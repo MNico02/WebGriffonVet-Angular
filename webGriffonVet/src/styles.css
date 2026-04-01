@@ -1,0 +1,12 @@
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+.glass-panel {
+  background: rgba(248, 249, 250, 0.7);
+  backdrop-filter: blur(20px);
+}
+
+.editorial-gradient {
+  background: linear-gradient(135deg, #4895ef 0%, #005fad 100%);
+}

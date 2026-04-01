@@ -1,0 +1,418 @@
+<main class="flex-1 overflow-y-auto bg-surface">
+
+  <!-- WELCOME -->
+  <div *ngIf="!paciente" class="flex flex-col items-center justify-center h-full min-h-[400px] text-center p-16">
+    <div class="text-6xl mb-6">🐾</div>
+    <h2 class="font-headline text-2xl font-bold text-on-surface mb-3">Bienvenido a VetCare</h2>
+    <p class="text-on-surface-variant max-w-md">Seleccioná un paciente del panel izquierdo para ver su historia clínica completa.</p>
+  </div>
+
+  <!-- PATIENT DETAIL -->
+  <div *ngIf="paciente">
+
+    <!-- Hero -->
+    <div class="editorial-gradient p-8 text-white flex items-center gap-6">
+      <div class="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center text-4xl">🐶</div>
+      <div>
+        <h1 class="font-headline text-3xl font-extrabold">{{ paciente.nombre }}</h1>
+        <p class="text-blue-100 mt-1">{{ paciente.especie }} · {{ paciente.raza }} · {{ paciente.edad }} años</p>
+        <p class="text-blue-200 text-sm mt-1">Dueño: {{ paciente.duenio }}</p>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex overflow-x-auto border-b border-outline-variant bg-surface-container-lowest sticky top-0 z-10">
+      <button *ngFor="let tab of tabs"
+        class="flex items-center gap-2 px-5 py-4 text-sm font-bold border-b-2 transition-all whitespace-nowrap"
+        [class.border-primary]="tabActiva === tab.id"
+        [class.text-primary]="tabActiva === tab.id"
+        [class.border-transparent]="tabActiva !== tab.id"
+        [class.text-on-surface-variant]="tabActiva !== tab.id"
+        (click)="switchTab(tab.id)">
+        <span>{{ tab.icono }}</span>
+        <span>{{ tab.label }}</span>
+        <span *ngIf="tab.count !== undefined && getCount(tab.id) > 0"
+          class="ml-1 px-2 py-0.5 rounded-full bg-primary text-white text-xs">
+          {{ getCount(tab.id) }}
+        </span>
+      </button>
+    </div>
+
+    <!-- Tab Panels -->
+    <div class="p-8">
+
+      <!-- INFO GENERAL -->
+      <div *ngIf="tabActiva === 'info'">
+        <div class="flex items-start justify-between mb-6">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-primary-container/20 flex items-center justify-center text-2xl">🐾</div>
+            <div>
+              <h2 class="font-headline text-xl font-bold text-on-surface">Datos del Paciente</h2>
+              <p class="text-on-surface-variant text-sm">Información básica y antecedentes</p>
+            </div>
+          </div>
+          <button class="px-4 py-2 rounded-full editorial-gradient text-white text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-all">✏️ Editar</button>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div class="bg-surface-container-low rounded-lg p-4 border border-outline-variant">
+            <p class="text-xs text-on-surface-variant uppercase tracking-widest mb-1">Nombre</p>
+            <p class="font-bold text-on-surface">{{ paciente.nombre }}</p>
+          </div>
+          <div class="bg-surface-container-low rounded-lg p-4 border border-outline-variant">
+            <p class="text-xs text-on-surface-variant uppercase tracking-widest mb-1">Especie</p>
+            <p class="font-bold text-on-surface">{{ paciente.especie }}</p>
+          </div>
+          <div class="bg-surface-container-low rounded-lg p-4 border border-outline-variant">
+            <p class="text-xs text-on-surface-variant uppercase tracking-widest mb-1">Raza</p>
+            <p class="font-bold text-on-surface">{{ paciente.raza }}</p>
+          </div>
+          <div class="bg-surface-container-low rounded-lg p-4 border border-outline-variant">
+            <p class="text-xs text-on-surface-variant uppercase tracking-widest mb-1">Edad</p>
+            <p class="font-bold text-on-surface">{{ paciente.edad }} años</p>
+          </div>
+          <div class="bg-surface-container-low rounded-lg p-4 border border-outline-variant">
+            <p class="text-xs text-on-surface-variant uppercase tracking-widest mb-1">Sexo</p>
+            <p class="font-bold text-on-surface">{{ paciente.sexo }}</p>
+          </div>
+          <div class="bg-surface-container-low rounded-lg p-4 border border-outline-variant">
+            <p class="text-xs text-on-surface-variant uppercase tracking-widest mb-1">Dueño</p>
+            <p class="font-bold text-on-surface">{{ paciente.duenio }}</p>
+          </div>
+        </div>
+        <div *ngIf="paciente.observaciones" class="mt-6 bg-surface-container-low rounded-lg p-4 border border-outline-variant">
+          <p class="text-xs text-on-surface-variant uppercase tracking-widest mb-2">Observaciones</p>
+          <p class="text-on-surface text-sm">{{ paciente.observaciones }}</p>
+        </div>
+      </div>
+
+      <!-- CONSULTAS -->
+      <div *ngIf="tabActiva === 'consultas'">
+        <div class="flex items-start justify-between mb-6">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-primary-container/20 flex items-center justify-center text-2xl">🧾</div>
+            <div>
+              <h2 class="font-headline text-xl font-bold text-on-surface">Historial de Consultas</h2>
+              <p class="text-on-surface-variant text-sm">Evolución cronológica del paciente</p>
+            </div>
+          </div>
+          <button class="px-4 py-2 rounded-full editorial-gradient text-white text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-all">+ Nueva Consulta</button>
+        </div>
+        <div class="space-y-4">
+          <div *ngFor="let c of paciente.consultas" class="bg-surface-container-lowest rounded-lg p-5 border border-outline-variant">
+            <div class="flex justify-between items-start mb-2">
+              <p class="font-bold text-on-surface">{{ c.motivo }}</p>
+              <span class="text-xs text-on-surface-variant">{{ c.fecha }}</span>
+            </div>
+            <p class="text-sm text-on-surface-variant">{{ c.diagnostico }}</p>
+            <p *ngIf="c.tratamiento" class="text-sm text-primary mt-1">💊 {{ c.tratamiento }}</p>
+          </div>
+          <p *ngIf="!paciente.consultas?.length" class="text-on-surface-variant text-sm">Sin consultas registradas.</p>
+        </div>
+      </div>
+
+      <!-- VACUNAS -->
+      <div *ngIf="tabActiva === 'vacunas'">
+        <div class="flex items-start justify-between mb-6">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-primary-container/20 flex items-center justify-center text-2xl">💉</div>
+            <div>
+              <h2 class="font-headline text-xl font-bold text-on-surface">Registro de Vacunación</h2>
+              <p class="text-on-surface-variant text-sm">Vacunas aplicadas y próximas dosis</p>
+            </div>
+          </div>
+          <button class="px-4 py-2 rounded-full editorial-gradient text-white text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-all">+ Registrar</button>
+        </div>
+        <div class="overflow-x-auto rounded-lg border border-outline-variant">
+          <table class="w-full text-sm">
+            <thead class="bg-surface-container text-on-surface-variant uppercase text-xs tracking-widest">
+              <tr>
+                <th class="px-4 py-3 text-left font-bold">Vacuna</th>
+                <th class="px-4 py-3 text-left font-bold">Fecha Aplicación</th>
+                <th class="px-4 py-3 text-left font-bold">Próxima Dosis</th>
+                <th class="px-4 py-3 text-left font-bold">Estado</th>
+                <th class="px-4 py-3 text-left font-bold">Observaciones</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-outline-variant bg-surface-container-lowest">
+              <tr *ngFor="let v of paciente.vacunas" class="hover:bg-surface-container transition-all">
+                <td class="px-4 py-3 font-bold text-on-surface">{{ v.nombre }}</td>
+                <td class="px-4 py-3 text-on-surface-variant">{{ v.fechaAplicacion }}</td>
+                <td class="px-4 py-3 text-on-surface-variant">{{ v.proximaDosis }}</td>
+                <td class="px-4 py-3">
+                  <span class="px-2 py-1 rounded-full text-xs font-bold"
+                    [class.bg-green-100]="v.estado === 'Al día'"
+                    [class.text-green-800]="v.estado === 'Al día'"
+                    [class.bg-red-100]="v.estado === 'Vencida'"
+                    [class.text-red-800]="v.estado === 'Vencida'"
+                    [class.bg-yellow-100]="v.estado === 'Próxima'"
+                    [class.text-yellow-800]="v.estado === 'Próxima'">
+                    {{ v.estado }}
+                  </span>
+                </td>
+                <td class="px-4 py-3 text-on-surface-variant">{{ v.observaciones }}</td>
+              </tr>
+              <tr *ngIf="!paciente.vacunas?.length">
+                <td colspan="5" class="px-4 py-6 text-center text-on-surface-variant">Sin vacunas registradas.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- DESPARASITACION -->
+      <div *ngIf="tabActiva === 'desparasitacion'">
+        <div class="flex items-start justify-between mb-6">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-primary-container/20 flex items-center justify-center text-2xl">🪱</div>
+            <div>
+              <h2 class="font-headline text-xl font-bold text-on-surface">Desparasitación</h2>
+              <p class="text-on-surface-variant text-sm">Interna y externa</p>
+            </div>
+          </div>
+          <button class="px-4 py-2 rounded-full editorial-gradient text-white text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-all">+ Registrar</button>
+        </div>
+        <div class="overflow-x-auto rounded-lg border border-outline-variant">
+          <table class="w-full text-sm">
+            <thead class="bg-surface-container text-on-surface-variant uppercase text-xs tracking-widest">
+              <tr>
+                <th class="px-4 py-3 text-left font-bold">Tipo</th>
+                <th class="px-4 py-3 text-left font-bold">Producto</th>
+                <th class="px-4 py-3 text-left font-bold">Fecha</th>
+                <th class="px-4 py-3 text-left font-bold">Próxima Dosis</th>
+                <th class="px-4 py-3 text-left font-bold">Observaciones</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-outline-variant bg-surface-container-lowest">
+              <tr *ngFor="let d of paciente.desparasitacion" class="hover:bg-surface-container transition-all">
+                <td class="px-4 py-3 font-bold text-on-surface">{{ d.tipo }}</td>
+                <td class="px-4 py-3 text-on-surface-variant">{{ d.producto }}</td>
+                <td class="px-4 py-3 text-on-surface-variant">{{ d.fecha }}</td>
+                <td class="px-4 py-3 text-on-surface-variant">{{ d.proximaDosis }}</td>
+                <td class="px-4 py-3 text-on-surface-variant">{{ d.observaciones }}</td>
+              </tr>
+              <tr *ngIf="!paciente.desparasitacion?.length">
+                <td colspan="5" class="px-4 py-6 text-center text-on-surface-variant">Sin registros.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PESO -->
+      <div *ngIf="tabActiva === 'peso'">
+        <div class="flex items-start justify-between mb-6">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-primary-container/20 flex items-center justify-center text-2xl">⚖️</div>
+            <div>
+              <h2 class="font-headline text-xl font-bold text-on-surface">Control de Peso</h2>
+              <p class="text-on-surface-variant text-sm">Evolución del peso corporal</p>
+            </div>
+          </div>
+          <button class="px-4 py-2 rounded-full editorial-gradient text-white text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-all">+ Registrar</button>
+        </div>
+        <div class="overflow-x-auto rounded-lg border border-outline-variant">
+          <table class="w-full text-sm">
+            <thead class="bg-surface-container text-on-surface-variant uppercase text-xs tracking-widest">
+              <tr>
+                <th class="px-4 py-3 text-left font-bold">Fecha</th>
+                <th class="px-4 py-3 text-left font-bold">Peso</th>
+                <th class="px-4 py-3 text-left font-bold">Condición corporal</th>
+                <th class="px-4 py-3 text-left font-bold">Notas</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-outline-variant bg-surface-container-lowest">
+              <tr *ngFor="let p of paciente.peso" class="hover:bg-surface-container transition-all">
+                <td class="px-4 py-3 text-on-surface-variant">{{ p.fecha }}</td>
+                <td class="px-4 py-3 font-bold text-on-surface">{{ p.valor }} kg</td>
+                <td class="px-4 py-3 text-on-surface-variant">{{ p.condicion }}</td>
+                <td class="px-4 py-3 text-on-surface-variant">{{ p.notas }}</td>
+              </tr>
+              <tr *ngIf="!paciente.peso?.length">
+                <td colspan="4" class="px-4 py-6 text-center text-on-surface-variant">Sin registros de peso.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ENFERMEDADES -->
+      <div *ngIf="tabActiva === 'enfermedades'">
+        <div class="flex items-start justify-between mb-6">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-primary-container/20 flex items-center justify-center text-2xl">🦠</div>
+            <div>
+              <h2 class="font-headline text-xl font-bold text-on-surface">Enfermedades</h2>
+              <p class="text-on-surface-variant text-sm">Diagnósticos registrados</p>
+            </div>
+          </div>
+          <button class="px-4 py-2 rounded-full editorial-gradient text-white text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-all">+ Registrar</button>
+        </div>
+        <div class="overflow-x-auto rounded-lg border border-outline-variant">
+          <table class="w-full text-sm">
+            <thead class="bg-surface-container text-on-surface-variant uppercase text-xs tracking-widest">
+              <tr>
+                <th class="px-4 py-3 text-left font-bold">Enfermedad</th>
+                <th class="px-4 py-3 text-left font-bold">Estado</th>
+                <th class="px-4 py-3 text-left font-bold">Diagnóstico</th>
+                <th class="px-4 py-3 text-left font-bold">Observaciones</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-outline-variant bg-surface-container-lowest">
+              <tr *ngFor="let e of paciente.enfermedades" class="hover:bg-surface-container transition-all">
+                <td class="px-4 py-3 font-bold text-on-surface">{{ e.nombre }}</td>
+                <td class="px-4 py-3">
+                  <span class="px-2 py-1 rounded-full text-xs font-bold"
+                    [class.bg-green-100]="e.estado === 'Superada'"
+                    [class.text-green-800]="e.estado === 'Superada'"
+                    [class.bg-red-100]="e.estado === 'Activa'"
+                    [class.text-red-800]="e.estado === 'Activa'"
+                    [class.bg-yellow-100]="e.estado === 'Crónica'"
+                    [class.text-yellow-800]="e.estado === 'Crónica'">
+                    {{ e.estado }}
+                  </span>
+                </td>
+                <td class="px-4 py-3 text-on-surface-variant">{{ e.diagnostico }}</td>
+                <td class="px-4 py-3 text-on-surface-variant">{{ e.observaciones }}</td>
+              </tr>
+              <tr *ngIf="!paciente.enfermedades?.length">
+                <td colspan="4" class="px-4 py-6 text-center text-on-surface-variant">Sin enfermedades registradas.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ALERGIAS -->
+      <div *ngIf="tabActiva === 'alergias'">
+        <div class="flex items-start justify-between mb-6">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-primary-container/20 flex items-center justify-center text-2xl">⚠️</div>
+            <div>
+              <h2 class="font-headline text-xl font-bold text-on-surface">Alergias</h2>
+              <p class="text-on-surface-variant text-sm">Alergias conocidas y severidad</p>
+            </div>
+          </div>
+          <button class="px-4 py-2 rounded-full editorial-gradient text-white text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-all">+ Registrar</button>
+        </div>
+        <div class="overflow-x-auto rounded-lg border border-outline-variant">
+          <table class="w-full text-sm">
+            <thead class="bg-surface-container text-on-surface-variant uppercase text-xs tracking-widest">
+              <tr>
+                <th class="px-4 py-3 text-left font-bold">Alérgeno</th>
+                <th class="px-4 py-3 text-left font-bold">Severidad</th>
+                <th class="px-4 py-3 text-left font-bold">Reacción</th>
+                <th class="px-4 py-3 text-left font-bold">Notas</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-outline-variant bg-surface-container-lowest">
+              <tr *ngFor="let a of paciente.alergias" class="hover:bg-surface-container transition-all">
+                <td class="px-4 py-3 font-bold text-on-surface">{{ a.alergeno }}</td>
+                <td class="px-4 py-3">
+                  <span class="px-2 py-1 rounded-full text-xs font-bold"
+                    [class.bg-yellow-100]="a.severidad === 'Leve'"
+                    [class.text-yellow-800]="a.severidad === 'Leve'"
+                    [class.bg-orange-100]="a.severidad === 'Moderada'"
+                    [class.text-orange-800]="a.severidad === 'Moderada'"
+                    [class.bg-red-100]="a.severidad === 'Severa'"
+                    [class.text-red-800]="a.severidad === 'Severa'">
+                    {{ a.severidad }}
+                  </span>
+                </td>
+                <td class="px-4 py-3 text-on-surface-variant">{{ a.reaccion }}</td>
+                <td class="px-4 py-3 text-on-surface-variant">{{ a.notas }}</td>
+              </tr>
+              <tr *ngIf="!paciente.alergias?.length">
+                <td colspan="4" class="px-4 py-6 text-center text-on-surface-variant">Sin alergias registradas.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TRATAMIENTOS -->
+      <div *ngIf="tabActiva === 'tratamientos'">
+        <div class="flex items-start justify-between mb-6">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-primary-container/20 flex items-center justify-center text-2xl">💊</div>
+            <div>
+              <h2 class="font-headline text-xl font-bold text-on-surface">Tratamientos y Medicación</h2>
+              <p class="text-on-surface-variant text-sm">Medicamentos indicados</p>
+            </div>
+          </div>
+          <button class="px-4 py-2 rounded-full editorial-gradient text-white text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-all">+ Nuevo</button>
+        </div>
+        <div class="overflow-x-auto rounded-lg border border-outline-variant">
+          <table class="w-full text-sm">
+            <thead class="bg-surface-container text-on-surface-variant uppercase text-xs tracking-widest">
+              <tr>
+                <th class="px-4 py-3 text-left font-bold">Medicamento</th>
+                <th class="px-4 py-3 text-left font-bold">Dosis / Frecuencia</th>
+                <th class="px-4 py-3 text-left font-bold">Duración</th>
+                <th class="px-4 py-3 text-left font-bold">Estado</th>
+                <th class="px-4 py-3 text-left font-bold">Indicaciones</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-outline-variant bg-surface-container-lowest">
+              <tr *ngFor="let t of paciente.tratamientos" class="hover:bg-surface-container transition-all">
+                <td class="px-4 py-3 font-bold text-on-surface">{{ t.medicamento }}</td>
+                <td class="px-4 py-3 text-on-surface-variant">{{ t.dosis }}</td>
+                <td class="px-4 py-3 text-on-surface-variant">{{ t.duracion }}</td>
+                <td class="px-4 py-3">
+                  <span class="px-2 py-1 rounded-full text-xs font-bold"
+                    [class.bg-green-100]="t.estado === 'Activo'"
+                    [class.text-green-800]="t.estado === 'Activo'"
+                    [class.bg-gray-100]="t.estado === 'Finalizado'"
+                    [class.text-gray-800]="t.estado === 'Finalizado'">
+                    {{ t.estado }}
+                  </span>
+                </td>
+                <td class="px-4 py-3 text-on-surface-variant">{{ t.indicaciones }}</td>
+              </tr>
+              <tr *ngIf="!paciente.tratamientos?.length">
+                <td colspan="5" class="px-4 py-6 text-center text-on-surface-variant">Sin tratamientos registrados.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ESTUDIOS -->
+      <div *ngIf="tabActiva === 'estudios'">
+        <div class="flex items-start justify-between mb-6">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-primary-container/20 flex items-center justify-center text-2xl">🧪</div>
+            <div>
+              <h2 class="font-headline text-xl font-bold text-on-surface">Estudios Clínicos</h2>
+              <p class="text-on-surface-variant text-sm">Análisis y diagnóstico por imagen</p>
+            </div>
+          </div>
+          <button class="px-4 py-2 rounded-full editorial-gradient text-white text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-all">+ Cargar</button>
+        </div>
+        <div class="overflow-x-auto rounded-lg border border-outline-variant">
+          <table class="w-full text-sm">
+            <thead class="bg-surface-container text-on-surface-variant uppercase text-xs tracking-widest">
+              <tr>
+                <th class="px-4 py-3 text-left font-bold">Tipo de Estudio</th>
+                <th class="px-4 py-3 text-left font-bold">Fecha</th>
+                <th class="px-4 py-3 text-left font-bold">Resultado</th>
+                <th class="px-4 py-3 text-left font-bold">Observaciones</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-outline-variant bg-surface-container-lowest">
+              <tr *ngFor="let e of paciente.estudios" class="hover:bg-surface-container transition-all">
+                <td class="px-4 py-3 font-bold text-on-surface">{{ e.tipo }}</td>
+                <td class="px-4 py-3 text-on-surface-variant">{{ e.fecha }}</td>
+                <td class="px-4 py-3 text-on-surface-variant">{{ e.resultado }}</td>
+                <td class="px-4 py-3 text-on-surface-variant">{{ e.observaciones }}</td>
+              </tr>
+              <tr *ngIf="!paciente.estudios?.length">
+                <td colspan="4" class="px-4 py-6 text-center text-on-surface-variant">Sin estudios registrados.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
