@@ -1,8 +1,14 @@
 import { Routes } from '@angular/router';
-import { AdminLayout } from './layouts/admin-layout/admin-layout';
 
 
-export const routes: Routes = [{
+
+export const routes: Routes = [
+  {
+    path: 'login',
+    loadComponent: () => import('./pages/cliente/login/login').then(m => m.Login),
+    data: {}
+  },
+  {
     path: 'main',
     loadComponent: () => import('./layouts/main-layout/main').then(m => m.Main),
     children: [

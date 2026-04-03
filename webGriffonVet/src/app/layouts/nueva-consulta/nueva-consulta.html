@@ -1,0 +1,118 @@
+<div class="modal-overlay fixed inset-0 bg-black/40 z-50 flex items-center justify-center"
+  (click)="onOverlayClick($event)">
+
+  <div class="bg-surface-container-lowest rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto mx-4">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between px-6 py-4 border-b border-outline-variant/30">
+      <h2 class="font-headline text-lg font-bold text-on-surface">Nueva Consulta</h2>
+      <button (click)="cerrar.emit()" class="p-2 rounded-full hover:bg-surface-container transition-all">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="px-6 py-5 space-y-4">
+
+      <!-- Motivo -->
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">Motivo de consulta</label>
+        <input type="text" [(ngModel)]="form.motivo_consulta" placeholder="Ej: Infección leve"
+          class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary" />
+      </div>
+
+      <!-- Anamnesis -->
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">Anamnesis</label>
+        <textarea [(ngModel)]="form.anamnesis" rows="2" placeholder="Decaimiento, falta de apetito..."
+          class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary resize-none"></textarea>
+      </div>
+
+      <!-- Examen general -->
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">Examen general</label>
+        <textarea [(ngModel)]="form.examen_general" rows="2" placeholder="Temperatura elevada..."
+          class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary resize-none"></textarea>
+      </div>
+
+      <!-- Diagnóstico -->
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">Diagnóstico</label>
+        <textarea [(ngModel)]="form.diagnostico" rows="2" placeholder="Infección bacteriana..."
+          class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary resize-none"></textarea>
+      </div>
+
+      <!-- Tratamiento general -->
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">Tratamiento general</label>
+        <input type="text" [(ngModel)]="form.tratamiento" placeholder="Antibiótico..."
+          class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary" />
+      </div>
+
+      <!-- Observaciones -->
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">Observaciones</label>
+        <input type="text" [(ngModel)]="form.observaciones" placeholder="Control en 5 días..."
+          class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary" />
+      </div>
+
+      <!-- Medicamentos -->
+      <div class="flex flex-col gap-2">
+        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">Medicamentos</label>
+
+        <!-- Fila agregar -->
+        <div class="grid grid-cols-2 gap-2">
+          <input type="text" [(ngModel)]="nuevoTratamiento.nombre_medicamento" placeholder="Nombre medicamento"
+            class="bg-surface-container rounded-lg px-3 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary" />
+          <input type="text" [(ngModel)]="nuevoTratamiento.dosis" placeholder="Dosis"
+            class="bg-surface-container rounded-lg px-3 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary" />
+          <input type="text" [(ngModel)]="nuevoTratamiento.frecuencia" placeholder="Frecuencia"
+            class="bg-surface-container rounded-lg px-3 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary" />
+          <input type="number" [(ngModel)]="nuevoTratamiento.duracion_dias" placeholder="Duración (días)"
+            class="bg-surface-container rounded-lg px-3 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary" />
+          <input type="text" [(ngModel)]="nuevoTratamiento.indicaciones" placeholder="Indicaciones"
+            class="bg-surface-container rounded-lg px-3 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary col-span-2" />
+        </div>
+
+        <button (click)="agregarTratamiento()"
+          class="self-start text-xs px-4 py-2 rounded-full border border-primary text-primary hover:bg-primary-container/20 transition-all font-bold">
+          + Agregar medicamento
+        </button>
+
+        <!-- Lista -->
+        @for (t of form.tratamientos; track $index) {
+          <div class="flex items-start justify-between bg-surface-container px-4 py-3 rounded-lg border border-outline-variant/20">
+            <div class="flex flex-col gap-1">
+              <span class="font-bold text-sm">💊 {{ t.nombre_medicamento }}</span>
+              <div class="flex gap-2 flex-wrap">
+                <span class="text-xs bg-primary-container/20 text-primary px-2 py-0.5 rounded-full">{{ t.dosis }}</span>
+                <span class="text-xs text-on-surface-variant">{{ t.frecuencia }}</span>
+                <span class="text-xs text-on-surface-variant">{{ t.duracion_dias }} días</span>
+              </div>
+              @if (t.indicaciones) {
+                <span class="text-xs text-on-surface-variant italic">{{ t.indicaciones }}</span>
+              }
+            </div>
+            <button (click)="eliminarTratamiento($index)" class="p-1 rounded-full hover:bg-error-container/20 transition-all">
+              <span class="material-symbols-outlined text-error text-[18px]">delete</span>
+            </button>
+          </div>
+        }
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="flex justify-end gap-3 px-6 py-4 border-t border-outline-variant/30">
+      <button (click)="cerrar.emit()"
+        class="px-5 py-2 rounded-full text-sm font-bold text-on-surface-variant hover:bg-surface-container transition-all">
+        Cancelar
+      </button>
+      <button (click)="guardar()"
+        class="px-5 py-2 rounded-full editorial-gradient text-white text-sm font-bold hover:opacity-90 transition-all">
+        Guardar consulta
+      </button>
+    </div>
+
+  </div>
+</div>

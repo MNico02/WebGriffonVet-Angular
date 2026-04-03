@@ -1,108 +1,106 @@
-import { Component, OnInit  } from '@angular/core';
+import { Component, inject, signal, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
+import { rxResource } from '@angular/core/rxjs-interop';
+import { MascotaService } from '../../../core/services/mascota-service';
+import { EMPTY } from 'rxjs';
+import { NuevaConsulta } from '../../../layouts/nueva-consulta/nueva-consulta';
 
 @Component({
   selector: 'app-historial-clinico-admin',
-  imports: [CommonModule],
+  imports: [CommonModule, NuevaConsulta],
   templateUrl: './historial-clinico-admin.html',
   styleUrl: './historial-clinico-admin.css',
 })
-export class HistorialClinicoAdmin implements OnInit {
-  
-  paciente: any = null;
-  
-  tabActiva = 'info';
+export class HistorialClinicoAdmin {
+  private route = inject(ActivatedRoute);
+  private mascotaService = inject(MascotaService);
+
+  mascotaId = input.required<number>();
+  usuarioId = input.required<number>();
+
+  mascotaResource = rxResource({
+    params: () => ({ mascotaId: this.mascotaId(), usuarioId: this.usuarioId() }),
+    stream: ({ params }) => {
+      if (!params.mascotaId || !params.usuarioId) return EMPTY;
+      return this.mascotaService.getMascota(params.mascotaId, params.usuarioId);
+    },
+  });
+
+  tabActiva = signal('info');
+  modalAbierto = signal(false);
 
   tabs = [
-    { id: 'info',           label: 'Info General',    icono: '📋' },
-    { id: 'consultas',      label: 'Consultas',        icono: '🧾', count: true },
-    { id: 'vacunas',        label: 'Vacunación',       icono: '💉', count: true },
-    { id: 'desparasitacion',label: 'Desparasitación',  icono: '🪱', count: true },
-    { id: 'peso',           label: 'Peso',             icono: '⚖️' },
-    { id: 'enfermedades',   label: 'Enfermedades',     icono: '🦠', count: true },
-    { id: 'alergias',       label: 'Alergias',         icono: '⚠️', count: true },
-    { id: 'tratamientos',   label: 'Tratamientos',     icono: '💊', count: true },
-    { id: 'estudios',       label: 'Estudios',         icono: '🧪', count: true },
+    { id: 'info', label: 'Info General', icono: '📋' },
+    { id: 'consultas', label: 'Consultas', icono: '🧾', count: true },
+    { id: 'vacunas', label: 'Vacunación', icono: '💉', count: true },
+    { id: 'desparasitacion', label: 'Desparasitación', icono: '🪱', count: true },
+    { id: 'peso', label: 'Peso', icono: '⚖️' },
+    { id: 'enfermedades', label: 'Enfermedades', icono: '🦠', count: true },
+    { id: 'alergias', label: 'Alergias', icono: '⚠️', count: true },
+    { id: 'tratamientos', label: 'Tratamientos', icono: '💊', count: true },
+    { id: 'estudios', label: 'Estudios', icono: '🧪', count: true },
   ];
 
-  constructor(private route: ActivatedRoute) {}
-
-  ngOnInit() {
-    const mascotaId = this.route.snapshot.paramMap.get('id');
-    this.paciente = {
-    nombre: 'Firulais',
-    especie: 'Perro',
-    raza: 'Labrador',
-    edad: 4,
-    sexo: 'Macho',
-    duenio: 'Juan Pérez',
-    observaciones: 'Paciente tranquilo, muy colaborador en las consultas.',
-
-    consultas: [
-      { fecha: '2024-03-10', motivo: 'Control anual', diagnostico: 'Todo en orden', tratamiento: 'Ninguno' },
-      { fecha: '2024-01-05', motivo: 'Vómitos frecuentes', diagnostico: 'Gastritis leve', tratamiento: 'Omeprazol 10mg por 5 días' },
-    ],
-
-    vacunas: [
-      { nombre: 'Séxtuple', fechaAplicacion: '2024-02-01', proximaDosis: '2025-02-01', estado: 'Al día', observaciones: '' },
-      { nombre: 'Antirrábica', fechaAplicacion: '2023-08-15', proximaDosis: '2024-08-15', estado: 'Vencida', observaciones: 'Reprogramar urgente' },
-      { nombre: 'Bordetella', fechaAplicacion: '2024-03-01', proximaDosis: '2024-09-01', estado: 'Próxima', observaciones: '' },
-    ],
-
-    desparasitacion: [
-      { tipo: 'Interna', producto: 'Milbemax', fecha: '2024-02-15', proximaDosis: '2024-05-15', observaciones: '' },
-      { tipo: 'Externa', producto: 'Frontline Spray', fecha: '2024-03-01', proximaDosis: '2024-04-01', observaciones: 'Zona rural, mayor exposición' },
-    ],
-
-    peso: [
-      { fecha: '2024-03-10', valor: 28.5, condicion: 'Ideal', notas: '' },
-      { fecha: '2024-01-05', valor: 30.1, condicion: 'Sobrepeso leve', notas: 'Reducir raciones' },
-      { fecha: '2023-10-20', valor: 27.8, condicion: 'Ideal', notas: '' },
-    ],
-
-    enfermedades: [
-      { nombre: 'Gastritis', estado: 'Superada', diagnostico: '2024-01-05', observaciones: 'Resolvió con tratamiento' },
-      { nombre: 'Displasia de cadera', estado: 'Crónica', diagnostico: '2022-06-10', observaciones: 'Control cada 6 meses' },
-    ],
-
-    alergias: [
-      { alergeno: 'Pollo', severidad: 'Moderada', reaccion: 'Dermatitis', notas: 'Evitar alimentos con pollo' },
-      { alergeno: 'Pasto kikuyo', severidad: 'Leve', reaccion: 'Estornudos', notas: '' },
-    ],
-
-    tratamientos: [
-      { medicamento: 'Meloxicam', dosis: '0.1mg/kg cada 24hs', duracion: '10 días', estado: 'Finalizado', indicaciones: 'Con comida' },
-      { medicamento: 'Condroitín', dosis: '1 comprimido cada 24hs', duracion: 'Indefinido', estado: 'Activo', indicaciones: 'Para displasia' },
-    ],
-
-    estudios: [
-      { tipo: 'Radiografía', fecha: '2022-06-10', resultado: 'Displasia bilateral leve', observaciones: 'Control anual recomendado' },
-      { tipo: 'Hemograma', fecha: '2024-03-10', resultado: 'Dentro de valores normales', observaciones: '' },
-    ],
-  };
-  }
-
-  cargarPaciente(id: string) {
-    // reemplazá esto con tu llamada real al servicio
-    // this.veterinariaService.getMascota(id).subscribe(data => this.paciente = data);
-  }
-
   switchTab(tab: string) {
-    this.tabActiva = tab;
+    this.tabActiva.set(tab);
   }
 
   getCount(tabId: string): number {
-    if (!this.paciente) return 0;
+    const paciente = this.mascotaResource.value();
+    if (!paciente) return 0;
     const map: Record<string, any[]> = {
-      consultas:       this.paciente.consultas,
-      vacunas:         this.paciente.vacunas,
-      desparasitacion: this.paciente.desparasitacion,
-      enfermedades:    this.paciente.enfermedades,
-      alergias:        this.paciente.alergias,
-      tratamientos:    this.paciente.tratamientos,
-      estudios:        this.paciente.estudios,
+      consultas:       paciente.historia_clinica?.consultas ?? [],
+      vacunas:         paciente.vacunas ?? [],
+      desparasitacion: paciente.desparasitaciones ?? [],
+      enfermedades:    paciente.enfermedades ?? [],
+      alergias:        paciente.alergias ?? [],
+      tratamientos:    paciente.historia_clinica?.consultas?.flatMap(c => c.tratamientos ?? []) ?? [],
+      estudios:        paciente.historia_clinica?.consultas?.flatMap(c => c.estudios ?? []) ?? [],
     };
     return map[tabId]?.length ?? 0;
   }
+
+  calcularEdad(fechaNacimiento: number): string {
+    const hoy = new Date();
+    const nacimiento = new Date(fechaNacimiento);
+
+    let anios = hoy.getFullYear() - nacimiento.getFullYear();
+    let meses = hoy.getMonth() - nacimiento.getMonth();
+
+    if (meses < 0) {
+      anios--;
+      meses += 12;
+    }
+
+    if (anios === 0) {
+      return `${meses} ${meses === 1 ? 'mes' : 'meses'}`;
+    }
+
+    if (meses === 0) {
+      return `${anios} ${anios === 1 ? 'año' : 'años'}`;
+    }
+
+    return `${anios} ${anios === 1 ? 'año' : 'años'} y ${meses} ${meses === 1 ? 'mes' : 'meses'}`;
+  }
+
+    get todosLosTratamientos() {
+      return this.mascotaResource.value()?.historia_clinica?.consultas?.flatMap(c =>
+        (c.tratamientos ?? []).map(t => ({
+          ...t,
+          fecha_consulta: c.fecha,
+          motivo_consulta: c.motivo_consulta,
+        }))
+      ) ?? [];
+    }
+
+    get todosLosEstudios() {
+      return this.mascotaResource.value()?.historia_clinica?.consultas?.flatMap(c =>
+        (c.estudios ?? []).map(e => ({
+          ...e,
+          fecha_consulta: c.fecha,
+          motivo_consulta: c.motivo_consulta,
+        }))
+      ) ?? [];
+    }
 }
