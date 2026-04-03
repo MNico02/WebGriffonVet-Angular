@@ -35,7 +35,17 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/admin/dashboard-admin/dashboard-admin').then(m => m.DashboardAdmin),
         resolve: {},
         providers: [],
-        data: {}
+        data: {},
+        children:[
+          { path: '',
+            redirectTo: 'dashboard',
+            pathMatch: 'full' 
+          },
+          {
+            path: 'clientes',
+            loadComponent: () => import('./pages/admin/clientes-admin/clientes-admin').then(m => m.ClientesAdmin)
+          }
+        ]
       },
       {
         path: 'historialClinico/:id',

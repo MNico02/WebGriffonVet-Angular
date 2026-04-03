@@ -1,85 +1,131 @@
-        <!-- Table View: Modern Bento-ish List -->
-        <section class="px-12 pb-20">
-          <div
-            class="bg-surface-container-low rounded-xl overflow-hidden shadow-sm"
-          >
-            <table class="w-full text-left border-collapse">
-              <thead>
-                <tr
-                  class="bg-surface-container-high/50 text-on-surface-variant font-label text-xs uppercase tracking-widest"
-                >
-                  <th class="px-8 py-5 font-bold">Cliente</th>
-                  <th class="px-8 py-5 font-bold">Mascotas</th>
-                  <th class="px-8 py-5 font-bold">Ultima Visita</th>
-                  <th class="px-8 py-5 font-bold">Estado</th>
-                  <th class="px-8 py-5 font-bold text-right">Acciones</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-outline-variant/10">
-                  @if (clientesResource.isLoading()) {
-                    <tr><td colspan="5">Cargando...</td></tr>
-                  }
-                 @for (cliente of clientesResource.value() ?? []; track cliente.id_usuario) {
-                      <tr class="group hover:bg-surface-container-lowest transition-all cursor-pointer">
-                    <td class="px-8 py-6">
-                      <div class="flex items-center gap-4">
-                        
-                        <div>
-                          <p class="font-headline font-bold text-on-surface">
-                            {{cliente.nombre}}
-                          </p>
-                          <p class="text-xs text-on-surface-variant">
-                           {{cliente.email}}
-                          </p>
-                        </div>
-                      </div>
-                    </td>
-                    <td class="px-8 py-6">
-                      <div class="flex gap-2">
-                        @for (mascota of cliente.mascotas; track mascota.id_mascota) {
-                          <div (click)="seleccionarMascota(mascota.id_mascota, cliente.id_usuario)" [class.border-primary]="mascotaSeleccionadaId() === mascota.id_mascota"
-                          class="group/pet relative bg-white px-3 py-1 rounded-full border border-outline-variant/30 flex items-center gap-2 text-xs font-bold hover:border-primary-container transition-all">
-                            <span class="material-symbols-outlined text-[16px] text-primary">pets</span>
-                            {{mascota.nombre_mascota}} ({{mascota.raza}})
-                          </div>
-                        }
-                      </div>
-                    </td>
-                    <!-- Fecha alta -->
-                    <td class="px-8 py-6">
-                      <p class="text-sm font-medium">{{cliente.fecha_alta | date:'MMM dd, yyyy'}}</p>
-                    </td>
+<!-- Main Content Area -->
+<main class="lg:ml-64 flex-1 bg-surface min-h-screen">
+  <!-- Header/Breadcrumb -->
+<!-- Header responsivo -->
+<header class="px-4 md:px-12 py-6 md:py-8 flex flex-col md:flex-row md:justify-between md:items-end gap-4">
+  <div>
+    <h2 class="font-headline font-extrabold text-2xl md:text-4xl text-on-surface tracking-tight">
+      Client Directory
+    </h2>
+    <p class="text-on-surface-variant font-medium mt-2">
+      Manage owner profiles and medical histories
+    </p>
+  </div>
+  <div class="flex gap-3 flex-wrap">
+    <div class="relative flex-1 min-w-[200px]">
+      <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/60">search</span>
+      <input
+        class="bg-surface-container-highest border-none rounded-md pl-12 pr-6 py-3 w-full focus:ring-2 focus:ring-primary transition-all"
+        placeholder="Search by name or pet..."
+        type="text"
+      />
+    </div>
+    <button class="bg-surface-container-high hover:bg-surface-container-highest px-4 py-3 rounded-md font-bold text-sm flex items-center gap-2 transition-all">
+      <span class="material-symbols-outlined">filter_list</span>
+      <span class="hidden sm:inline">Filters</span>
+    </button>
+  </div>
+</header>
 
-                    <!-- Estado activo -->
-                    <td class="px-8 py-6">
-                      <span [class]="cliente.activo 
-                        ? 'px-3 py-1 rounded-full bg-green-100 text-green-700 text-[10px] font-black uppercase tracking-widest'
-                        : 'px-3 py-1 rounded-full bg-red-100 text-red-700 text-[10px] font-black uppercase tracking-widest'">
-                        {{ cliente.activo ? 'Activo' : 'Inactivo' }}
-                      </span>
-                    </td>
-                    <td class="px-8 py-6 text-right">
-                      <button
-                        class="text-primary hover:bg-primary-fixed/30 p-2 rounded-full transition-all"
-                      >
-                        <span
-                          class="material-symbols-outlined"
-                          data-icon="clinical_notes"
-                          >clinical_notes</span
-                        >
-                      </button>
-                    </td>
-                  </tr>
-                 }
-              </tbody>
-            </table>
-          </div>
-         
-          
-        </section>
-          @if (mascotaSeleccionadaId() !== null) {
-        <app-historial-clinico-admin 
-          [mascotaId]="mascotaSeleccionadaId()!" 
-          [usuarioId]="usuarioSeleccionadoId()!" 
-        />
-      }
+<!-- Tabla con scroll horizontal -->
+<section class="px-4 md:px-12 pb-20">
+  <div class="bg-surface-container-low rounded-xl overflow-x-auto shadow-sm">
+    <table class="w-full text-left border-collapse min-w-[640px]">
+      <!-- ...resto igual... -->
+    </table>
+  </div>
+</section>
+  <!-- Table View: Modern Bento-ish List -->
+  <section class="px-4 md:px-12 pb-20">
+    <div class="bg-surface-container-low rounded-xl overflow-x-auto shadow-sm table-scroll-container relative">
+      <!-- Indicador de scroll en mobile -->
+      <div class="absolute bottom-1 right-3 md:right-8 text-[10px] text-on-surface-variant/60 pointer-events-none md:hidden">
+        ← Desliza →
+      </div>
+      <table class="w-full text-left border-collapse min-w-[500px]">
+        <thead>
+          <tr
+            class="bg-surface-container-high/50 text-on-surface-variant font-label text-xs uppercase tracking-widest"
+          >
+            <th class="px-2 sm:px-4 md:px-8 py-3 sm:py-5 font-bold text-xs sm:text-sm">Cliente</th>
+            <th class="px-2 sm:px-4 md:px-8 py-3 sm:py-5 font-bold text-xs sm:text-sm">Mascotas</th>
+            <th class="px-2 sm:px-4 md:px-8 py-3 sm:py-5 font-bold text-xs sm:text-sm">Teléfono</th>
+            <th class="px-2 sm:px-4 md:px-8 py-3 sm:py-5 font-bold text-xs sm:text-sm">Estado</th>
+            <th class="px-2 sm:px-4 md:px-8 py-3 sm:py-5 font-bold text-right text-xs sm:text-sm">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-outline-variant/10">
+          @if (clientesResource.isLoading()) {
+            <tr>
+              <td colspan="5">Cargando...</td>
+            </tr>
+          }
+          @for (cliente of clientesResource.value() ?? []; track cliente.id_usuario) {
+            <tr class="group hover:bg-surface-container-lowest transition-all cursor-pointer">
+              <td class="px-2 sm:px-4 md:px-8 py-3 sm:py-6">
+                <div class="flex items-center gap-2 sm:gap-4">
+                  <div class="min-w-0">
+                    <p class="font-headline font-bold text-on-surface text-sm sm:text-base truncate">
+                      {{ cliente.nombre_completo }}
+                    </p>
+                    <p class="text-xs text-on-surface-variant hidden sm:block truncate">
+                      {{ cliente.email }}
+                    </p>
+                  </div>
+                </div>
+              </td>
+              <td class="px-2 sm:px-4 md:px-8 py-3 sm:py-6">
+                <div class="flex flex-wrap gap-1 sm:gap-2">
+                  @for (mascota of cliente.mascotas; track mascota.id_mascota) {
+                    <div
+                      (click)="seleccionarMascota(mascota.id_mascota, cliente.id_usuario)"
+                      [class.border-primary]="mascotaSeleccionadaId() === mascota.id_mascota"
+                      class="group/pet relative bg-white px-2 py-0.5 sm:px-3 sm:py-1 rounded-full border border-outline-variant/30 flex items-center gap-1 sm:gap-2 text-xs font-bold hover:border-primary-container transition-all flex-shrink-0"
+                      [title]="mascota.nombre_mascota + ' (' + mascota.especie + ')'"
+                    >
+                      <span class="material-symbols-outlined text-[14px] sm:text-[16px] text-primary">pets</span>
+                      <span class="hidden sm:inline truncate">{{ mascota.nombre_mascota }}</span>
+                      <span class="sm:hidden text-[10px] font-bold">{{ mascota.nombre_mascota.substring(0, 3) }}</span>
+                    </div>
+                  }
+                </div>
+              </td>
+              <!-- Teléfono -->
+              <td class="px-2 sm:px-4 md:px-8 py-3 sm:py-6">
+                <p class="text-xs sm:text-sm font-medium truncate">{{ cliente.telefono }}</p>
+              </td>
+
+              <!-- Estado activo -->
+              <td class="px-2 sm:px-4 md:px-8 py-3 sm:py-6">
+                <span
+                  [class]="
+                    cliente.activo
+                      ? 'px-2 py-0.5 sm:px-3 sm:py-1 rounded-full bg-green-100 text-green-700 text-[8px] sm:text-[10px] font-black uppercase tracking-widest'
+                      : 'px-2 py-0.5 sm:px-3 sm:py-1 rounded-full bg-red-100 text-red-700 text-[8px] sm:text-[10px] font-black uppercase tracking-widest'
+                  "
+                >
+                  {{ cliente.activo ? 'Activo' : 'Inactivo' }}
+                </span>
+              </td>
+              <td class="px-2 sm:px-4 md:px-8 py-3 sm:py-6 text-right">
+                <button
+                  class="text-primary hover:bg-primary-fixed/30 p-1 sm:p-2 rounded-full transition-all"
+                >
+                  <span class="material-symbols-outlined text-[18px] sm:text-[20px]" data-icon="clinical_notes"
+                    >clinical_notes</span
+                  >
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+  @if (mascotaSeleccionadaId() !== null) {
+    <app-historial-clinico-admin
+      [mascotaId]="mascotaSeleccionadaId()!"
+      [usuarioId]="usuarioSeleccionadoId()!"
+    />
+  }
+</main>

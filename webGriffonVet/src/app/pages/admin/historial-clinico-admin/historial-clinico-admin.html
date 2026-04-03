@@ -1,39 +1,58 @@
-<main class="flex-1 overflow-y-auto bg-surface">
-  <!-- LOADING -->
+
+
+<main class="flex-1 overflow-y-auto bg-surface w-full">
+
   @if (mascotaResource.isLoading()) {
     <div class="flex items-center justify-center h-full min-h-[400px]">
       <p class="text-on-surface-variant">Cargando...</p>
     </div>
   }
 
-  <!-- PATIENT DETAIL -->
   @if (mascotaResource.value(); as paciente) {
-    <!-- Tabs -->
-    <div
-      class="flex overflow-x-auto border-b border-outline-variant bg-surface-container-lowest sticky top-0 z-10"
-    >
-      @for (tab of tabs; track tab.id) {
-        <button
-          class="flex items-center gap-2 px-5 py-4 text-sm font-bold border-b-2 transition-all whitespace-nowrap"
-          [class.border-primary]="tabActiva() === tab.id"
-          [class.text-primary]="tabActiva() === tab.id"
-          [class.border-transparent]="tabActiva() !== tab.id"
-          [class.text-on-surface-variant]="tabActiva() !== tab.id"
-          (click)="switchTab(tab.id)"
-        >
-          <span>{{ tab.icono }}</span>
-          <span>{{ tab.label }}</span>
-          @if (tab.count && getCount(tab.id) > 0) {
-            <span class="ml-1 px-2 py-0.5 rounded-full bg-primary text-white text-xs">
-              {{ getCount(tab.id) }}
-            </span>
-          }
-        </button>
-      }
+
+    <!-- TABS WRAPPER: ocupa todo el ancho disponible -->
+    <div class="w-full sticky top-0 z-10 bg-surface-container-lowest border-b border-outline-variant">
+
+      <!-- Fila de tabs con scroll horizontal -->
+      <div
+        #tabsContainer
+        class="flex overflow-x-auto tabs-scroll-hidden"
+        (scroll)="onTabsScroll()"
+      >
+        @for (tab of tabs; track tab.id) {
+          <button
+            [attr.data-tab]="tab.id"
+            class="flex items-center gap-2 px-4 py-4 text-sm font-bold border-b-2 transition-all whitespace-nowrap flex-shrink-0"
+            [class.border-primary]="tabActiva() === tab.id"
+            [class.text-primary]="tabActiva() === tab.id"
+            [class.border-transparent]="tabActiva() !== tab.id"
+            [class.text-on-surface-variant]="tabActiva() !== tab.id"
+            (click)="switchTab(tab.id)"
+          >
+            <span style="font-size: 14px;">{{ tab.icono }}</span>
+            <span>{{ tab.label }}</span>
+            @if (tab.count && getCount(tab.id) > 0) {
+              <span class="ml-1 px-2 py-0.5 rounded-full bg-primary text-white text-xs">
+                {{ getCount(tab.id) }}
+              </span>
+            }
+          </button>
+        }
+      </div>
+
+      <!-- Barra de scroll personalizada -->
+      <div class="h-1 bg-outline-variant/20 mx-3 mb-1 rounded-full overflow-hidden">
+        <div
+          class="h-full bg-primary/50 rounded-full transition-all duration-100"
+          [style.width.%]="thumbWidth"
+          [style.margin-left.%]="thumbLeft"
+        ></div>
+      </div>
+
     </div>
 
-    <!-- Tab Panels -->
-    <div class="p-8">
+    <!-- Contenido de tabs -->
+    <div class="p-4 md:p-8 overflow-x-hidden">
       <!-- INFO GENERAL -->
       @if (tabActiva() === 'info') {
         <div>
@@ -560,5 +579,6 @@
 }
       
     </div>
+
   }
 </main>

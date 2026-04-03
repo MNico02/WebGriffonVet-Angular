@@ -13,15 +13,9 @@ export class ClienteService {
   constructor(private http: HttpClient) {}
 
   getClientes(): Observable<Cliente[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/obtenerClientes`).pipe(
-      map(response => {
-        // el back devuelve el JSON como string dentro de una clave rara
-        const key = 'JSON_F52E2B61-18A1-11d1-B105-00805F49916B';
-        const jsonString = response.map(r => r[key]).join('');
-        const parsed = JSON.parse(jsonString);
-        return parsed.clientes as Cliente[];
-      })
-    );
-  }
+  return this.http.get<{ clientes: Cliente[] }>(`${this.apiUrl}/obtenerClientes`).pipe(
+    map(response => response.clientes)
+  );
+}
 
 }

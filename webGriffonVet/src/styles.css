@@ -10,3 +10,9 @@
 .editorial-gradient {
   background: linear-gradient(135deg, #4895ef 0%, #005fad 100%);
 }
+
+.tabs-scroll-hidden {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar { display: none; }
+}

@@ -1,124 +1,187 @@
-  <body
-    class="bg-surface font-body text-on-surface antialiased selection:bg-primary-fixed selection:text-on-primary-fixed"
+<body
+  class="bg-surface font-body text-on-surface antialiased selection:bg-primary-fixed selection:text-on-primary-fixed"
+>
+  <!-- Botón mobile (solo visible en mobile, agregar al top del body) -->
+  <div
+    class="lg:hidden fixed top-0 left-0 right-0 z-50 bg-slate-100 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 px-4 py-3 flex items-center gap-3"
   >
-    <div class="flex min-h-screen">
-      <!-- SideNavBar (Shared Component Identity) -->
-      <aside
-        class="h-screen w-64 fixed left-0 top-0 bg-slate-100 dark:bg-slate-950 flex flex-col py-6 font-plus-jakarta font-medium no-border space-y-2 flat no shadows z-40"
-      >
-        <!-- Header Section -->
-        <div class="px-6 mb-10">
-          <h1 class="text-lg font-black text-blue-900 dark:text-blue-200">
-            Panel Admin
-          </h1>   
-        </div>
-        <!-- Main Navigation Tabs -->
-        <nav class="flex-1 px-2 space-y-1">
-          <a
-            class="text-slate-500 dark:text-slate-400 mx-2 px-4 py-3 hover:bg-slate-200/50 dark:hover:bg-slate-800 flex items-center gap-3 transition-transform hover:translate-x-1 active:scale-98"
-            href="#"
-          >
-            <span class="material-symbols-outlined" data-icon="dashboard"
-              >dashboard</span
-            >
-            <span>Dashboard</span>
-          </a>
-          <a
-            class="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100 rounded-full mx-2 px-4 py-3 flex items-center gap-3 transition-transform hover:translate-x-1 active:scale-98"
-            href="#"
-          >
-            <span
-              class="material-symbols-outlined"
-              data-icon="group"
-              style="font-variation-settings: &quot;FILL&quot; 1"
-              >group</span
-            >
-            <span>Clients</span>
-          </a>
-        </nav>
-
-        <!-- Footer Tabs -->
-        <div class="border-t border-slate-200 dark:border-slate-800 pt-4 px-2">
-          <a
-            class="text-slate-500 dark:text-slate-400 mx-2 px-4 py-3 hover:bg-slate-200/50 dark:hover:bg-slate-800 flex items-center gap-3 transition-transform hover:translate-x-1 active:scale-98"
-            href="#"
-          >
-            <span class="material-symbols-outlined" data-icon="logout"
-              >logout</span
-            >
-            <span>Logout</span>
-          </a>
-        </div>
-      </aside>
-      <!-- Main Content Area -->
-      <main class="ml-64 flex-1 bg-surface min-h-screen">
-        <!-- Header/Breadcrumb -->
-        <header class="px-12 py-8 flex justify-between items-end">
-          <div>
-            <h2
-              class="font-headline font-extrabold text-4xl text-on-surface tracking-tight"
-            >
-              Client Directory
-            </h2>
-            <p class="text-on-surface-variant font-medium mt-2">
-              Manage owner profiles and medical histories
-            </p>
-          </div>
-          <!-- Search & Filters -->
-          <div class="flex gap-4">
-            <div class="relative">
-              <span
-                class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/60"
-                data-icon="search"
-                >search</span
-              >
-              <input
-                class="bg-surface-container-highest border-none rounded-md pl-12 pr-6 py-3 w-80 focus:ring-2 focus:ring-primary focus:bg-white transition-all"
-                placeholder="Search by name or pet..."
-                type="text"
-              />
-            </div>
-            <button
-              class="bg-surface-container-high hover:bg-surface-container-highest px-6 py-3 rounded-md font-bold text-sm flex items-center gap-2 transition-all"
-            >
-              <span class="material-symbols-outlined" data-icon="filter_list"
-                >filter_list</span
-              >
-              Filters
-            </button>
-          </div>
-        </header>
-          <app-clientes-admin></app-clientes-admin>
-      </main>
-    </div>
-    <!-- Footer (Shared Component Identity) -->
-    <footer
-      class="ml-64 bg-slate-50 dark:bg-slate-950 w-full mt-auto flex flex-col md:flex-row justify-between items-center px-12 py-8 font-manrope text-xs uppercase tracking-widest border-t border-slate-200 dark:border-slate-800"
+    <button
+      (click)="toggle()"
+      class="p-1.5 rounded-lg text-slate-500 hover:bg-slate-200/60 dark:hover:bg-slate-800 transition-colors"
     >
-      <div class="text-blue-900 dark:text-blue-100 font-plus-jakarta font-bold">
-        © 2024 The Clinical Sanctuary. Celestial Care for Every Companion.
+      <span class="material-symbols-outlined text-[20px]">menu</span>
+    </button>
+    <h1 class="text-lg font-black text-blue-900 dark:text-blue-200">Panel Admin</h1>
+  </div>
+
+  <!-- Overlay para mobile -->
+  @if (!collapsed()) {
+    <div class="lg:hidden fixed inset-0 bg-black/40 z-30" (click)="toggle()"></div>
+  }
+  <div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside
+      [class]="
+        'h-screen fixed left-0 top-0 bg-slate-100 dark:bg-slate-950 flex flex-col py-6 font-plus-jakarta font-medium z-40 transition-all duration-300 ease-in-out overflow-hidden' +
+        (collapsed() ? ' -translate-x-full lg:translate-x-0 lg:w-[68px]' : ' translate-x-0 w-64')
+      "
+    >
+      <!-- Header -->
+      <div class="px-4 mb-10 flex items-center justify-between min-w-0">
+        <h1
+          class="text-lg font-black text-blue-900 dark:text-blue-200 whitespace-nowrap transition-all duration-300 overflow-hidden"
+          [style.width]="collapsed() ? '0' : 'auto'"
+          [style.opacity]="collapsed() ? '0' : '1'"
+        >
+          Panel Admin
+        </h1>
+        <button
+          (click)="toggle()"
+          class="ml-auto p-1.5 rounded-lg text-slate-500 hover:bg-slate-200/60 dark:hover:bg-slate-800 dark:text-slate-400 transition-colors flex-shrink-0"
+        >
+          <span class="material-symbols-outlined text-[20px]">
+            {{ collapsed() ? 'menu_open' : 'menu' }}
+          </span>
+        </button>
       </div>
-      <div class="flex gap-8 mt-4 md:mt-0">
+
+      <!-- Nav -->
+      <nav class="flex-1 px-2 space-y-1">
         <a
-          class="text-slate-400 hover:text-blue-500 underline underline-offset-4 opacity-80 hover:opacity-100 transition-all"
-          href="#"
-          >Privacy Policy</a
+          routerLink="/admin/dashboard"
+          routerLinkActive
+          #rla0="routerLinkActive"
+          [routerLinkActiveOptions]="{ exact: true }"
+          [class]="
+            'mx-2 px-4 py-3 flex items-center gap-3 rounded-full transition-transform hover:translate-x-1 ' +
+            (rla0.isActive
+              ? 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100'
+              : 'text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800')
+          "
+          [title]="collapsed() ? 'Dashboard' : ''"
         >
+          <span
+            class="material-symbols-outlined flex-shrink-0"
+            [style.font-variation-settings]="rla0.isActive ? '\'FILL\' 1' : ''"
+            >dashboard</span
+          >
+          <span
+            class="whitespace-nowrap overflow-hidden transition-all duration-200"
+            [style.width]="collapsed() ? '0' : 'auto'"
+            [style.opacity]="collapsed() ? '0' : '1'"
+            >Dashboard</span
+          >
+        </a>
+
         <a
-          class="text-slate-400 hover:text-blue-500 underline underline-offset-4 opacity-80 hover:opacity-100 transition-all"
-          href="#"
-          >Terms of Service</a
+          routerLink="/admin/dashboard/clientes"
+          routerLinkActive
+          #rla1="routerLinkActive"
+          [class]="
+            'mx-2 px-4 py-3 flex items-center gap-3 rounded-full transition-transform hover:translate-x-1 ' +
+            (rla1.isActive
+              ? 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100'
+              : 'text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800')
+          "
+          [title]="collapsed() ? 'Clientes' : ''"
         >
+          <span
+            class="material-symbols-outlined flex-shrink-0"
+            [style.font-variation-settings]="rla1.isActive ? '\'FILL\' 1' : ''"
+            >group</span
+          >
+          <span
+            class="whitespace-nowrap overflow-hidden transition-all duration-200"
+            [style.width]="collapsed() ? '0' : 'auto'"
+            [style.opacity]="collapsed() ? '0' : '1'"
+            >Clientes</span
+          >
+        </a>
+
         <a
-          class="text-slate-400 hover:text-blue-500 underline underline-offset-4 opacity-80 hover:opacity-100 transition-all"
-          href="#"
-          >Emergency Care</a
+          routerLink="/admin/dashboard/productos"
+          routerLinkActive
+          #rla2="routerLinkActive"
+          [class]="
+            'mx-2 px-4 py-3 flex items-center gap-3 rounded-full transition-transform hover:translate-x-1 ' +
+            (rla2.isActive
+              ? 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100'
+              : 'text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800')
+          "
+          [title]="collapsed() ? 'Productos' : ''"
         >
+          <span
+            class="material-symbols-outlined flex-shrink-0"
+            [style.font-variation-settings]="rla2.isActive ? '\'FILL\' 1' : ''"
+            >inventory_2</span
+          >
+          <span
+            class="whitespace-nowrap overflow-hidden transition-all duration-200"
+            [style.width]="collapsed() ? '0' : 'auto'"
+            [style.opacity]="collapsed() ? '0' : '1'"
+            >Productos</span
+          >
+        </a>
+      </nav>
+
+      <!-- Footer -->
+      <div class="border-t border-slate-200 dark:border-slate-800 pt-4 px-2">
         <a
-          class="text-slate-400 hover:text-blue-500 underline underline-offset-4 opacity-80 hover:opacity-100 transition-all"
           href="#"
-          >Contact Us</a
+          class="text-slate-500 dark:text-slate-400 mx-2 px-4 py-3 hover:bg-slate-200/50 dark:hover:bg-slate-800 flex items-center gap-3 rounded-full transition-transform hover:translate-x-1"
+          [title]="collapsed() ? 'Logout' : ''"
         >
+          <span class="material-symbols-outlined flex-shrink-0">logout</span>
+          <span
+            class="whitespace-nowrap overflow-hidden transition-all duration-200"
+            [style.width]="collapsed() ? '0' : 'auto'"
+            [style.opacity]="collapsed() ? '0' : '1'"
+            >Logout</span
+          >
+        </a>
       </div>
-    </footer>
-  </body>
+    </aside>
+
+    <!-- Main Content — se desplaza con el sidebar -->
+    <div
+      class="flex flex-col flex-1 transition-all duration-300 pt-14 lg:pt-0"
+      [class.lg:ml-[68px]]="collapsed()"
+      [class.lg:ml-64]="!collapsed()"
+    >
+      <main class="flex-1 bg-surface min-h-screen">
+        <router-outlet />
+      </main>
+
+      <!-- Footer -->
+      <footer
+        class="bg-slate-50 dark:bg-slate-950 w-full mt-auto flex flex-col md:flex-row justify-between items-center px-4 md:px-12 py-8 font-manrope text-xs uppercase tracking-widest border-t border-slate-200 dark:border-slate-800"
+      >
+        <div class="text-blue-900 dark:text-blue-100 font-plus-jakarta font-bold">
+          © 2024 The Clinical Sanctuary. Celestial Care for Every Companion.
+        </div>
+        <div class="flex gap-8 mt-4 md:mt-0">
+          <a
+            class="text-slate-400 hover:text-blue-500 underline underline-offset-4 opacity-80 hover:opacity-100 transition-all"
+            href="#"
+            >Privacy Policy</a
+          >
+          <a
+            class="text-slate-400 hover:text-blue-500 underline underline-offset-4 opacity-80 hover:opacity-100 transition-all"
+            href="#"
+            >Terms of Service</a
+          >
+          <a
+            class="text-slate-400 hover:text-blue-500 underline underline-offset-4 opacity-80 hover:opacity-100 transition-all"
+            href="#"
+            >Emergency Care</a
+          >
+          <a
+            class="text-slate-400 hover:text-blue-500 underline underline-offset-4 opacity-80 hover:opacity-100 transition-all"
+            href="#"
+            >Contact Us</a
+          >
+        </div>
+      </footer>
+    </div>
+  </div>
+</body>

@@ -1,0 +1,94 @@
+/* Estilos para scroll horizontal responsivo */
+.overflow-x-auto {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* Smooth scroll en iOS */
+}
+
+/* Scrollbar contenedor de tabla - MÁS VISIBLE */
+.table-scroll-container::-webkit-scrollbar {
+  height: 12px !important;
+}
+
+.table-scroll-container::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+}
+
+.table-scroll-container::-webkit-scrollbar-thumb {
+  background: rgba(59, 130, 246, 0.5);
+  border-radius: 10px;
+  border: 2px solid rgba(0, 0, 0, 0.08);
+}
+
+.table-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(59, 130, 246, 0.8);
+}
+
+/* Firefox - scrollbar visible */
+.table-scroll-container {
+  scrollbar-width: auto;
+  scrollbar-color: rgba(59, 130, 246, 0.5) rgba(0, 0, 0, 0.08);
+}
+
+/* Ocultar scrollbar visual pero mantener funcionalidad en otros elementos */
+.tabs-scroll-hidden {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+.tabs-scroll-hidden::-webkit-scrollbar {
+  height: 6px;
+}
+
+.tabs-scroll-hidden::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tabs-scroll-hidden::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.tabs-scroll-hidden::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Scrollbar más visible en tablas */
+.overflow-x-auto::-webkit-scrollbar {
+  height: 10px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb {
+  background: rgba(59, 130, 246, 0.4);
+  border-radius: 5px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb:hover {
+  background: rgba(59, 130, 246, 0.7);
+}
+
+/* Asegurar que las tablas sean responsivas */
+@media (max-width: 768px) {
+  table {
+    font-size: 0.875rem;
+  }
+  
+  td, th {
+    padding: 0.75rem 0.5rem !important;
+  }
+
+  /* Scrollbar más grande en mobile */
+  .table-scroll-container::-webkit-scrollbar {
+    height: 14px;
+  }
+}
+
+/* Soporte para Firefox */
+.overflow-x-auto {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(59, 130, 246, 0.4) rgba(0, 0, 0, 0.08);
+}

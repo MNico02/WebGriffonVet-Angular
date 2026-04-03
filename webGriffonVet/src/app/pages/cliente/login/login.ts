@@ -30,15 +30,29 @@ export class Login {
   login() {
     this.authService.login(this.correo, this.clave).subscribe({
       next: res => {
-        this.authService.setToken(res.token);
+        this.authService.setSession(res.token, res.rol);
         localStorage.setItem('email', this.correo);
-
-        this.router.navigateByUrl(this.returnUrl);
+        this.redirigirPorRol(res.rol);
       },
-      error: () => {
-        this.error =`Usuario o contraseña incorrectos`;
+      error: (err) => {
+        this.error = err?.error?.error 
+                  || err?.error?.message 
+                  || 'Error al iniciar sesión';
       }
     });
+  }
+
+  private redirigirPorRol(rol: string): void {
+    switch (rol?.toUpperCase()) {
+      case 'ADMIN':
+        this.router.navigateByUrl('/admin');
+        break;
+      case 'CLIENTE':
+        this.router.navigateByUrl('/');
+        break;
+      default:
+        this.router.navigateByUrl(this.returnUrl);
+    }
   }
 
 }

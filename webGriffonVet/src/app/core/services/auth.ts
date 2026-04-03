@@ -7,30 +7,18 @@ import { environment } from '../../../environments/environment.development';
   providedIn: 'root',
 })
 export class AuthService {
- private apiUrl = environment.apiUrl;
- private loggedIn$ = new BehaviorSubject<boolean>(this.hasToken());
+  private apiUrl = environment.apiUrl;
+  private loggedIn$ = new BehaviorSubject<boolean>(this.hasToken());
 
   constructor(private http: HttpClient) {}
 
-  /* =========================
-     AUTH API
-     ========================= */
-
- login(correo: string, clave: string): Observable<{ token: string }> {
-    return this.http.post<{ token: string }>(
+  login(correo: string, clave: string): Observable<{ token: string; rol: string }> {
+    return this.http.post<{ token: string; rol: string }>(
       `${this.apiUrl}/login`,
       { email: correo, password: clave }
     );
   }
-/*
- registrarCliente(cliente: ICliente): Observable<string> {
-    return this.http.post<string>(
-      `${this.apiUrl}/registrarCliente`,
-      cliente
-    );
-  }*/
 
- 
   private hasToken(): boolean {
     return !!localStorage.getItem('token');
   }
@@ -39,26 +27,25 @@ export class AuthService {
     return localStorage.getItem('token');
   }
 
-  setToken(token: string): void {
-    localStorage.setItem('token', token);
-    this.loggedIn$.next(true);
+  getRol(): string | null {
+    return localStorage.getItem('rol');
   }
 
-
-
-
+  setSession(token: string, rol: string): void {
+    localStorage.setItem('token', token);
+    localStorage.setItem('rol', rol);
+    this.loggedIn$.next(true);
+  }
 
   logout(): void {
     localStorage.clear();
     this.loggedIn$.next(false);
   }
 
- 
-  
   isLoggedIn(): boolean {
     return this.loggedIn$.value;
   }
-  
+
   isLoggedIn$(): Observable<boolean> {
     return this.loggedIn$.asObservable();
   }
