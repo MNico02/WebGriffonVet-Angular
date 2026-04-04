@@ -4,7 +4,7 @@ export interface Mascota {
   especie: string;
   raza: string;
   tamanio: string;
-  fecha_nacimiento: number;
+  fecha_nacimiento: string;
   sexo: string;
   tipo_pelaje: string;
   comportamiento: string;

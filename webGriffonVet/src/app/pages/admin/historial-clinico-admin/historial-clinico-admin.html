@@ -59,7 +59,7 @@
           <div class="flex items-start justify-between mb-6">
             <div class="flex items-center gap-4">
               <div
-                class="w-12 h-12 rounded-full bg-primary-container/20 flex items-center justify-center text-2xl"
+                class="w-12 h-12 rounded-full sbg-primary-container/20 flex items-center justify-center text-2xl"
               >
                 🐾
               </div>
@@ -68,11 +68,20 @@
                 <p class="text-on-surface-variant text-sm">Información básica y antecedentes</p>
               </div>
             </div>
-            <button
-              class="px-4 py-2 rounded-full editorial-gradient text-white text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-all"
+            <button (click)="modalEditarAbierto.set(true)" 
+            class="px-4 py-2 rounded-full editorial-gradient text-white text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-all"
             >
-              ✏️ Editar
+              Editar mascota
             </button>
+            @if (modalEditarAbierto() && mascotaParaEditar()) {
+              <app-editar-mascota
+                [mascotaId]="mascotaId()"
+                [usuarioId]="usuarioId()"
+                [mascota]="mascotaParaEditar()!"
+                (cerrar)="modalEditarAbierto.set(false)"
+                (mascotaEditada)="mascotaResource.reload()"
+              />
+            }
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div class="bg-surface-container-low rounded-lg p-4 border border-outline-variant">

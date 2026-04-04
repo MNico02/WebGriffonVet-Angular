@@ -1,4 +1,4 @@
-import { Component, inject, signal, input, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, inject, signal, input, ViewChild, ElementRef, AfterViewInit, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { MascotaService } from '../../../core/services/mascota-service';
@@ -9,10 +9,11 @@ import { NuevaDesparasitacion } from '../../../layouts/nueva-desparasitacion/nue
 import { NuevoPeso } from '../../../layouts/nuevo-peso/nuevo-peso';
 import { NuevaEnfermedad } from '../../../layouts/nueva-enfemedad/nueva-enfemedad';
 import { NuevaAlergia } from '../../../layouts/nueva-alergia/nueva-alergia';
-
+import { EditarMascota } from '../../../layouts/editar-mascota/editar-mascota';
+import { editarMascota } from '../../../api/models/editarMascota';
 @Component({
   selector: 'app-historial-clinico-admin',
-  imports: [CommonModule, NuevaConsulta, NuevaVacunacion, NuevaDesparasitacion, NuevoPeso, NuevaEnfermedad, NuevaAlergia],
+  imports: [CommonModule, NuevaConsulta, NuevaVacunacion, NuevaDesparasitacion, NuevoPeso, NuevaEnfermedad, NuevaAlergia, EditarMascota],
   templateUrl: './historial-clinico-admin.html',
   styleUrl: './historial-clinico-admin.css',
 })
@@ -37,6 +38,7 @@ export class HistorialClinicoAdmin implements AfterViewInit {   // <-- implement
   modalPesoAbierto = signal(false);
   modalEnfermedadAbierto = signal(false);
   modalAlergiaAbierto = signal(false);
+  modalEditarAbierto = signal(false);
 
   @ViewChild('tabsContainer') tabsContainer!: ElementRef<HTMLDivElement>;
 
@@ -101,7 +103,7 @@ export class HistorialClinicoAdmin implements AfterViewInit {   // <-- implement
     return map[tabId]?.length ?? 0;
   }
 
-  calcularEdad(fechaNacimiento: number): string {
+  calcularEdad(fechaNacimiento: string): string {
     const hoy = new Date();
     const nacimiento = new Date(fechaNacimiento);
     let anios = hoy.getFullYear() - nacimiento.getFullYear();
@@ -123,4 +125,21 @@ export class HistorialClinicoAdmin implements AfterViewInit {   // <-- implement
       (c.estudios ?? []).map(e => ({ ...e, fecha_consulta: c.fecha, motivo_consulta: c.motivo_consulta }))
     ) ?? [];
   }
+    mascotaParaEditar = computed<editarMascota | null>(() => {
+    const m = this.mascotaResource.value();
+    if (!m) return null;
+    return {
+      id_usuario: this.usuarioId(),
+      id_mascota: this.mascotaId(),
+      nombre: m.nombre ?? '',
+      especie: m.especie ?? '',
+      raza: m.raza ?? '',
+      tamanio: m.tamanio ?? '',
+      sexo: m.sexo ?? '',
+      tipo_pelaje: m.tipo_pelaje ?? '',
+      comportamiento: m.comportamiento ?? '',
+      observaciones: m.observaciones ?? '',
+      fecha_nacimiento: m.fecha_nacimiento ? m.fecha_nacimiento.substring(0, 10) : ''
+    };
+  });
 }

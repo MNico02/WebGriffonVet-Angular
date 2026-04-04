@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, map} from 'rxjs';
 import { Mascota } from '../../api/models/mascota';
 import { environment } from '../../../environments/environment.development';
+import { editarMascota } from '../../api/models/editarMascota';
 
 @Injectable({ providedIn: 'root' })
 export class MascotaService {
@@ -23,5 +24,9 @@ export class MascotaService {
       return mascota;
     })
   );
+  }
+
+  editarMascota(payload: editarMascota): Observable<any>{
+    return this.http.put(`${this.apiUrl}/actualizarMascotas`, payload);
   }
 }
