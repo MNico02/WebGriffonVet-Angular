@@ -4,10 +4,15 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { MascotaService } from '../../../core/services/mascota-service';
 import { EMPTY } from 'rxjs';
 import { NuevaConsulta } from '../../../layouts/nueva-consulta/nueva-consulta';
+import { NuevaVacunacion } from '../../../layouts/nuevavacunacion/nuevavacunacion';
+import { NuevaDesparasitacion } from '../../../layouts/nueva-desparasitacion/nueva-desparasitacion';
+import { NuevoPeso } from '../../../layouts/nuevo-peso/nuevo-peso';
+import { NuevaEnfermedad } from '../../../layouts/nueva-enfemedad/nueva-enfemedad';
+import { NuevaAlergia } from '../../../layouts/nueva-alergia/nueva-alergia';
 
 @Component({
   selector: 'app-historial-clinico-admin',
-  imports: [CommonModule, NuevaConsulta],
+  imports: [CommonModule, NuevaConsulta, NuevaVacunacion, NuevaDesparasitacion, NuevoPeso, NuevaEnfermedad, NuevaAlergia],
   templateUrl: './historial-clinico-admin.html',
   styleUrl: './historial-clinico-admin.css',
 })
@@ -27,6 +32,11 @@ export class HistorialClinicoAdmin implements AfterViewInit {   // <-- implement
 
   tabActiva = signal('info');
   modalAbierto = signal(false);
+  modalVacunacionAbierto = signal(false);
+  modalDesparasitacionAbierto = signal(false);
+  modalPesoAbierto = signal(false);
+  modalEnfermedadAbierto = signal(false);
+  modalAlergiaAbierto = signal(false);
 
   @ViewChild('tabsContainer') tabsContainer!: ElementRef<HTMLDivElement>;
 
@@ -37,7 +47,7 @@ export class HistorialClinicoAdmin implements AfterViewInit {   // <-- implement
     { id: 'info',           label: 'Info General',   icono: '📋' },
     { id: 'consultas',      label: 'Consultas',       icono: '🧾', count: true },
     { id: 'vacunas',        label: 'Vacunación',      icono: '💉', count: true },
-    { id: 'desparasitacion',label: 'Desparasitación', icono: '🪱', count: true },
+    { id: 'desparasitacion',label: 'Desparasitación', icono: '', count: true },
     { id: 'peso',           label: 'Peso',            icono: '⚖️' },
     { id: 'enfermedades',   label: 'Enfermedades',    icono: '🦠', count: true },
     { id: 'alergias',       label: 'Alergias',        icono: '⚠️', count: true },

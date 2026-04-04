@@ -1,0 +1,85 @@
+<div class="modal-overlay fixed inset-0 bg-black/40 z-50 flex items-center justify-center"
+  (click)="onOverlayClick($event)">
+
+  <div class="bg-surface-container-lowest rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto mx-4">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between px-6 py-4 border-b border-outline-variant/30">
+      <h2 class="font-headline text-lg font-bold text-on-surface">Registrar Alergia</h2>
+      <button (click)="cerrar.emit()" class="p-2 rounded-full hover:bg-surface-container transition-all">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="px-6 py-5 space-y-4">
+
+      <!-- Select alergia -->
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">Alergia</label>
+        @if (cargandoAlergias) {
+          <div class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 text-on-surface-variant italic">
+            Cargando alergias...
+          </div>
+        } @else {
+          <select [(ngModel)]="form.id_alergia"
+            class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary">
+            <option [ngValue]="0" disabled>Seleccionar alergia...</option>
+            @for (a of alergias; track a.id_alergia) {
+              <option [ngValue]="a.id_alergia">{{ a.nombre }}</option>
+            }
+          </select>
+        }
+      </div>
+
+      <!-- Agregar alergia nueva -->
+      <div class="flex flex-col gap-1 pb-3 border-b border-outline-variant/20">
+        <label class="text-xs text-on-surface-variant">¿No encontrás la alergia? Agregá una nueva</label>
+        <div class="flex gap-2">
+          <input type="text" [(ngModel)]="nuevaAlergiaNombre" placeholder="Nombre de la alergia"
+            class="flex-1 bg-surface-container rounded-lg px-3 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary" />
+          <button (click)="insertarAlergia()" [disabled]="agregandoAlergia || !nuevaAlergiaNombre.trim()"
+            class="px-4 py-2 rounded-lg text-xs font-bold border border-secondary text-secondary hover:bg-secondary-container/20 transition-all disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap">
+            {{ agregandoAlergia ? 'Guardando...' : '+ Agregar' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Severidad -->
+      <div class="flex flex-col gap-2">
+        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">Severidad</label>
+        <div class="flex gap-2">
+          @for (s of severidades; track s) {
+            <button (click)="form.severidad = s"
+              [class]="form.severidad === s
+                ? getSeveridadActivaClass(s)
+                : 'flex-1 py-2 rounded-lg text-xs font-bold border border-outline-variant/30 bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-all'">
+              {{ s }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Observaciones -->
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">Observaciones</label>
+        <textarea [(ngModel)]="form.observaciones" rows="3" placeholder="Reacciones, desencadenantes, tratamiento..."
+          class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary resize-none"></textarea>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="flex justify-end gap-3 px-6 py-4 border-t border-outline-variant/30">
+      <button (click)="cerrar.emit()"
+        class="px-5 py-2 rounded-full text-sm font-bold text-on-surface-variant hover:bg-surface-container transition-all">
+        Cancelar
+      </button>
+      <button (click)="guardar()" [disabled]="form.id_alergia === 0 || !form.severidad"
+        class="px-5 py-2 rounded-full editorial-gradient text-white text-sm font-bold hover:opacity-90 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+        Guardar alergia
+      </button>
+    </div>
+
+  </div>
+</div>

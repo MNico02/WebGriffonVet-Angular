@@ -254,7 +254,19 @@
                 <p class="text-on-surface-variant text-sm">Vacunas aplicadas y próximas dosis</p>
               </div>
             </div>
-            <button class="px-4 py-2 rounded-full editorial-gradient text-white text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-all">+ Registrar</button>
+            <button (click)="modalVacunacionAbierto.set(true)"
+              class="px-4 py-2 rounded-full editorial-gradient text-white text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-all"
+            >
+              + Nueva Vacunación
+            </button>
+            @if (modalVacunacionAbierto()) {
+              <app-nueva-vacunacion-modal
+                [mascotaId]="mascotaId()"
+                [usuarioId]="usuarioId()"
+                (cerrar)="modalVacunacionAbierto.set(false)"
+                (vacunacionGuardada)="mascotaResource.reload()"
+              />
+}
           </div>
           <div class="overflow-x-auto rounded-lg border border-outline-variant">
             <table class="w-full text-sm">
@@ -308,7 +320,19 @@
                 <p class="text-on-surface-variant text-sm">Interna y externa</p>
               </div>
             </div>
-            <button class="px-4 py-2 rounded-full editorial-gradient text-white text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-all">+ Registrar</button>
+            <button (click)="modalDesparasitacionAbierto.set(true)"
+              class="px-4 py-2 rounded-full editorial-gradient text-white text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-all"
+            >
+              + Nueva Desparasitación
+            </button>
+            @if (modalDesparasitacionAbierto()) {
+              <app-nueva-desparasitacion
+                [mascotaId]="mascotaId()"
+                [usuarioId]="usuarioId()"
+                (cerrar)="modalDesparasitacionAbierto.set(false)"
+                (desparasitacionGuardada)="mascotaResource.reload()"
+              />
+            }
           </div>
           <div class="overflow-x-auto rounded-lg border border-outline-variant">
             <table class="w-full text-sm">
@@ -350,7 +374,19 @@
                 <p class="text-on-surface-variant text-sm">Evolución del peso corporal</p>
               </div>
             </div>
-            <button class="px-4 py-2 rounded-full editorial-gradient text-white text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-all">+ Registrar</button>
+            <button (click)="modalPesoAbierto.set(true)"
+              class="px-4 py-2 rounded-full editorial-gradient text-white text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-all"
+            >
+              + Registrar Peso
+            </button>
+            @if (modalPesoAbierto()) {
+              <app-nuevo-peso
+                [mascotaId]="mascotaId()"
+                [usuarioId]="usuarioId()"
+                (cerrar)="modalPesoAbierto.set(false)"
+                (pesoGuardado)="mascotaResource.reload()"
+              />
+            }
           </div>
           <div class="overflow-x-auto rounded-lg border border-outline-variant">
             <table class="w-full text-sm">
@@ -390,7 +426,19 @@
                 <p class="text-on-surface-variant text-sm">Diagnósticos registrados</p>
               </div>
             </div>
-            <button class="px-4 py-2 rounded-full editorial-gradient text-white text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-all">+ Registrar</button>
+            <button (click)="modalEnfermedadAbierto.set(true)" 
+            class="px-4 py-2 rounded-full editorial-gradient text-white text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-all"
+            >
+                + Registrar Enfermedad
+              </button>
+              @if (modalEnfermedadAbierto()) {
+                <app-nueva-enfermedad
+                  [mascotaId]="mascotaId()"
+                  [usuarioId]="usuarioId()"
+                  (cerrar)="modalEnfermedadAbierto.set(false)"
+                  (enfermedadGuardada)="mascotaResource.reload()"
+                />
+              }
           </div>
           <div class="overflow-x-auto rounded-lg border border-outline-variant">
             <table class="w-full text-sm">
@@ -440,7 +488,19 @@
                 <p class="text-on-surface-variant text-sm">Alergias conocidas y severidad</p>
               </div>
             </div>
-            <button class="px-4 py-2 rounded-full editorial-gradient text-white text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-all">+ Registrar</button>
+            <button (click)="modalAlergiaAbierto.set(true)" 
+            class="px-4 py-2 rounded-full editorial-gradient text-white text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-all"
+            >
+              + Registrar Alergia
+            </button>
+            @if (modalAlergiaAbierto()) {
+              <app-nueva-alergia
+                [mascotaId]="mascotaId()"
+                [usuarioId]="usuarioId()"
+                (cerrar)="modalAlergiaAbierto.set(false)"
+                (alergiaGuardada)="mascotaResource.reload()"
+              />
+            }
           </div>
           <div class="overflow-x-auto rounded-lg border border-outline-variant">
             <table class="w-full text-sm">

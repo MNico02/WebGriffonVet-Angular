@@ -9,14 +9,28 @@ export interface NuevaConsultaRequest {
   tratamiento: string;
   observaciones: string;
   tratamientos: NuevoTratamientoRequest[];
-  estudios: any[];
-  archivos: any[];
+  estudios: EstudioRequest[];
+  archivos: ArchivoRequest[];
 }
 
 export interface NuevoTratamientoRequest {
+  id_medicamento: number;
   nombre_medicamento: string;
   dosis: string;
   frecuencia: string;
   duracion_dias: number;
   indicaciones: string;
 }
+
+export interface EstudioRequest{
+  tipo_estudio: string;
+  resultado: string;
+  observaciones: string;
+}
+
+export interface ArchivoRequest{
+  url_archivo: string;
+  tipo_archivo: string;
+  descripcion: string;
+}
+

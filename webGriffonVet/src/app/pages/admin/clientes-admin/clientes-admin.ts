@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, computed} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Cliente } from '../../../api/models/cliente';
@@ -29,6 +29,7 @@ export class ClientesAdmin  {
 
   mascotaSeleccionadaId = signal<number | null>(null);
   usuarioSeleccionadoId = signal<number | null>(null);
+  searchQuery = signal('');
 
   seleccionarMascota(idMascota: number, idUsuario: number) {
     if (this.mascotaSeleccionadaId() === idMascota) {
@@ -39,6 +40,19 @@ export class ClientesAdmin  {
       this.usuarioSeleccionadoId.set(idUsuario);
     }
   }
+
+  clientesFiltrados = computed(() => {
+    const query = this.searchQuery().toLowerCase().trim();
+    const clientes = this.clientesResource.value() ?? [];
+
+    if (!query) return clientes;
+
+    return clientes.filter(cliente =>
+      cliente.nombre_completo.toLowerCase().includes(query) ||
+      cliente.email.toLowerCase().includes(query) ||
+      cliente.mascotas.some(m => m.nombre_mascota.toLowerCase().includes(query))
+    );
+  });
 
 
 

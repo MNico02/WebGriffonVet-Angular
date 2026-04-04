@@ -54,6 +54,7 @@ export interface consulta{
   tratamiento: string;
   tratamientos: tratamiento[];
   estudios: estudio[];
+  archivos: archivo[];
 
 }
 export interface tratamiento{
@@ -66,4 +67,10 @@ export interface estudio{
   tipo_estudio:string;
   resultado:string;
   fecha:Date;
+}
+
+export interface archivo{
+  url_archivo: string;
+  tipo_archivo: string;
+  descripcion: string;
 }

@@ -56,14 +56,33 @@
           class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary" />
       </div>
 
-      <!-- Medicamentos -->
-      <div class="flex flex-col gap-2">
-        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">Medicamentos</label>
+      <!-- ════════════════════════════════════════ -->
+      <!--              TRATAMIENTOS               -->
+      <!-- ════════════════════════════════════════ -->
+      <div class="flex flex-col gap-3">
+        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">Tratamientos</label>
 
-        <!-- Fila agregar -->
+        <!-- Fila agregar tratamiento -->
         <div class="grid grid-cols-2 gap-2">
-          <input type="text" [(ngModel)]="nuevoTratamiento.nombre_medicamento" placeholder="Nombre medicamento"
-            class="bg-surface-container rounded-lg px-3 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary" />
+
+          <!-- Select medicamento -->
+          <div class="col-span-2 flex flex-col gap-1">
+            <label class="text-xs text-on-surface-variant">Medicamento</label>
+            @if (cargandoMedicamentos) {
+              <div class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 text-on-surface-variant italic">
+                Cargando medicamentos...
+              </div>
+            } @else {
+              <select [(ngModel)]="nuevoTratamiento.id_medicamento" (ngModelChange)="onMedicamentoSeleccionado()"
+                class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary">
+                <option [ngValue]="0" disabled>Seleccionar medicamento...</option>
+                @for (med of medicamentos; track med.id_medicamento) {
+                  <option [ngValue]="med.id_medicamento">{{ med.nombre }}</option>
+                }
+              </select>
+            }
+          </div>
+
           <input type="text" [(ngModel)]="nuevoTratamiento.dosis" placeholder="Dosis"
             class="bg-surface-container rounded-lg px-3 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary" />
           <input type="text" [(ngModel)]="nuevoTratamiento.frecuencia" placeholder="Frecuencia"
@@ -71,15 +90,15 @@
           <input type="number" [(ngModel)]="nuevoTratamiento.duracion_dias" placeholder="Duración (días)"
             class="bg-surface-container rounded-lg px-3 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary" />
           <input type="text" [(ngModel)]="nuevoTratamiento.indicaciones" placeholder="Indicaciones"
-            class="bg-surface-container rounded-lg px-3 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary col-span-2" />
+            class="bg-surface-container rounded-lg px-3 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary" />
         </div>
 
         <button (click)="agregarTratamiento()"
           class="self-start text-xs px-4 py-2 rounded-full border border-primary text-primary hover:bg-primary-container/20 transition-all font-bold">
-          + Agregar medicamento
+          + Agregar tratamiento
         </button>
 
-        <!-- Lista -->
+        <!-- Lista de tratamientos cargados -->
         @for (t of form.tratamientos; track $index) {
           <div class="flex items-start justify-between bg-surface-container px-4 py-3 rounded-lg border border-outline-variant/20">
             <div class="flex flex-col gap-1">
@@ -94,6 +113,62 @@
               }
             </div>
             <button (click)="eliminarTratamiento($index)" class="p-1 rounded-full hover:bg-error-container/20 transition-all">
+              <span class="material-symbols-outlined text-error text-[18px]">delete</span>
+            </button>
+          </div>
+        }
+
+        <!-- Agregar medicamento nuevo al sistema -->
+        <div class="flex flex-col gap-1 pt-1 border-t border-outline-variant/20">
+          <label class="text-xs text-on-surface-variant">¿No encontrás el medicamento? Agregá uno nuevo</label>
+          <div class="flex gap-2">
+            <input type="text" [(ngModel)]="nuevoMedicamentoNombre" placeholder="Nombre del nuevo medicamento"
+              class="flex-1 bg-surface-container rounded-lg px-3 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary" />
+            <button (click)="insertarMedicamento()" [disabled]="agregandoMedicamento || !nuevoMedicamentoNombre.trim()"
+              class="px-4 py-2 rounded-lg text-xs font-bold border border-secondary text-secondary hover:bg-secondary-container/20 transition-all disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap">
+              {{ agregandoMedicamento ? 'Guardando...' : '+ Agregar' }}
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ════════════════════════════════════════ -->
+      <!--               ESTUDIOS                  -->
+      <!-- ════════════════════════════════════════ -->
+      <div class="flex flex-col gap-3">
+        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">Estudios</label>
+
+        <!-- Fila agregar estudio -->
+        <div class="grid grid-cols-2 gap-2">
+          <input type="text" [(ngModel)]="nuevoEstudio.tipo_estudio" placeholder="Tipo de estudio (Ej: Hemograma)"
+            class="col-span-2 bg-surface-container rounded-lg px-3 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary" />
+          <input type="text" [(ngModel)]="nuevoEstudio.resultado" placeholder="Resultado"
+            class="bg-surface-container rounded-lg px-3 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary" />
+          <input type="text" [(ngModel)]="nuevoEstudio.observaciones" placeholder="Observaciones"
+            class="bg-surface-container rounded-lg px-3 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary" />
+        </div>
+
+        <button (click)="agregarEstudio()"
+          class="self-start text-xs px-4 py-2 rounded-full border border-primary text-primary hover:bg-primary-container/20 transition-all font-bold">
+          + Agregar estudio
+        </button>
+
+        <!-- Lista de estudios cargados -->
+        @for (e of form.estudios; track $index) {
+          <div class="flex items-start justify-between bg-surface-container px-4 py-3 rounded-lg border border-outline-variant/20">
+            <div class="flex flex-col gap-1">
+              <span class="font-bold text-sm">🔬 {{ e.tipo_estudio }}</span>
+              @if (e.resultado) {
+                <span class="text-xs bg-tertiary-container/20 text-tertiary px-2 py-0.5 rounded-full self-start">
+                  {{ e.resultado }}
+                </span>
+              }
+              @if (e.observaciones) {
+                <span class="text-xs text-on-surface-variant italic">{{ e.observaciones }}</span>
+              }
+            </div>
+            <button (click)="eliminarEstudio($index)" class="p-1 rounded-full hover:bg-error-container/20 transition-all">
               <span class="material-symbols-outlined text-error text-[18px]">delete</span>
             </button>
           </div>
