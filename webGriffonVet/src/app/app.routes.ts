@@ -1,45 +1,41 @@
 import { Routes } from '@angular/router';
-
-
+import { authGuard } from './guards/auth-guard-guard';
+import { roleGuard } from './guards/role-guard-guard';
 
 export const routes: Routes = [
   {
     path: 'login',
     loadComponent: () => import('./pages/cliente/login/login').then(m => m.Login),
-    data: {}
   },
   {
     path: 'main',
     loadComponent: () => import('./layouts/main-layout/main').then(m => m.Main),
+    canActivate: [authGuard, roleGuard(['CLIENTE'])],
     children: [
       {
         path: '',
         loadComponent: () => import('./pages/cliente/home/home').then(m => m.Home),
-        resolve: {},
-        providers: [],
-        data: {}
       }
     ]
   },
   {
     path: 'admin',
-    loadComponent:() => import('./layouts/admin-layout/admin-layout').then(m=>m.AdminLayout),
-    // canActivate: [AuthGuard], ← acá agregás el guard cuando tengas auth
+    loadComponent: () => import('./layouts/admin-layout/admin-layout').then(m => m.AdminLayout),
+    canActivate: [authGuard, roleGuard(['ADMIN'])],
     children: [
-      { path: '',
+      {
+        path: '',
         redirectTo: 'dashboard',
-        pathMatch: 'full' 
+        pathMatch: 'full'
       },
       {
         path: 'dashboard',
         loadComponent: () => import('./pages/admin/dashboard-admin/dashboard-admin').then(m => m.DashboardAdmin),
-        resolve: {},
-        providers: [],
-        data: {},
-        children:[
-          { path: '',
+        children: [
+          {
+            path: '',
             redirectTo: 'dashboard',
-            pathMatch: 'full' 
+            pathMatch: 'full'
           },
           {
             path: 'clientes',
@@ -50,9 +46,6 @@ export const routes: Routes = [
       {
         path: 'historialClinico/:id',
         loadComponent: () => import('./pages/admin/historial-clinico-admin/historial-clinico-admin').then(m => m.HistorialClinicoAdmin),
-        resolve: {},
-        providers: [],
-        data: {}
       }
     ]
   },

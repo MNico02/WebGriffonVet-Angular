@@ -1,6 +1,10 @@
-import { Component, ViewEncapsulation } from '@angular/core'; 
+import { Component, ViewEncapsulation, inject } from '@angular/core'; 
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { Router, RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { AsyncPipe } from '@angular/common';
+import { AuthService } from '../../core/services/auth';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-header',
@@ -10,7 +14,15 @@ import { CommonModule } from '@angular/common';
   encapsulation: ViewEncapsulation.None
 })
 export class Header {
+  private authService = inject(AuthService);
+  private router = inject(Router);
 
+  isLoggedIn$: Observable<boolean> = this.authService.isLoggedIn$();
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
 }
 
 
