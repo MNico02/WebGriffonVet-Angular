@@ -19,6 +19,14 @@
         (input)="searchQuery.set($any($event.target).value)"
       />
     </div>
+ 
+  <button
+    (click)="abrirModal()"
+    class="bg-primary text-white px-6 py-3 rounded-md font-bold hover:opacity-90 transition-all flex items-center gap-2"
+  >
+    <span class="material-symbols-outlined">add</span>
+    Agregar Cliente
+  </button>
   </div>
 </header>
 
@@ -78,7 +86,13 @@
                       class="group/pet relative bg-white px-2 py-0.5 sm:px-3 sm:py-1 rounded-full border border-outline-variant/30 flex items-center gap-1 sm:gap-2 text-xs font-bold hover:border-primary-container transition-all flex-shrink-0"
                       [title]="mascota.nombre_mascota + ' (' + mascota.especie + ')'"
                     >
-                      <span class="material-symbols-outlined text-[14px] sm:text-[16px] text-primary">pets</span>
+                      <span 
+  class="material-symbols-outlined text-[14px] sm:text-[16px]"
+  [ngClass]="getColorMascota(mascota)"
+>
+  {{ getIconoMascota(mascota) }} 
+</span>
+
                       <span class="hidden sm:inline truncate">{{ mascota.nombre_mascota }}</span>
                       <span class="sm:hidden text-[10px] font-bold">{{ mascota.nombre_mascota.substring(0, 3) }}</span>
                     </div>
@@ -123,4 +137,14 @@
       [usuarioId]="usuarioSeleccionadoId()!"
     />
   }
+
+@if (mostrarModal()) {
+  <app-nuevo-cliente-desde-admin
+    (cerrar)="mostrarModal.set(false)"
+    (clienteGuardado)="clientesResource.reload()"
+  />
+}
+
+
+
 </main>

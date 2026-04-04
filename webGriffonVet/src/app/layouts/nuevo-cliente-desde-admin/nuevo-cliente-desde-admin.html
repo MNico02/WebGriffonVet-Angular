@@ -1,0 +1,55 @@
+<div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+  <div class="bg-white w-[600px] max-h-[90vh] overflow-y-auto rounded-xl p-6 shadow-xl">
+
+    <h2 class="text-xl font-bold mb-4">Nuevo Cliente</h2>
+
+    <!-- CLIENTE -->
+    <div class="grid grid-cols-2 gap-3 mb-4">
+      <input [(ngModel)]="formCliente.cliente.nombre" placeholder="Nombre" class="input"/>
+      <input [(ngModel)]="formCliente.cliente.apellido" placeholder="Apellido" class="input"/>
+      <input [(ngModel)]="formCliente.cliente.email" placeholder="Email" class="input col-span-2"/>
+      <input [(ngModel)]="formCliente.cliente.telefono" placeholder="Teléfono" class="input"/>
+      <input [(ngModel)]="formCliente.cliente.password" placeholder="Password" class="input"/>
+    </div>
+
+    <h3 class="font-bold mb-2">Mascota</h3>
+
+    <!-- MASCOTA -->
+    <div class="grid grid-cols-2 gap-3">
+
+      <input [(ngModel)]="formCliente.mascota.nombre" placeholder="Nombre" class="input"/>
+      <input [(ngModel)]="formCliente.mascota.especie" placeholder="Especie" class="input"/>
+      <input [(ngModel)]="formCliente.mascota.raza" placeholder="Raza" class="input"/>
+
+      <!-- TAMAÑO -->
+      <select [(ngModel)]="formCliente.mascota.tamanio" class="input">
+        <option value="">Tamaño</option>
+        <option value="CHICO">Chico</option>
+        <option value="MEDIANO">Mediano</option>
+        <option value="GRANDE">Grande</option>
+      </select>
+
+      <input type="date" [(ngModel)]="formCliente.mascota.fecha_nacimiento" class="input"/>
+
+      <!-- SEXO -->
+      <select [(ngModel)]="formCliente.mascota.sexo" class="input">
+        <option value="">Sexo</option>
+        <option value="MACHO">Macho</option>
+        <option value="HEMBRA">Hembra</option>
+      </select>
+
+      <input [(ngModel)]="formCliente.mascota.tipo_pelaje" placeholder="Pelaje" class="input"/>
+      <input [(ngModel)]="formCliente.mascota.observaciones" placeholder="Observaciones" class="input col-span-2"/>
+
+    </div>
+
+    <!-- BOTONES -->
+    <div class="flex justify-end gap-3 mt-6">
+      <button (click)="cerrar.emit()" class="px-4 py-2 border rounded-md">Cancelar</button>
+      <button (click)="guardar()" class="px-4 py-2 bg-primary text-white rounded-md">
+        Guardar
+      </button>
+    </div>
+
+  </div>
+</div>

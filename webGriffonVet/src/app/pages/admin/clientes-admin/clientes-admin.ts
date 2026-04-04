@@ -6,10 +6,12 @@ import { ClienteService } from '../../../core/services/cliente-service';
 import { ChangeDetectorRef } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { HistorialClinicoAdmin } from '../historial-clinico-admin/historial-clinico-admin';
+import { FormsModule } from '@angular/forms';
+import { NuevoClienteDesdeAdmin } from '../../../layouts/nuevo-cliente-desde-admin/nuevo-cliente-desde-admin';
 
 @Component({
   selector: 'app-clientes-admin',
-  imports: [CommonModule, HistorialClinicoAdmin],
+  imports: [CommonModule, HistorialClinicoAdmin, NuevoClienteDesdeAdmin],
   templateUrl: './clientes-admin.html',
   styleUrl: './clientes-admin.css',
 })
@@ -54,7 +56,36 @@ export class ClientesAdmin  {
     );
   });
 
+  mostrarModal = signal(false);
+
+abrirModal() {
+  this.mostrarModal.set(true);
+}
+   cerrarModal() {
+  this.mostrarModal.set(false);
+}
 
 
+
+getIconoMascota(mascota: any): string {
+  const especie = mascota.especie?.toUpperCase();
+
+  if (especie === 'PERRO') return 'pets'; // podés cambiar
+  if (especie === 'GATO') return 'pets'; // icono tipo gato
+
+  return 'pets'; // fallback
+}
+
+getColorMascota(mascota: any): string {
+  const sexo = mascota.sexo?.toUpperCase();
+
+  if (sexo === 'MACHO') return 'text-blue-500';
+  if (sexo === 'HEMBRA') return 'text-pink-500';
+
+  return 'text-gray-400';
+}
 
 }
+
+
+

@@ -13,9 +13,14 @@ export class ClienteService {
   constructor(private http: HttpClient) {}
 
   getClientes(): Observable<Cliente[]> {
-  return this.http.get<{ clientes: Cliente[] }>(`${this.apiUrl}/obtenerClientes`).pipe(
-    map(response => response.clientes)
-  );
+    return this.http.get<{ clientes: Cliente[] }>(`${this.apiUrl}/obtenerClientes`)
+      .pipe(map(response => response.clientes));
+  }
+
+ 
+  insertarCliente(data: any) {
+    return this.http.post(`${this.apiUrl}/insertarClienteMascotaAdmin`, data);
+  }
 }
 
-}
+

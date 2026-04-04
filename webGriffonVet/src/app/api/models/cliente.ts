@@ -11,6 +11,7 @@ export interface Mascota {
   id_mascota: number;
   nombre_mascota: string;
   especie: string;
+  sexo?: string;
 }
 
 

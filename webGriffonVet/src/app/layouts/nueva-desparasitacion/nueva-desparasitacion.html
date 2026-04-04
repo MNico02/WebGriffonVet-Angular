@@ -38,9 +38,15 @@
         <div class="grid grid-cols-2 gap-2">
           <input type="text" [(ngModel)]="nuevaDesparasitacionNombre" placeholder="Nombre"
             class="bg-surface-container rounded-lg px-3 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary" />
-          <input type="text" [(ngModel)]="nuevaDesparasitacionTipo" placeholder="Tipo (Ej: Interno, Externo)"
-            class="bg-surface-container rounded-lg px-3 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary" />
-        </div>
+          <select
+            [(ngModel)]="nuevaDesparasitacionTipo"
+            class="bg-surface-container rounded-lg px-3 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary"
+          >
+            <option value="">Tipo</option>
+            <option value="INTERNO">INTERNO</option>
+            <option value="EXTERNO">EXTERNO</option>
+          </select>
+          </div>
         <button (click)="insertarTipoDesparasitacion()" [disabled]="agregandoDesparasitacion || !nuevaDesparasitacionNombre.trim()"
           class="self-start px-4 py-2 rounded-lg text-xs font-bold border border-secondary text-secondary hover:bg-secondary-container/20 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
           {{ agregandoDesparasitacion ? 'Guardando...' : '+ Agregar' }}
