@@ -8,6 +8,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/cliente/login/login').then(m => m.Login),
   },
   {
+    path: 'registro',
+    loadComponent: () => import('./pages/cliente/registro/registro').then(m => m.Registro),
+  },
+  {
     path: 'main',
     loadComponent: () => import('./layouts/main-layout/main').then(m => m.Main),
     canActivate: [authGuard, roleGuard(['CLIENTE'])],

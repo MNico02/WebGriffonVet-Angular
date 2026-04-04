@@ -3,6 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment.development';
 
+export interface RegistroPayload {
+  nombre: string;
+  apellido: string;
+  email: string;
+  telefono: string;
+  password: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -17,6 +25,10 @@ export class AuthService {
       `${this.apiUrl}/login`,
       { email: correo, password: clave }
     );
+  }
+
+  registro(payload: RegistroPayload): Observable<any> {
+    return this.http.post(`${this.apiUrl}/usuarios/registro`, payload);
   }
 
   private hasToken(): boolean {

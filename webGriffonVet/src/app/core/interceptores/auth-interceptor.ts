@@ -11,6 +11,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   const publicEndpoints = [
     '/login',
+    '/registro'
   ];
 
   const isPublic = publicEndpoints.some(e => req.url.includes(e));
