@@ -19,7 +19,11 @@ export const routes: Routes = [
       {
         path: '',
         loadComponent: () => import('./pages/cliente/home/home').then(m => m.Home),
-      }
+      },
+    {
+      path: 'mis-mascotas', 
+      loadComponent: () => import('./pages/cliente/mascotas/mascotas').then(m => m.Mascotas),
+    }
     ]
   },
   {

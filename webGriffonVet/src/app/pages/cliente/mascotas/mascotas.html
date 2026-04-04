@@ -1,1 +1,113 @@
-<p>mascotas works!</p>
+<main class="pt-28 pb-20 max-w-7xl mx-auto px-6">
+
+  <!-- HEADER -->
+  <header class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+    <div class="max-w-2xl">
+      <h1 class="font-headline text-5xl font-extrabold tracking-tight text-on-surface mb-4">
+        Mis Mascotas
+      </h1>
+      <p class="text-on-surface-variant text-lg leading-relaxed">
+        Gestiona los perfiles de salud de tus compañeros.
+      </p>
+    </div>
+
+    <button class="main-gradient text-white rounded-full px-8 py-4 flex items-center gap-3 shadow-lg hover:brightness-90 transition-all active:scale-95">
+      <span class="material-symbols-outlined">add_circle</span>
+      <span class="font-label font-bold text-sm tracking-widest uppercase">
+        Agregar Nueva Mascota
+      </span>
+    </button>
+  </header>
+
+  <!-- GRID MASCOTAS -->
+  <div *ngIf="mascotas.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+    <div 
+      *ngFor="let m of mascotas; trackBy: trackById"
+      class="group bg-surface-container-lowest pet-card-radius p-6 transition-all duration-300 hover:translate-y-[-8px] hover:shadow-[0_12px_40px_rgba(25,28,29,0.06)]"
+    >
+
+      <!-- IMAGEN -->
+      <div class="relative mb-6 overflow-hidden pet-card-radius h-64">
+        <img 
+          class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          [src]="m.especie === 'PERRO' 
+            ? 'https://images.unsplash.com/photo-1558788353-f76d92427f16' 
+            : 'https://images.unsplash.com/photo-1518791841217-8f162f1e1131'"
+        />
+
+        <!-- BADGE -->
+        <div 
+          class="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-tighter"
+          [ngClass]="m.especie === 'PERRO' 
+            ? 'bg-primary-container text-on-primary-container' 
+            : 'bg-tertiary-container text-on-tertiary'"
+        >
+          {{ m.especie === 'PERRO' ? 'Canino' : 'Felino' }}
+        </div>
+      </div>
+
+      <!-- INFO -->
+      <div class="flex justify-between items-start mb-4">
+        <div>
+          <h3 class="font-headline text-2xl font-bold text-on-surface">
+            {{ m.nombre }}
+          </h3>
+
+          <p class="text-tertiary font-medium text-sm">
+            {{ m.raza }} • {{ m.fecha_nacimiento | date:'yyyy' }}
+          </p>
+
+          <p class="text-xs text-gray-400 mt-1">
+            {{ m.edad }}
+          </p>
+        </div>
+
+        <span class="material-symbols-outlined text-outline">
+          pets
+        </span>
+      </div>
+
+      <!-- BOTONES -->
+      <div class="flex gap-2 mt-6">
+        <button class="flex-1 bg-surface-container text-primary font-bold py-3 rounded-full text-xs uppercase tracking-widest hover:bg-primary hover:text-white transition-colors">
+          Detalles
+        </button>
+
+        <button class="w-12 h-12 flex items-center justify-center border border-outline-variant/20 rounded-full text-outline hover:text-primary transition-colors">
+          <span class="material-symbols-outlined">edit</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CARD AGREGAR (SIEMPRE VISIBLE) -->
+  <div class="mt-12 flex justify-center">
+    <div class="group border-2 border-dashed border-outline-variant/30 pet-card-radius p-10 flex flex-col items-center justify-center text-center hover:bg-surface-container-low transition-all max-w-sm w-full">
+
+      <div class="w-20 h-20 rounded-full bg-primary-fixed flex items-center justify-center mb-6">
+        <span class="material-symbols-outlined text-4xl">add</span>
+      </div>
+
+      <h3 class="font-headline text-xl font-bold text-on-surface mb-2">
+        ¿Nueva incorporación?
+      </h3>
+
+      <p class="text-on-surface-variant text-sm mb-6 px-4">
+        Registrá a tu nueva mascota.
+      </p>
+
+      <button class="text-primary font-bold text-sm tracking-widest uppercase hover:underline">
+        Comenzar registro
+      </button>
+
+    </div>
+  </div>
+
+  <!-- MENSAJE SI NO HAY DATOS -->
+  <div *ngIf="!loading && mascotas.length === 0" class="text-center py-20 text-gray-400">
+    No tenés mascotas registradas
+  </div>
+
+</main>
