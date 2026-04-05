@@ -92,6 +92,7 @@ export interface Medicamento{
 
 export interface editarMascotaRequest{
     id_mascota:number;
+    id_usuario:number;
     nombre:string;
     especie:string;
     raza:string;

@@ -27,6 +27,7 @@ export class EditarMascota implements OnInit {
 
   form: editarMascotaRequest = {
     id_mascota: 0,
+    id_usuario: 0,
     nombre: '',
     especie: '',
     raza: '',
