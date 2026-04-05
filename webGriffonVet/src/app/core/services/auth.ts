@@ -31,6 +31,32 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/usuarios/registro`, payload);
   }
 
+  
+  private decodificarToken(): any {
+    const token = this.getToken();
+    if (!token) return null;
+    try {
+      return JSON.parse(atob(token.split('.')[1]));
+    } catch {
+      return null;
+    }
+  }
+
+  getIdUsuario(): number {
+    return this.decodificarToken()?.id_usuario ?? 0;
+  }
+
+  getEmail(): string {
+    return this.decodificarToken()?.sub ?? ''; 
+  }
+
+  isTokenExpirado(): boolean {
+    const payload = this.decodificarToken();
+    if (!payload?.exp) return true;
+    return Date.now() >= payload.exp * 1000;
+  }
+  // ─────────────────────────────────────────────────────────────────────────
+
   private hasToken(): boolean {
     return !!localStorage.getItem('token');
   }
@@ -40,12 +66,11 @@ export class AuthService {
   }
 
   getRol(): string | null {
-    return localStorage.getItem('rol');
+    return this.decodificarToken()?.rol ?? null;
   }
 
-  setSession(token: string, rol: string): void {
+  setSession(token: string): void {
     localStorage.setItem('token', token);
-    localStorage.setItem('rol', rol);
     this.loggedIn$.next(true);
   }
 

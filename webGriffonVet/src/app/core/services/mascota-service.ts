@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, map} from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { Mascota } from '../../api/models/mascota';
 import { environment } from '../../../environments/environment.development';
-import { editarMascota } from '../../api/models/editarMascota';
+import { MascotaUsuario } from '../../api/models/mascota-usuario.model';
 
 @Injectable({ providedIn: 'root' })
 export class MascotaService {
@@ -11,22 +11,28 @@ export class MascotaService {
 
   private apiUrl = environment.apiUrl;
 
-      getMascota(mascotaId: number, usuarioId: number): Observable<Mascota> {
-      return this.http.post<Mascota>(`${this.apiUrl}/obtenerMascota`, {
+  getMascota(mascotaId: number, usuarioId: number): Observable<Mascota> {
+    return this.http
+      .post<Mascota>(`${this.apiUrl}/obtenerMascota`, {
         id_usuario: usuarioId,
-        id_mascota: mascotaId
-      }).pipe(
-    map(mascota => {
-      mascota.historia_clinica?.consultas?.forEach(c => {
-        c.tratamientos = c.tratamientos ?? [];
-        c.estudios     = c.estudios     ?? [];
-      });
-      return mascota;
-    })
-  );
+        id_mascota: mascotaId,
+      })
+      .pipe(
+        map((mascota) => {
+          mascota.historia_clinica?.consultas?.forEach((c) => {
+            c.tratamientos = c.tratamientos ?? [];
+            c.estudios = c.estudios ?? [];
+          });
+          return mascota;
+        }),
+      );
   }
 
-  editarMascota(payload: editarMascota): Observable<any>{
-    return this.http.put(`${this.apiUrl}/actualizarMascotas`, payload);
+  getMascotas(): Observable<MascotaUsuario[]> {
+    return this.http
+      .get<{ success: number; mascotas: MascotaUsuario[] }>(
+        `${this.apiUrl}/usuario/obtenerMascotas`, {}
+      )
+      .pipe(map((response) => response.mascotas ?? []));
   }
 }

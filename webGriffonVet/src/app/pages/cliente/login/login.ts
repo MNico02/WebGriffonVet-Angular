@@ -30,9 +30,10 @@ export class Login {
   login() {
     this.authService.login(this.correo, this.clave).subscribe({
       next: res => {
-        this.authService.setSession(res.token, res.rol);
+        this.authService.setSession(res.token);
         localStorage.setItem('email', this.correo);
-        this.redirigirPorRol(res.rol);
+        const rol = this.authService.getRol(); 
+        this.redirigirPorRol(rol ?? '');
       },
       error: (err) => {
         this.error = err?.error?.error 

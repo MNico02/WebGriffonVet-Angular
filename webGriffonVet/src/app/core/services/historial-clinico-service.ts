@@ -1,0 +1,94 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment.development';
+import {
+  alergia,
+  alergiaMascotaRequest,
+  Vacuna,
+  NuevaVacunacionRequest,
+  pesoMascotaRequest,
+  enfermedad,
+  enfermedadMascotaRequest,
+  desparasitacion,
+  desparasitacionMascotaRequest,
+  desparasitacionRequest,
+  NuevaConsultaRequest,
+  Medicamento,
+  editarMascotaRequest
+} from '../../api/models/historialClinico';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class HistorialClinicoService {
+  constructor(private http: HttpClient) {}
+  private apiUrl = environment.apiUrl;
+
+  obtenerAlergia(): Observable<alergia[]> {
+    return this.http.get<alergia[]>(`${this.apiUrl}/ObtenerAlergias`);
+  }
+
+  insertarAlergiaCatalogo(nombre: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/InsertarAlergiaCatalogo`, { nombre });
+  }
+
+  insertarAlergia(payload: alergiaMascotaRequest): Observable<any> {
+    return this.http.post(`${this.apiUrl}/InsertarAlergia`, payload);
+  }
+
+  obtenerVacunas(): Observable<Vacuna[]> {
+    return this.http.get<Vacuna[]>(`${this.apiUrl}/ObtenerVacunas`);
+  }
+
+  insertarVacuna(nombre: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/InsertarVacuna`, { nombre });
+  }
+
+  insertarVacunacion(payload: NuevaVacunacionRequest): Observable<any> {
+    return this.http.post(`${this.apiUrl}/InsertarVacunacion`, payload);
+  }
+
+  insertarPeso(payload: pesoMascotaRequest): Observable<any> {
+    return this.http.post(`${this.apiUrl}/InsertarPeso`, payload);
+  }
+  obtenerEnfermedades(): Observable<enfermedad[]> {
+    return this.http.get<enfermedad[]>(`${this.apiUrl}/ObtenerEnfermedades`);
+  }
+
+  insertarEnfermedadCatalogo(nombre: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/InsertarEnfermedadCatalogo`, { nombre });
+  }
+
+  insertarEnfermedad(payload: enfermedadMascotaRequest): Observable<any> {
+    return this.http.post(`${this.apiUrl}/InsertarEnfermedad`, payload);
+  }
+
+  obtenerDesparasitaciones(): Observable<desparasitacion[]> {
+    return this.http.get<desparasitacion[]>(`${this.apiUrl}/ObtenerDesparasitaciones`);
+  }
+
+  insertarDesparasitacion(payload: desparasitacionMascotaRequest): Observable<any> {
+    return this.http.post(`${this.apiUrl}/InsertarDesparasitacion`, payload);
+  }
+
+  insertarTipoDesparasitacion(payload: desparasitacionRequest): Observable<any> {
+    return this.http.post(`${this.apiUrl}/InsertarTipoDesparasitacion`, payload);
+  }
+
+  crearConsulta(payload: NuevaConsultaRequest): Observable<any> {
+    return this.http.post(`${this.apiUrl}/nuevaConsulta`, payload);
+  }
+
+  obtenerMedicamentos(): Observable<Medicamento[]> {
+    return this.http.get<Medicamento[]>(`${this.apiUrl}/ObtenerMedicamentos`);
+  }
+
+  insertarMedicamento(nombre: string): Observable<Medicamento> {
+    return this.http.post<Medicamento>(`${this.apiUrl}/InsertarMedicamento`, { nombre });
+  }
+
+   editarMascota(payload: editarMascotaRequest): Observable<any> {
+    return this.http.put(`${this.apiUrl}/actualizarMascotas`, payload);
+  }
+}

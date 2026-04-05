@@ -1,8 +1,8 @@
 import { Component, input, output, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { EnfermedadService } from '../../core/services/enfermedad-service';
-import { enfermedad, enfermedadMascotaRequest } from '../../api/models/enfermedad';
+import { HistorialClinicoService } from '../../core/services/historial-clinico-service';
+import { enfermedad, enfermedadMascotaRequest } from '../../api/models/historialClinico';
 
 @Component({
   selector: 'app-nueva-enfermedad',
@@ -14,7 +14,7 @@ export class NuevaEnfermedad implements OnInit {
 
   mascotaId = input.required<number>();
   usuarioId = input.required<number>();
-  private enfermedadService = inject(EnfermedadService);
+  private enfermedadService = inject(HistorialClinicoService);
 
   cerrar = output<void>();
   enfermedadGuardada = output<void>();

@@ -1,8 +1,8 @@
 import { Component, input, output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PesoService } from '../../core/services/peso-service';
-import { pesoMascotaRequest } from '../../api/models/peso';
+import { HistorialClinicoService } from '../../core/services/historial-clinico-service';
+import { pesoMascotaRequest } from '../../api/models/historialClinico';
 
 @Component({
   selector: 'app-nuevo-peso',
@@ -14,7 +14,7 @@ export class NuevoPeso {
 
   mascotaId = input.required<number>();
   usuarioId = input.required<number>();
-  private pesoService = inject(PesoService);
+  private service = inject(HistorialClinicoService);
 
   cerrar = output<void>();
   pesoGuardado = output<void>();
@@ -36,7 +36,7 @@ export class NuevoPeso {
 
     console.log('Payload peso:', payload);
 
-    this.pesoService.insertarPeso(payload).subscribe(() => {
+    this.service.insertarPeso(payload).subscribe(() => {
       this.pesoGuardado.emit();
       this.cerrar.emit();
     });

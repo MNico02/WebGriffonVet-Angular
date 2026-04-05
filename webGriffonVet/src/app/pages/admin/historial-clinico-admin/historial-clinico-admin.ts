@@ -10,14 +10,15 @@ import { NuevoPeso } from '../../../layouts/nuevo-peso/nuevo-peso';
 import { NuevaEnfermedad } from '../../../layouts/nueva-enfemedad/nueva-enfemedad';
 import { NuevaAlergia } from '../../../layouts/nueva-alergia/nueva-alergia';
 import { EditarMascota } from '../../../layouts/editar-mascota/editar-mascota';
-import { editarMascota } from '../../../api/models/editarMascota';
+import { editarMascotaRequest } from '../../../api/models/historialClinico';
+
 @Component({
   selector: 'app-historial-clinico-admin',
   imports: [CommonModule, NuevaConsulta, NuevaVacunacion, NuevaDesparasitacion, NuevoPeso, NuevaEnfermedad, NuevaAlergia, EditarMascota],
   templateUrl: './historial-clinico-admin.html',
   styleUrl: './historial-clinico-admin.css',
 })
-export class HistorialClinicoAdmin implements AfterViewInit {   // <-- implements AfterViewInit
+export class HistorialClinicoAdmin implements AfterViewInit {  
   private mascotaService = inject(MascotaService);
 
   mascotaId = input.required<number>();
@@ -104,15 +105,24 @@ export class HistorialClinicoAdmin implements AfterViewInit {   // <-- implement
   }
 
   calcularEdad(fechaNacimiento: string): string {
-    const hoy = new Date();
-    const nacimiento = new Date(fechaNacimiento);
-    let anios = hoy.getFullYear() - nacimiento.getFullYear();
-    let meses = hoy.getMonth() - nacimiento.getMonth();
-    if (meses < 0) { anios--; meses += 12; }
-    if (anios === 0) return `${meses} ${meses === 1 ? 'mes' : 'meses'}`;
-    if (meses === 0) return `${anios} ${anios === 1 ? 'año' : 'años'}`;
-    return `${anios} ${anios === 1 ? 'año' : 'años'} y ${meses} ${meses === 1 ? 'mes' : 'meses'}`;
-  }
+  if (!fechaNacimiento) return 'Sin fecha';
+
+  const [anio, mes, dia] = fechaNacimiento.split('-').map(Number);
+  const nacimiento = new Date(anio, mes - 1, dia);
+
+  if (isNaN(nacimiento.getTime())) return 'Fecha inválida';
+
+  const hoy = new Date();
+  let anios = hoy.getFullYear() - nacimiento.getFullYear();
+  let meses = hoy.getMonth() - nacimiento.getMonth();
+
+  if (meses < 0) { anios--; meses += 12; }
+
+  if (anios === 0 && meses === 0) return 'Menos de 1 mes';  // ← caso faltante
+  if (anios === 0) return `${meses} ${meses === 1 ? 'mes' : 'meses'}`;
+  if (meses === 0) return `${anios} ${anios === 1 ? 'año' : 'años'}`;
+  return `${anios} ${anios === 1 ? 'año' : 'años'} y ${meses} ${meses === 1 ? 'mes' : 'meses'}`;
+}
 
   get todosLosTratamientos() {
     return this.mascotaResource.value()?.historia_clinica?.consultas?.flatMap(c =>
@@ -125,7 +135,7 @@ export class HistorialClinicoAdmin implements AfterViewInit {   // <-- implement
       (c.estudios ?? []).map(e => ({ ...e, fecha_consulta: c.fecha, motivo_consulta: c.motivo_consulta }))
     ) ?? [];
   }
-    mascotaParaEditar = computed<editarMascota | null>(() => {
+    mascotaParaEditar = computed<editarMascotaRequest | null>(() => {
     const m = this.mascotaResource.value();
     if (!m) return null;
     return {

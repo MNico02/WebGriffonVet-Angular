@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { UsuarioMismascotasService } from '../../../core/services/usuario-mismascotas';
+import { MascotaService } from '../../../core/services/mascota-service';
 import { MascotaUsuario } from '../../../api/models/mascota-usuario.model';
 import { ChangeDetectorRef } from '@angular/core';
+
 @Component({
   selector: 'app-mascotas',
   standalone: true,
@@ -16,14 +17,13 @@ export class Mascotas implements OnInit {
   loading = true;
 
   constructor(
-  private service: UsuarioMismascotasService,
+  private service: MascotaService,
   private cdr: ChangeDetectorRef
 ) {}
 
   ngOnInit(): void {
-    const id_usuario = 2;
-
-    this.service.obtenerMascotas(id_usuario).subscribe({
+    
+    this.service.getMascotas().subscribe({
   next: (data) => {
 
     this.mascotas = data.map(m => ({

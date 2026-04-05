@@ -1,9 +1,9 @@
 import { Component, input, output, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NuevoTratamientoRequest, NuevaConsultaRequest } from '../../api/models/nuevaconsulta';
-import { ConsultaService } from '../../core/services/consulta-service';
-import { Medicamento } from '../../api/models/medicamento';
+import { NuevoTratamientoRequest, NuevaConsultaRequest } from '../../api/models/historialClinico';
+import { HistorialClinicoService } from '../../core/services/historial-clinico-service';
+import { Medicamento } from '../../api/models/historialClinico';
 
 export interface NuevoEstudioRequest {
   tipo_estudio: string;
@@ -20,7 +20,7 @@ export interface NuevoEstudioRequest {
 export class NuevaConsulta implements OnInit {
   mascotaId = input.required<number>();
   usuarioId = input.required<number>();
-  private consultaService = inject(ConsultaService);
+  private service = inject(HistorialClinicoService);
 
   cerrar = output<void>();
   consultaGuardada = output<void>();
@@ -68,7 +68,7 @@ export class NuevaConsulta implements OnInit {
 
   cargarMedicamentos() {
     this.cargandoMedicamentos = true;
-    this.consultaService.obtenerMedicamentos().subscribe({
+    this.service.obtenerMedicamentos().subscribe({
       next: (data: Medicamento[]) => {
         this.medicamentos = data;
         this.cargandoMedicamentos = false;
@@ -91,7 +91,7 @@ export class NuevaConsulta implements OnInit {
     insertarMedicamento() {
     if (!this.nuevoMedicamentoNombre.trim()) return;
     this.agregandoMedicamento = true;
-    this.consultaService.insertarMedicamento(this.nuevoMedicamentoNombre.trim()).subscribe({
+    this.service.insertarMedicamento(this.nuevoMedicamentoNombre.trim()).subscribe({
       next: () => {
         this.nuevoMedicamentoNombre = '';
         this.cargarMedicamentos();
@@ -142,7 +142,7 @@ export class NuevaConsulta implements OnInit {
 
     console.log('Payload a enviar:', payload);
 
-    this.consultaService.crearConsulta(payload).subscribe(() => {
+    this.service.crearConsulta(payload).subscribe(() => {
       this.consultaGuardada.emit();
       this.cerrar.emit();
     });

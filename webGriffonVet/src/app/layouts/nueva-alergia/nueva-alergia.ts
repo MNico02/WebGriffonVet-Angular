@@ -1,8 +1,8 @@
 import { Component, input, output, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AlergiaService } from '../../core/services/alergia-service';
-import { alergia, alergiaMascotaRequest } from '../../api/models/alergia';
+import { HistorialClinicoService } from '../../core/services/historial-clinico-service';
+import { alergia, alergiaMascotaRequest } from '../../api/models/historialClinico';
 
 @Component({
   selector: 'app-nueva-alergia',
@@ -13,7 +13,7 @@ import { alergia, alergiaMascotaRequest } from '../../api/models/alergia';
 export class NuevaAlergia implements OnInit {
   mascotaId = input.required<number>();
   usuarioId = input.required<number>();
-  private alergiaService = inject(AlergiaService);
+  private service = inject(HistorialClinicoService);
 
   cerrar = output<void>();
   alergiaGuardada = output<void>();
@@ -40,7 +40,7 @@ export class NuevaAlergia implements OnInit {
 
   cargarAlergias() {
     this.cargandoAlergias = true;
-    this.alergiaService.obtenerAlergia().subscribe({
+    this.service.obtenerAlergia().subscribe({
       next: (data: alergia[]) => {
         this.alergias = data;
         this.cargandoAlergias = false;
@@ -56,7 +56,7 @@ export class NuevaAlergia implements OnInit {
   insertarAlergia() {
     if (!this.nuevaAlergiaNombre.trim()) return;
     this.agregandoAlergia = true;
-    this.alergiaService.insertarAlergiaCatalogo(this.nuevaAlergiaNombre.trim()).subscribe({
+    this.service.insertarAlergiaCatalogo(this.nuevaAlergiaNombre.trim()).subscribe({
       next: () => {
         this.nuevaAlergiaNombre = '';
         this.cargarAlergias();
@@ -76,7 +76,7 @@ export class NuevaAlergia implements OnInit {
 
     console.log('Payload alergia:', payload);
 
-    this.alergiaService.insertarAlergia(payload).subscribe(() => {
+    this.service.insertarAlergia(payload).subscribe(() => {
       this.alergiaGuardada.emit();
       this.cerrar.emit();
     });

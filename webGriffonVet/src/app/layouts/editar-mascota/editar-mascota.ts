@@ -1,8 +1,8 @@
 import { Component, input, output, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MascotaService } from '../../core/services/mascota-service';
-import { editarMascota } from '../../api/models/editarMascota';
+import { HistorialClinicoService } from '../../core/services/historial-clinico-service';
+import { editarMascotaRequest } from '../../api/models/historialClinico';
 
 
 @Component({
@@ -15,18 +15,17 @@ export class EditarMascota implements OnInit {
 
   mascotaId = input.required<number>();
   usuarioId = input.required<number>();
-  mascota = input.required<editarMascota>();
-  private mascotaService = inject(MascotaService);
+  mascota = input.required<editarMascotaRequest>();
+  private service = inject(HistorialClinicoService);
 
   cerrar = output<void>();
   mascotaEditada = output<void>();
 
   especies = ['Perro', 'Gato', 'Ave', 'Conejo', 'Reptil', 'Otro'];
-  tamanios = ['PEQUEÑO', 'MEDIANO', 'GRANDE'];
+  tamanios = ['CHICO', 'MEDIANO', 'GRANDE'];
   sexos = ['MACHO', 'HEMBRA'];
 
-  form: editarMascota = {
-    id_usuario: 0,
+  form: editarMascotaRequest = {
     id_mascota: 0,
     nombre: '',
     especie: '',
@@ -44,15 +43,14 @@ export class EditarMascota implements OnInit {
 }
 
   guardar() {
-    const payload: editarMascota = {
+    const payload: editarMascotaRequest = {
       ...this.form,
-      id_usuario: this.usuarioId(),
       id_mascota: this.mascotaId()
     };
 
     console.log('Payload editar mascota:', payload);
 
-    this.mascotaService.editarMascota(payload).subscribe(() => {
+    this.service.editarMascota(payload).subscribe(() => {
       this.mascotaEditada.emit();
       this.cerrar.emit();
     });

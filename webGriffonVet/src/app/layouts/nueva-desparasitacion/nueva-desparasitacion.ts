@@ -1,8 +1,8 @@
 import { Component, input, output, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { DesparasitacionService } from '../../core/services/desparasitacion-service';
-import { desparasitacion, desparasitacionMascotaRequest, desparasitacionRequest } from '../../api/models/desparasitacion';
+import { HistorialClinicoService } from '../../core/services/historial-clinico-service';
+import { desparasitacion, desparasitacionMascotaRequest, desparasitacionRequest } from '../../api/models/historialClinico';
 
 @Component({
   selector: 'app-nueva-desparasitacion',
@@ -14,7 +14,7 @@ export class NuevaDesparasitacion implements OnInit {
 
   mascotaId = input.required<number>();
   usuarioId = input.required<number>();
-  private despService = inject(DesparasitacionService);
+  private service = inject(HistorialClinicoService);
 
   cerrar = output<void>();
   desparasitacionGuardada = output<void>();
@@ -41,7 +41,7 @@ export class NuevaDesparasitacion implements OnInit {
 
   cargarDesparasitaciones() {
     this.cargandoDesparasitaciones = true;
-    this.despService.obtenerDesparasitaciones().subscribe({
+    this.service.obtenerDesparasitaciones().subscribe({
       next: (data: desparasitacion[]) => {
         this.desparasitaciones = data;
         this.cargandoDesparasitaciones = false;
@@ -68,7 +68,7 @@ export class NuevaDesparasitacion implements OnInit {
       nombre: this.nuevaDesparasitacionNombre.trim(),
       tipo: this.nuevaDesparasitacionTipo.trim()
     };
-    this.despService.insertarTipoDesparasitacion(payload).subscribe({
+    this.service.insertarTipoDesparasitacion(payload).subscribe({
       next: () => {
         this.nuevaDesparasitacionNombre = '';
         this.nuevaDesparasitacionTipo = '';
@@ -89,7 +89,7 @@ export class NuevaDesparasitacion implements OnInit {
 
     console.log('Payload desparasitación:', payload);
 
-    this.despService.insertarDesparasitacion(payload).subscribe(() => {
+    this.service.insertarDesparasitacion(payload).subscribe(() => {
       this.desparasitacionGuardada.emit();
       this.cerrar.emit();
     });

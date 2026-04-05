@@ -1,22 +1,9 @@
 import { Component, input, output, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { VacunacionService } from '../../core/services/vacunacion-service';
-
-export interface Vacuna {
-  id_vacuna: number;
-  nombre: string;
-}
-
-export interface NuevaVacunacionRequest {
-  id_mascota: number;
-  id_usuario: number;
-  id_vacuna: number;
-  nombre_vacuna: string;
-  fecha_aplicacion: string;
-  proxima_dosis: string;
-  observaciones: string;
-}
+import { HistorialClinicoService } from '../../core/services/historial-clinico-service';
+import { Vacuna } from '../../api/models/historialClinico';
+import { NuevaVacunacionRequest } from '../../api/models/historialClinico';
 
 @Component({
   selector: 'app-nueva-vacunacion-modal',
@@ -27,7 +14,7 @@ export interface NuevaVacunacionRequest {
 export class NuevaVacunacion implements OnInit {
   mascotaId = input.required<number>();
   usuarioId = input.required<number>();
-  private vacunacionService = inject(VacunacionService);
+  private vacunacionService = inject(HistorialClinicoService);
 
   cerrar = output<void>();
   vacunacionGuardada = output<void>();
