@@ -7,7 +7,7 @@ import { ChangeDetectorRef } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { HistorialClinicoAdmin } from '../historial-clinico-admin/historial-clinico-admin';
 import { FormsModule } from '@angular/forms';
-import { NuevoClienteDesdeAdmin } from '../../../layouts/nuevo-cliente-desde-admin/nuevo-cliente-desde-admin';
+import { NuevoClienteDesdeAdmin } from '../../../layouts/admin/nuevo-cliente-desde-admin/nuevo-cliente-desde-admin';
 
 @Component({
   selector: 'app-clientes-admin',

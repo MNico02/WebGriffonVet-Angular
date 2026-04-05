@@ -1,8 +1,8 @@
 import { Component, input, output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HistorialClinicoService } from '../../core/services/historial-clinico-service';
-import { pesoMascotaRequest } from '../../api/models/historialClinico';
+import { HistorialClinicoService } from '../../../core/services/historial-clinico-service';
+import { pesoMascotaRequest } from '../../../api/models/historialClinico';
 
 @Component({
   selector: 'app-nuevo-peso',

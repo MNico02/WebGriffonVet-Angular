@@ -3,12 +3,12 @@ import { CommonModule } from '@angular/common';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { MascotaService } from '../../../core/services/mascota-service';
 import { EMPTY } from 'rxjs';
-import { NuevaConsulta } from '../../../layouts/nueva-consulta/nueva-consulta';
-import { NuevaVacunacion } from '../../../layouts/nuevavacunacion/nuevavacunacion';
-import { NuevaDesparasitacion } from '../../../layouts/nueva-desparasitacion/nueva-desparasitacion';
-import { NuevoPeso } from '../../../layouts/nuevo-peso/nuevo-peso';
-import { NuevaEnfermedad } from '../../../layouts/nueva-enfemedad/nueva-enfemedad';
-import { NuevaAlergia } from '../../../layouts/nueva-alergia/nueva-alergia';
+import { NuevaConsulta } from '../../../layouts/admin/nueva-consulta/nueva-consulta';
+import { NuevaVacunacion } from '../../../layouts/admin/nuevavacunacion/nuevavacunacion';
+import { NuevaDesparasitacion } from '../../../layouts/admin/nueva-desparasitacion/nueva-desparasitacion';
+import { NuevoPeso } from '../../../layouts/admin/nuevo-peso/nuevo-peso';
+import { NuevaEnfermedad } from '../../../layouts/admin/nueva-enfemedad/nueva-enfemedad';
+import { NuevaAlergia } from '../../../layouts/admin/nueva-alergia/nueva-alergia';
 import { EditarMascota } from '../../../layouts/editar-mascota/editar-mascota';
 import { editarMascotaRequest } from '../../../api/models/historialClinico';
 

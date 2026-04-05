@@ -13,7 +13,7 @@ export const routes: Routes = [
   },
   {
     path: 'main',
-    loadComponent: () => import('./layouts/main-layout/main').then(m => m.Main),
+    loadComponent: () => import('./layouts/cliente/main-layout/main').then(m => m.Main),
     canActivate: [authGuard, roleGuard(['CLIENTE'])],
     children: [
       {
@@ -28,7 +28,7 @@ export const routes: Routes = [
   },
   {
     path: 'admin',
-    loadComponent: () => import('./layouts/admin-layout/admin-layout').then(m => m.AdminLayout),
+    loadComponent: () => import('./layouts/admin/admin-layout/admin-layout').then(m => m.AdminLayout),
     canActivate: [authGuard, roleGuard(['ADMIN'])],
     children: [
       {

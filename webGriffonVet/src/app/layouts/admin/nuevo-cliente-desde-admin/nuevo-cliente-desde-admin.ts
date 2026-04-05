@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ClienteService } from '../../core/services/cliente-service';
+import { ClienteService } from '../../../core/services/cliente-service';
 
 @Component({
   selector: 'app-nuevo-cliente-desde-admin',

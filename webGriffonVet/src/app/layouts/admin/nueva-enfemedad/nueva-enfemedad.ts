@@ -1,8 +1,8 @@
 import { Component, input, output, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HistorialClinicoService } from '../../core/services/historial-clinico-service';
-import { enfermedad, enfermedadMascotaRequest } from '../../api/models/historialClinico';
+import { HistorialClinicoService } from '../../../core/services/historial-clinico-service';
+import { enfermedad, enfermedadMascotaRequest } from '../../../api/models/historialClinico';
 
 @Component({
   selector: 'app-nueva-enfermedad',

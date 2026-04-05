@@ -1,9 +1,9 @@
 import { Component, input, output, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NuevoTratamientoRequest, NuevaConsultaRequest } from '../../api/models/historialClinico';
-import { HistorialClinicoService } from '../../core/services/historial-clinico-service';
-import { Medicamento } from '../../api/models/historialClinico';
+import { NuevoTratamientoRequest, NuevaConsultaRequest } from '../../../api/models/historialClinico';
+import { HistorialClinicoService } from '../../../core/services/historial-clinico-service';
+import { Medicamento } from '../../../api/models/historialClinico';
 
 export interface NuevoEstudioRequest {
   tipo_estudio: string;

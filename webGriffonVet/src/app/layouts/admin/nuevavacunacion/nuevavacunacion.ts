@@ -1,9 +1,9 @@
 import { Component, input, output, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HistorialClinicoService } from '../../core/services/historial-clinico-service';
-import { Vacuna } from '../../api/models/historialClinico';
-import { NuevaVacunacionRequest } from '../../api/models/historialClinico';
+import { HistorialClinicoService } from '../../../core/services/historial-clinico-service';
+import { Vacuna } from '../../../api/models/historialClinico';
+import { NuevaVacunacionRequest } from '../../../api/models/historialClinico';
 
 @Component({
   selector: 'app-nueva-vacunacion-modal',
