@@ -1,10 +1,11 @@
 import { Component, OnInit, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe, NgClass } from '@angular/common';
 import { MascotaService } from '../../../core/services/mascota-service';
 import { MascotaUsuario } from '../../../api/models/mascota-usuario.model';
 import { ChangeDetectorRef } from '@angular/core';
 import { EditarMascota } from '../../../layouts/editar-mascota/editar-mascota';
 import { editarMascotaRequest } from '../../../api/models/historialClinico';
+import { AuthService } from '../../../core/services/auth';
 
 @Component({
   selector: 'app-mascotas',
@@ -18,15 +19,49 @@ export class Mascotas implements OnInit {
   mascotas: MascotaUsuario[] = [];
   loading = true;
 
+  // ID de la mascota cuyo panel está abierto; null = ninguno
+  mascotaExpandida: number | null = null;
+
   modalEditarAbierto = signal(false);
   mascotaSeleccionada = signal<editarMascotaRequest | null>(null);
 
   constructor(
     private service: MascotaService,
+    private auth: AuthService,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
+    this.cargarMascotas();
+  }
+
+  toggleDetalles(id: number): void {
+    this.mascotaExpandida = this.mascotaExpandida === id ? null : id;
+  }
+
+  abrirEditar(m: MascotaUsuario) {
+    this.mascotaSeleccionada.set({
+      id_usuario: this.auth.getIdUsuario(),
+      id_mascota: m.id_mascota,
+      nombre: m.nombre ?? '',
+      especie: m.especie ?? '',
+      raza: m.raza ?? '',
+      tamanio: m.tamanio ?? '',
+      sexo: m.sexo ?? '',
+      tipo_pelaje: m.tipo_pelaje ?? '',
+      comportamiento: m.comportamiento ?? '',
+      observaciones: m.observaciones ?? '',
+      fecha_nacimiento: m.fecha_nacimiento ? m.fecha_nacimiento.substring(0, 10) : ''
+    });
+    this.modalEditarAbierto.set(true);
+  }
+
+  onMascotaEditada() {
+    this.modalEditarAbierto.set(false);
+    this.cargarMascotas();
+  }
+
+  private cargarMascotas(): void {
     this.service.getMascotas().subscribe({
       next: (data) => {
         this.mascotas = data.map(m => ({
@@ -40,38 +75,6 @@ export class Mascotas implements OnInit {
       error: (err) => {
         console.error(err);
         this.loading = false;
-        this.cdr.detectChanges();
-      }
-    });
-  }
-
-  abrirEditar(m: MascotaUsuario) {
-    this.mascotaSeleccionada.set({
-      id_usuario: 0,
-      id_mascota: m.id_mascota,
-      nombre: m.nombre ?? '',
-      especie: m.especie ?? '',
-      raza: m.raza ?? '',
-      tamanio: '',
-      sexo: m.sexo ?? '',
-      tipo_pelaje:'',
-      comportamiento:'',
-      observaciones: '',
-      fecha_nacimiento: m.fecha_nacimiento ? m.fecha_nacimiento.substring(0, 10) : ''
-    });
-    this.modalEditarAbierto.set(true);
-  }
-
-  onMascotaEditada() {
-    this.modalEditarAbierto.set(false);
-    // Recargá la lista
-    this.service.getMascotas().subscribe({
-      next: (data) => {
-        this.mascotas = data.map(m => ({
-          ...m,
-          especie: this.normalizar(m.especie),
-          edad: this.calcularEdad(m.fecha_nacimiento)
-        }));
         this.cdr.detectChanges();
       }
     });

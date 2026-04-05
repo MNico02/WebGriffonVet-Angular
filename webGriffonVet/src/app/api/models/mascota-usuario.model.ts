@@ -4,6 +4,10 @@ export interface MascotaUsuario {
   especie: string;       
   raza?: string;
   sexo?: string;
+  tamanio:string;
   fecha_nacimiento: string;
-  edad?: string;
+  comportamiento:string;
+  observaciones:string;
+  tipo_pelaje:string;
 }
+

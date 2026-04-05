@@ -4,15 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { HistorialClinicoService } from '../../core/services/historial-clinico-service';
 import { editarMascotaRequest } from '../../api/models/historialClinico';
 
-
 @Component({
   selector: 'app-editar-mascota',
   imports: [CommonModule, FormsModule],
   templateUrl: './editar-mascota.html',
-  styleUrl: './editar-mascota.css'
+  styleUrl: './editar-mascota.css',
 })
 export class EditarMascota implements OnInit {
-
   mascotaId = input.required<number>();
   usuarioId = input.required<number>();
   mascota = input.required<editarMascotaRequest>();
@@ -21,7 +19,7 @@ export class EditarMascota implements OnInit {
   cerrar = output<void>();
   mascotaEditada = output<void>();
 
-  especies = ['Perro', 'Gato', 'Ave', 'Conejo', 'Reptil', 'Otro'];
+  especies = ['PERRO', 'GATO', 'AVE', 'CONEJO', 'REPTIL', 'OTRO'];
   tamanios = ['CHICO', 'MEDIANO', 'GRANDE'];
   sexos = ['MACHO', 'HEMBRA'];
 
@@ -36,17 +34,18 @@ export class EditarMascota implements OnInit {
     tipo_pelaje: '',
     comportamiento: '',
     observaciones: '',
-    fecha_nacimiento: ''
+    fecha_nacimiento: '',
   };
 
   ngOnInit() {
-  this.form = { ...this.mascota() };
-}
+    this.form = { ...this.mascota() };
+    console.log('Payload editar mascota:', this.mascota());
+  }
 
   guardar() {
     const payload: editarMascotaRequest = {
       ...this.form,
-      id_mascota: this.mascotaId()
+      id_mascota: this.mascotaId(),
     };
 
     console.log('Payload editar mascota:', payload);
