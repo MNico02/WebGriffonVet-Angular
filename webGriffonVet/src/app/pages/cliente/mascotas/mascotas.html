@@ -1,5 +1,4 @@
 <main class="pt-28 pb-20 max-w-7xl mx-auto px-6">
-
   <!-- HEADER -->
   <header class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
     <div class="max-w-2xl">
@@ -15,26 +14,30 @@
   <!-- GRID MASCOTAS -->
   @if (mascotas.length > 0) {
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-
       @for (m of mascotas; track m.id_mascota) {
-        <div class="group bg-surface-container-lowest pet-card-radius transition-all duration-300 hover:translate-y-[-4px] hover:shadow-[0_12px_40px_rgba(25,28,29,0.06)]">
-
+        <div
+          class="group bg-surface-container-lowest pet-card-radius transition-all duration-300 hover:translate-y-[-4px] hover:shadow-[0_12px_40px_rgba(25,28,29,0.06)]"
+        >
           <!-- IMAGEN -->
           <div class="relative overflow-hidden pet-card-radius-top h-64">
             <img
               class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-              [src]="m.especie === 'PERRO'
-                ? 'https://images.unsplash.com/photo-1558788353-f76d92427f16'
-                : 'https://images.unsplash.com/photo-1518791841217-8f162f1e1131'"
+              [src]="
+                m.especie === 'PERRO'
+                  ? 'https://images.unsplash.com/photo-1558788353-f76d92427f16'
+                  : 'https://images.unsplash.com/photo-1518791841217-8f162f1e1131'
+              "
               [alt]="m.nombre"
             />
 
             <!-- BADGE -->
             <div
               class="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-tighter"
-              [ngClass]="m.especie === 'PERRO'
-                ? 'bg-primary-container text-on-primary-container'
-                : 'bg-tertiary-container text-on-tertiary'"
+              [ngClass]="
+                m.especie === 'PERRO'
+                  ? 'bg-primary-container text-on-primary-container'
+                  : 'bg-tertiary-container text-on-tertiary'
+              "
             >
               {{ m.especie === 'PERRO' ? 'Canino' : 'Felino' }}
             </div>
@@ -48,7 +51,7 @@
                   {{ m.nombre }}
                 </h3>
                 <p class="text-tertiary font-medium text-sm">
-                  {{ m.raza }} • {{ m.fecha_nacimiento | date:'yyyy' }}
+                  {{ m.raza }} • {{ m.fecha_nacimiento | date: 'yyyy' }}
                 </p>
                 <p class="text-xs text-gray-400 mt-1">
                   {{ calcularEdad(m.fecha_nacimiento) }}
@@ -59,43 +62,55 @@
 
             <!-- PANEL DE DETALLES EXPANDIBLE -->
             @if (mascotaExpandida === m.id_mascota) {
-              <div class="mt-4 mb-4 border-t border-outline-variant/20 pt-4 grid grid-cols-2 gap-3 text-sm animate-[fadeIn_0.2s_ease]">
-
+              <div
+                class="mt-4 mb-4 border-t border-outline-variant/20 pt-4 grid grid-cols-2 gap-3 text-sm animate-[fadeIn_0.2s_ease]"
+              >
                 @if (m.sexo) {
                   <div class="flex flex-col">
-                    <span class="text-xs text-on-surface-variant uppercase tracking-widest mb-0.5">Sexo</span>
+                    <span class="text-xs text-on-surface-variant uppercase tracking-widest mb-0.5"
+                      >Sexo</span
+                    >
                     <span class="text-on-surface font-medium capitalize">{{ m.sexo }}</span>
                   </div>
                 }
 
                 @if (m.tamanio) {
                   <div class="flex flex-col">
-                    <span class="text-xs text-on-surface-variant uppercase tracking-widest mb-0.5">Tamaño</span>
+                    <span class="text-xs text-on-surface-variant uppercase tracking-widest mb-0.5"
+                      >Tamaño</span
+                    >
                     <span class="text-on-surface font-medium capitalize">{{ m.tamanio }}</span>
                   </div>
                 }
 
                 @if (m.tipo_pelaje) {
                   <div class="flex flex-col">
-                    <span class="text-xs text-on-surface-variant uppercase tracking-widest mb-0.5">Pelaje</span>
+                    <span class="text-xs text-on-surface-variant uppercase tracking-widest mb-0.5"
+                      >Pelaje</span
+                    >
                     <span class="text-on-surface font-medium capitalize">{{ m.tipo_pelaje }}</span>
                   </div>
                 }
 
                 @if (m.comportamiento) {
                   <div class="flex flex-col">
-                    <span class="text-xs text-on-surface-variant uppercase tracking-widest mb-0.5">Comportamiento</span>
-                    <span class="text-on-surface font-medium capitalize">{{ m.comportamiento }}</span>
+                    <span class="text-xs text-on-surface-variant uppercase tracking-widest mb-0.5"
+                      >Comportamiento</span
+                    >
+                    <span class="text-on-surface font-medium capitalize">{{
+                      m.comportamiento
+                    }}</span>
                   </div>
                 }
 
                 @if (m.observaciones) {
                   <div class="col-span-2 flex flex-col">
-                    <span class="text-xs text-on-surface-variant uppercase tracking-widest mb-0.5">Observaciones</span>
+                    <span class="text-xs text-on-surface-variant uppercase tracking-widest mb-0.5"
+                      >Observaciones</span
+                    >
                     <span class="text-on-surface font-medium">{{ m.observaciones }}</span>
                   </div>
                 }
-
               </div>
             }
 
@@ -116,7 +131,6 @@
               </button>
             </div>
           </div>
-
         </div>
       }
     </div>
@@ -124,32 +138,29 @@
 
   <!-- CARD AGREGAR (SIEMPRE VISIBLE) -->
   <div class="mt-12 flex justify-center">
-    <div class="group border-2 border-dashed border-outline-variant/30 pet-card-radius p-10 flex flex-col items-center justify-center text-center hover:bg-surface-container-low transition-all max-w-sm w-full">
-
+    <div
+      class="group border-2 border-dashed border-outline-variant/30 pet-card-radius p-10 flex flex-col items-center justify-center text-center hover:bg-surface-container-low transition-all max-w-sm w-full"
+    >
       <div class="w-20 h-20 rounded-full bg-primary-fixed flex items-center justify-center mb-6">
         <span class="material-symbols-outlined text-4xl">add</span>
       </div>
 
-      <h3 class="font-headline text-xl font-bold text-on-surface mb-2">
-        ¿Nueva incorporación?
-      </h3>
+      <h3 class="font-headline text-xl font-bold text-on-surface mb-2">¿Nueva incorporación?</h3>
 
-      <p class="text-on-surface-variant text-sm mb-6 px-4">
-        Registrá a tu nueva mascota.
-      </p>
+      <p class="text-on-surface-variant text-sm mb-6 px-4">Registrá a tu nueva mascota.</p>
 
-      <button class="text-primary font-bold text-sm tracking-widest uppercase hover:underline">
+      <button
+        (click)="abrirAgregar()"
+        class="text-primary font-bold text-sm tracking-widest uppercase hover:underline"
+      >
         Comenzar registro
       </button>
-
     </div>
   </div>
 
   <!-- MENSAJE SI NO HAY DATOS -->
   @if (!loading && mascotas.length === 0) {
-    <div class="text-center py-20 text-gray-400">
-      No tenés mascotas registradas
-    </div>
+    <div class="text-center py-20 text-gray-400">No tenés mascotas registradas</div>
   }
 
   @if (modalEditarAbierto() && mascotaSeleccionada()) {
@@ -161,5 +172,11 @@
       (mascotaEditada)="onMascotaEditada()"
     />
   }
-
+  @if (modalAgregarAbierto()) {
+    <app-nueva-mascota
+      [usuarioId]="getIdUsuario()"
+      (cerrar)="modalAgregarAbierto.set(false)"
+      (mascotaGuardada)="onMascotaAgregada()"
+    />
+  }
 </main>

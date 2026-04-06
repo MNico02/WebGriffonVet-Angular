@@ -6,13 +6,14 @@ import { ChangeDetectorRef } from '@angular/core';
 import { EditarMascota } from '../../../layouts/editar-mascota/editar-mascota';
 import { editarMascotaRequest } from '../../../api/models/historialClinico';
 import { AuthService } from '../../../core/services/auth';
+import { NuevaMascota } from '../../../layouts/cliente/nueva-mascota/nueva-mascota';
 
 @Component({
   selector: 'app-mascotas',
   standalone: true,
   templateUrl: './mascotas.html',
   styleUrl: './mascotas.css',
-  imports: [CommonModule, EditarMascota]
+  imports: [CommonModule, EditarMascota, NuevaMascota]
 })
 export class Mascotas implements OnInit {
 
@@ -24,6 +25,7 @@ export class Mascotas implements OnInit {
 
   modalEditarAbierto = signal(false);
   mascotaSeleccionada = signal<editarMascotaRequest | null>(null);
+  modalAgregarAbierto = signal(false);
 
   constructor(
     private service: MascotaService,
@@ -58,6 +60,15 @@ export class Mascotas implements OnInit {
 
   onMascotaEditada() {
     this.modalEditarAbierto.set(false);
+    this.cargarMascotas();
+  }
+
+  abrirAgregar() {
+    this.modalAgregarAbierto.set(true);
+  }
+
+  onMascotaAgregada() {
+    this.modalAgregarAbierto.set(false);
     this.cargarMascotas();
   }
 
@@ -97,5 +108,8 @@ export class Mascotas implements OnInit {
 
   trackById(index: number, item: MascotaUsuario) {
     return item.id_mascota;
+  }
+  getIdUsuario(){
+    return this.auth.getIdUsuario();
   }
 }

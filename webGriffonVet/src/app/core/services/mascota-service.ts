@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { Mascota } from '../../api/models/mascota';
 import { environment } from '../../../environments/environment.development';
-import { MascotaUsuario } from '../../api/models/mascota-usuario.model';
+import { MascotaRequest, MascotaUsuario } from '../../api/models/mascota-usuario.model';
 
 @Injectable({ providedIn: 'root' })
 export class MascotaService {
@@ -34,5 +34,9 @@ export class MascotaService {
         `${this.apiUrl}/usuario/obtenerMascotas`, {}
       )
       .pipe(map((response) => response.mascotas ?? []));
+  }
+
+  insertarMascota(payload: MascotaRequest ): Observable<any>{
+    return this.http.post(`${this.apiUrl}/insertarMascotas`, payload);
   }
 }

@@ -14,7 +14,6 @@ export const routes: Routes = [
   {
     path: 'main',
     loadComponent: () => import('./layouts/cliente/main-layout/main').then(m => m.Main),
-    canActivate: [authGuard, roleGuard(['CLIENTE'])],
     children: [
       {
         path: '',
@@ -23,6 +22,7 @@ export const routes: Routes = [
     {
       path: 'mis-mascotas', 
       loadComponent: () => import('./pages/cliente/mascotas/mascotas').then(m => m.Mascotas),
+      canActivate: [authGuard, roleGuard(['CLIENTE'])],
     }
     ]
   },
