@@ -229,23 +229,26 @@
 
       <div class="space-y-4">
         @for (c of paciente.historia_clinica.consultas; track c.id_consulta) {
-        <div
+         <div
           class="bg-surface-container-lowest rounded-xl border border-outline-variant/30 overflow-hidden"
-        >
+          >
           <!-- Header de la consulta -->
           <div
             class="flex justify-between items-start px-5 py-4 bg-surface-container/50 border-b border-outline-variant/20"
           >
             <div class="flex items-center gap-3">
-              <span
-                class="text-xs font-black uppercase tracking-widest text-primary bg-primary-container/20 px-3 py-1 rounded-full"
-              >
-                #{{ c.id_consulta }}
-              </span>
               <p class="font-bold text-on-surface text-base">
                 Motivo: {{ c.motivo_consulta }}
               </p>
             </div>
+            <!-- 🔥 BOTÓN EDITAR -->
+            <button
+              (click)="abrirEditarConsulta(c)"
+              class="px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest 
+         bg-yellow-400 text-black hover:bg-yellow-300 transition-all shadow-sm"
+            >
+              Editar
+            </button>
             <span
               class="text-xs text-on-surface-variant bg-surface-container px-3 py-1 rounded-full border border-outline-variant/30"
             >
@@ -363,6 +366,13 @@
           Sin consultas registradas.
         </p>
         }
+        @if (modalEditarConsulta() && consultaSeleccionada()) {
+  <app-editar-consulta-modal
+    [consulta]="consultaSeleccionada()"
+    (cerrar)="modalEditarConsulta.set(false)"
+    (consultaActualizada)="mascotaResource.reload()"
+  />
+}
       </div>
     </div>
     } @if (tabActiva() === 'vacunas') {
@@ -407,7 +417,7 @@
               <th class="px-4 py-3 text-left font-bold">Vacuna</th>
               <th class="px-4 py-3 text-left font-bold">Fecha Aplicación</th>
               <th class="px-4 py-3 text-left font-bold">Próxima Dosis</th>
-           
+
               <th class="px-4 py-3 text-left font-bold">Observaciones</th>
             </tr>
           </thead>
@@ -425,9 +435,9 @@
               <td class="px-4 py-3 text-on-surface-variant">
                 {{ v.proxima_dosis }}
               </td>
-              
+
               <td class="px-4 py-3 text-on-surface-variant">
-               {{v.observaciones}}
+                {{v.observaciones}}
               </td>
             </tr>
             } @empty {
@@ -570,7 +580,7 @@
               <td class="px-4 py-3 font-bold text-on-surface">
                 {{ p.peso }} kg
               </td>
-            
+
               <td class="px-4 py-3 text-on-surface-variant">
                 {{ p.observaciones }}
               </td>
@@ -713,8 +723,8 @@
             <tr>
               <th class="px-4 py-3 text-left font-bold">Alérgeno</th>
               <th class="px-4 py-3 text-left font-bold">Severidad</th>
-              <th class="px-4 py-3 text-left font-bold">Reacción</th>
-              <th class="px-4 py-3 text-left font-bold">Notas</th>
+
+              <th class="px-4 py-3 text-left font-bold">OBSERVACIONES</th>
             </tr>
           </thead>
           <tbody
@@ -738,7 +748,6 @@
                   {{ a.severidad }}
                 </span>
               </td>
-              <td class="px-4 py-3 text-on-surface-variant">"reaccion?"</td>
               <td class="px-4 py-3 text-on-surface-variant">
                 {{ a.observaciones }}
               </td>
@@ -889,7 +898,13 @@
                 {{ e.fecha | date:'dd MMM yyyy' }}
               </td>
               <td class="px-4 py-3 text-on-surface-variant">
-                {{ e.resultado }}
+                <a
+                  [href]="e.resultado"
+                  target="_blank"
+                  class="text-primary font-semibold hover:underline"
+                >
+                  Ver Estudio
+                </a>
               </td>
               <td class="px-4 py-3">
                 <div class="flex flex-col">

@@ -22,12 +22,11 @@
 
     <!-- Body -->
 
-    
     <div class="px-6 py-5 space-y-4">
       <!-- Motivo -->
       <div class="flex flex-col gap-1">
         <label
-          class="text-xs font-black uppercase tracking-widest text-on-surface-variant" 
+          class="text-xs font-black uppercase tracking-widest text-on-surface-variant"
           >Motivo de consulta *</label
         >
         <input
@@ -286,36 +285,36 @@
             class="col-span-2 bg-surface-container rounded-lg px-3 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary"
           />
           <div
-  class="col-span-2 border-2 border-dashed border-outline-variant/40 rounded-lg p-4 text-center cursor-pointer hover:bg-surface-container transition-all"
-  (drop)="onDrop($event)"
-  (dragover)="onDragOver($event)"
->
-  <p class="text-xs text-on-surface-variant">
-    Arrastrá imagen o PDF o hacé click
-  </p>
+            class="col-span-2 border-2 border-dashed border-outline-variant/40 rounded-lg p-4 text-center cursor-pointer hover:bg-surface-container transition-all"
+            (drop)="onDrop($event)"
+            (dragover)="onDragOver($event)"
+          >
+            <p class="text-xs text-on-surface-variant">
+              Arrastrá imagen o PDF o hacé click
+            </p>
 
-  <input
-    type="file"
-    #fileInput
-    (change)="onFileSelected($event)"
-    accept="image/*,.pdf"
-    class="hidden"
-  />
+            <input
+              type="file"
+              #fileInput
+              (change)="onFileSelected($event)"
+              accept="image/*,.pdf"
+              class="hidden"
+            />
 
-  <button
-    type="button"
-    (click)="fileInput.click()"
-    class="mt-2 text-xs text-primary underline"
-  >
-    Seleccionar archivo
-  </button>
+            <button
+              type="button"
+              (click)="fileInput.click()"
+              class="mt-2 text-xs text-primary underline"
+            >
+              Seleccionar archivo
+            </button>
 
-  @if (archivoSeleccionadoNombre) {
-    <p class="text-xs mt-2 text-on-surface">
-      {{ archivoSeleccionadoNombre }}
-    </p>
-  }
-</div>
+            @if (archivoSeleccionadoNombre) {
+            <p class="text-xs mt-2 text-on-surface">
+              {{ archivoSeleccionadoNombre }}
+            </p>
+            }
+          </div>
           <input
             type="text"
             [(ngModel)]="nuevoEstudio.observaciones"

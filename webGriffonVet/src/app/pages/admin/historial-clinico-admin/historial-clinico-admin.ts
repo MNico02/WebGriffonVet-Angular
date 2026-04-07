@@ -11,10 +11,10 @@ import { NuevaEnfermedad } from '../../../layouts/admin/nueva-enfemedad/nueva-en
 import { NuevaAlergia } from '../../../layouts/admin/nueva-alergia/nueva-alergia';
 import { EditarMascota } from '../../../layouts/editar-mascota/editar-mascota';
 import { editarMascotaRequest } from '../../../api/models/historialClinico';
-
+import { EditarConsultaModal } from '../../../layouts/admin/editar-consulta-modal/editar-consulta-modal';
 @Component({
   selector: 'app-historial-clinico-admin',
-  imports: [CommonModule, NuevaConsulta, NuevaVacunacion, NuevaDesparasitacion, NuevoPeso, NuevaEnfermedad, NuevaAlergia, EditarMascota],
+  imports: [CommonModule, NuevaConsulta, NuevaVacunacion, NuevaDesparasitacion, NuevoPeso, NuevaEnfermedad, NuevaAlergia, EditarMascota,EditarConsultaModal],
   templateUrl: './historial-clinico-admin.html',
   styleUrl: './historial-clinico-admin.css',
 })
@@ -40,6 +40,9 @@ export class HistorialClinicoAdmin implements AfterViewInit {
   modalEnfermedadAbierto = signal(false);
   modalAlergiaAbierto = signal(false);
   modalEditarAbierto = signal(false);
+
+modalEditarConsulta = signal(false);
+consultaSeleccionada = signal<any | null>(null);
 
   @ViewChild('tabsContainer') tabsContainer!: ElementRef<HTMLDivElement>;
 
@@ -155,5 +158,10 @@ export class HistorialClinicoAdmin implements AfterViewInit {
   });
   esImagen(url: string): boolean {
   return /\.(jpg|jpeg|png|webp)$/i.test(url);
+}
+
+abrirEditarConsulta(c: any) {
+  this.consultaSeleccionada.set(c);
+  this.modalEditarConsulta.set(true);
 }
 }

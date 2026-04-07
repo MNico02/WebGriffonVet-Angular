@@ -1,0 +1,246 @@
+<div
+  class="modal-overlay fixed inset-0 bg-black/40 z-50 flex items-center justify-center"
+  (click)="onOverlayClick($event)"
+>
+  <div
+    class="bg-surface-container-lowest rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto mx-4"
+  >
+
+    <!-- HEADER -->
+    <div class="flex items-center justify-between px-6 py-4 border-b border-outline-variant/30">
+      <h2 class="font-headline text-lg font-bold text-on-surface">
+        Editar Consulta
+      </h2>
+
+      <button (click)="cerrar.emit()" class="p-2 rounded-full hover:bg-surface-container">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <!-- BODY -->
+    <div class="px-6 py-5 space-y-4">
+
+      <!-- Motivo -->
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">
+          Motivo
+        </label>
+        <input [(ngModel)]="form.motivo_consulta"
+          class="w-full bg-surface-container rounded-lg px-4 py-2 border border-outline-variant/30"/>
+      </div>
+
+      <!-- Anamnesis -->
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">
+          Anamnesis
+        </label>
+        <textarea [(ngModel)]="form.anamnesis"
+          class="w-full bg-surface-container rounded-lg px-4 py-2 border border-outline-variant/30"></textarea>
+      </div>
+
+      <!-- Examen -->
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">
+          Examen general
+        </label>
+        <textarea [(ngModel)]="form.examen_general"
+          class="w-full bg-surface-container rounded-lg px-4 py-2 border border-outline-variant/30"></textarea>
+      </div>
+
+      <!-- Diagnóstico presuntivo -->
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">
+          Diagnóstico presuntivo
+        </label>
+        <textarea [(ngModel)]="form.diagnostico_presuntivo"
+          class="w-full bg-surface-container rounded-lg px-4 py-2 border border-outline-variant/30"></textarea>
+      </div>
+
+      <!-- Diagnóstico -->
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">
+          Diagnóstico
+        </label>
+        <textarea [(ngModel)]="form.diagnostico"
+          class="w-full bg-surface-container rounded-lg px-4 py-2 border border-outline-variant/30"></textarea>
+      </div>
+
+      <!-- Tratamiento -->
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">
+          Tratamiento
+        </label>
+        <textarea [(ngModel)]="form.tratamiento"
+          class="w-full bg-surface-container rounded-lg px-4 py-2 border border-outline-variant/30"></textarea>
+      </div>
+
+      <!-- Observaciones -->
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">
+          Observaciones
+        </label>
+        <textarea [(ngModel)]="form.observaciones"
+          class="w-full bg-surface-container rounded-lg px-4 py-2 border border-outline-variant/30"></textarea>
+      </div>
+
+      <!-- ════════════════════════════════════════ -->
+<!--               ESTUDIOS                  -->
+<!-- ════════════════════════════════════════ -->
+<div class="flex flex-col gap-3">
+
+  <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">
+    Estudios
+  </label>
+
+  <!-- 🔒 ESTUDIOS EXISTENTES -->
+  @if (form.estudios?.length && form.estudios.some(e => e.resultado)) {
+    <div class="flex flex-col gap-2">
+      <p class="text-xs text-on-surface-variant">Estudios guardados</p>
+
+      @for (e of form.estudios; track $index) {
+        @if (e.resultado) {
+          <div class="flex items-start justify-between bg-surface-container px-4 py-3 rounded-lg border border-outline-variant/20">
+
+            <div class="flex flex-col gap-1">
+              <span class="font-bold text-sm">🔬 {{ e.tipo_estudio }}</span>
+
+              <a
+                [href]="e.resultado"
+                target="_blank"
+                class="text-xs text-primary underline"
+              >
+                Ver archivo
+              </a>
+
+              @if (e.observaciones) {
+                <span class="text-xs text-on-surface-variant italic">
+                  {{ e.observaciones }}
+                </span>
+              }
+            </div>
+
+          </div>
+        }
+      }
+    </div>
+  }
+
+  <!-- 🆕 AGREGAR SOLO SI NO TIENE -->
+  @if (!form.estudios?.length || !form.estudios.some(e => e.resultado)) {
+
+    <!-- INPUTS IGUAL QUE INSERTAR -->
+    <div class="grid grid-cols-2 gap-2">
+
+      <input
+        type="text"
+        [(ngModel)]="nuevoEstudio.tipo_estudio"
+        placeholder="Tipo de estudio (Ej: Hemograma)"
+        class="col-span-2 bg-surface-container rounded-lg px-3 py-2 text-sm border border-outline-variant/30"
+      />
+
+      <div
+        class="col-span-2 border-2 border-dashed border-outline-variant/40 rounded-lg p-4 text-center cursor-pointer hover:bg-surface-container transition-all"
+        (click)="fileInput.click()"
+      >
+        <input
+          type="file"
+          #fileInput
+          (change)="onFileSelected($event)"
+          accept="image/*,.pdf"
+          class="hidden"
+        />
+
+        <p class="text-xs text-on-surface-variant">
+          Arrastrá imagen o PDF o hacé click
+        </p>
+
+        <button
+          type="button"
+          class="mt-2 text-xs text-primary underline"
+        >
+          Seleccionar archivo
+        </button>
+
+        @if (archivoSeleccionadoNombre) {
+          <p class="text-xs mt-2 text-on-surface">
+            {{ archivoSeleccionadoNombre }}
+          </p>
+        }
+      </div>
+
+      <input
+        type="text"
+        [(ngModel)]="nuevoEstudio.observaciones"
+        placeholder="Observaciones"
+        class="bg-surface-container rounded-lg px-3 py-2 text-sm border border-outline-variant/30"
+      />
+    </div>
+
+    <!-- BOTÓN -->
+    <button
+      (click)="agregarEstudio()"
+      class="self-start text-xs px-4 py-2 rounded-full border border-primary text-primary hover:bg-primary-container/20 transition-all font-bold"
+    >
+      + Agregar estudio
+    </button>
+
+    <!-- 🧪 PREVIEW (IGUAL AL INSERTAR) -->
+    @for (e of form.estudios; track $index) {
+      <div class="flex items-start justify-between bg-surface-container px-4 py-3 rounded-lg border border-outline-variant/20">
+
+        <div class="flex flex-col gap-1">
+          <span class="font-bold text-sm">🔬 {{ e.tipo_estudio }}</span>
+
+          @if (e.observaciones) {
+            <span class="text-xs text-on-surface-variant italic">
+              {{ e.observaciones }}
+            </span>
+          }
+
+          @if (archivoSeleccionadoNombre) {
+            <span class="text-xs text-primary">
+              {{ archivoSeleccionadoNombre }}
+            </span>
+          }
+        </div>
+
+        <!-- 🔥 DELETE SOLO NUEVOS -->
+        @if (!e.resultado) {
+          <button
+            (click)="eliminarEstudio($index)"
+            class="p-1 rounded-full hover:bg-error-container/20 transition-all"
+          >
+            <span class="material-symbols-outlined text-error text-[18px]">
+              delete
+            </span>
+          </button>
+        }
+
+      </div>
+    }
+
+  }
+
+</div>
+
+    <!-- FOOTER -->
+    <div class="flex justify-end gap-3 px-6 py-4 border-t border-outline-variant/30">
+
+      <button
+        (click)="cerrar.emit()"
+        class="px-5 py-2 rounded-full text-sm font-bold text-on-surface-variant hover:bg-surface-container"
+      >
+        Cancelar
+      </button>
+
+      <button
+        (click)="guardar()"
+        class="px-5 py-2 rounded-full bg-yellow-400 text-black font-bold hover:bg-yellow-300 transition-all"
+      >
+        Guardar cambios
+      </button>
+
+    </div>
+
+  </div>
+</div>
