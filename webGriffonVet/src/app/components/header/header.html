@@ -6,7 +6,15 @@
       <a class="text-slate-600 hover:text-blue-600 transition-all" routerLink="/main/home" routerLinkActive="text-blue-700 font-bold border-b-2 border-blue-600">Inicio</a>
       <a class="text-slate-600 hover:text-blue-600 transition-all" routerLink="/main/productos" routerLinkActive="text-blue-700 font-bold border-b-2 border-blue-600">Productos</a>
       <a class="text-slate-600 hover:text-blue-600 transition-all" href="#">Turnos</a>
-      <a class="text-slate-600 hover:text-blue-600 transition-all" routerLink="/main/mis-mascotas" routerLinkActive="text-blue-700 font-bold border-b-2 border-blue-600">Mis Mascotas</a>
+      @if (isLoggedIn$ | async) {
+          @if(!isAdmin){
+            <a class="text-slate-600 hover:text-blue-600 transition-all" routerLink="/main/mis-mascotas" routerLinkActive="text-blue-700 font-bold border-b-2 border-blue-600">Mis Mascotas</a>
+          }
+          @if(isAdmin()) {
+              <a class="text-slate-600 hover:text-blue-600 transition-all" routerLink="/admin/dashboard" routerLinkActive="text-blue-700 font-bold border-b-2 border-blue-600">Panel Admin</a>
+        
+          }
+        }
     </nav>
 
     <div class="flex items-center gap-4">

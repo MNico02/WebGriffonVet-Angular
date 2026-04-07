@@ -18,6 +18,15 @@ export class Header {
   private router = inject(Router);
 
   isLoggedIn$: Observable<boolean> = this.authService.isLoggedIn$();
+  private rol = this.authService.getRol();
+  isAdmin():boolean{
+
+    if(this.rol === 'ADMIN')
+      return true;
+
+    return false;
+      
+  }
 
   logout(): void {
     this.authService.logout();

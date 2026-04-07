@@ -1,1 +1,126 @@
-<p>productos-admin works!</p>
+<main class="pt-24 pb-20 max-w-7xl mx-auto px-6 sm:px-8">
+  <!-- Header -->
+  <header class="mb-16">
+    <h1 class="font-headline text-4xl font-extrabold tracking-tighter text-on-surface mb-4">
+      Administra tus productos
+    </h1>
+    <br />
+    <div class="relative flex-1 min-w-[400px]">
+      <span
+        class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/60"
+        >search</span
+      >
+      <input
+        class="bg-surface-container-highest border-none rounded-md pl-12 pr-6 py-3 w-full focus:ring-2 focus:ring-primary transition-all"
+        placeholder="Buscá por nombre o descripción..."
+        type="text"
+        [value]="searchQuery()"
+        (input)="searchQuery.set($any($event.target).value)"
+      />
+    </div>
+  </header>
+  <!-- Buscador -->
+
+  <!-- Loading -->
+  @if (productosResource.isLoading()) {
+    <div class="flex items-center justify-center py-20 text-on-surface-variant gap-3">
+      <span class="material-symbols-outlined animate-spin">progress_activity</span>
+      <span class="text-sm">Cargando productos...</span>
+    </div>
+  }
+
+  <!-- Error -->
+  @if (productosResource.error()) {
+    <div class="flex items-center justify-center py-20 text-error gap-2">
+      <span class="material-symbols-outlined">error</span>
+      <span class="text-sm">Error al cargar los productos.</span>
+    </div>
+  }
+
+  <!-- Grid: siempre renderizado, independiente del modal -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+    <!-- Cards dinámicas -->
+    @for (producto of productosFiltrados(); track producto.id_producto) {
+      <div
+        class="bg-surface-container-lowest custom-card-shape p-6 shadow-[0_12px_40px_rgba(25,28,29,0.06)] group hover:scale-[1.02] transition-all duration-300"
+      >
+        <div class="relative overflow-hidden custom-card-shape mb-6 aspect-square">
+          <img
+            [src]="producto.imagen_url"
+            [alt]="producto.nombre"
+            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+          />
+          @if (!producto.activo) {
+            <span
+              class="absolute top-4 left-4 bg-error-container text-on-error-container px-3 py-1 rounded-full text-xs font-bold uppercase tracking-tighter"
+            >
+              Inactivo
+            </span>
+          }
+        </div>
+
+        <div class="space-y-3">
+          <p class="font-label text-xs uppercase tracking-widest text-primary font-bold">
+            {{ producto.categoria }}
+          </p>
+          <h3 class="font-headline text-2xl font-bold text-on-surface">{{ producto.nombre }}</h3>
+          <p class="text-on-surface-variant text-sm line-clamp-2">{{ producto.descripcion }}</p>
+          <div class="flex justify-between items-center pt-4">
+            <div class="flex flex-col">
+              <span class="text-2xl font-black text-on-surface">${{ producto.precio }}</span>
+              <span class="text-xs text-on-surface-variant">Stock: {{ producto.stock }}</span>
+            </div>
+            <button
+              (click)="abrirEditar(producto)"
+              class="w-12 h-12 flex items-center justify-center border border-outline-variant/20 rounded-full text-outline hover:text-primary transition-colors"
+            >
+              <span class="material-symbols-outlined">edit</span>
+            </button>
+            <!-- ELIMINAR -->
+            <button
+              (click)="eliminar(producto.id_producto)"
+              class="w-12 h-12 flex items-center justify-center border border-red-300 rounded-full text-red-500 hover:bg-red-100 transition-colors"
+            >
+              <span class="material-symbols-outlined">delete</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Card Agregar: siempre al final de la grilla -->
+    <div class="mt-12 flex justify-center">
+      <div
+        class="group border-2 border-dashed border-outline-variant/30 pet-card-radius p-10 flex flex-col items-center justify-center text-center hover:bg-surface-container-low transition-all max-w-sm w-full"
+      >
+        <div class="w-20 h-20 rounded-full bg-primary-fixed flex items-center justify-center mb-6">
+          <span class="material-symbols-outlined text-4xl">add</span>
+        </div>
+        <p class="text-on-surface-variant text-sm mb-6 px-4">Registrá un producto nuevo</p>
+        <button
+          (click)="abrirModal()"
+          class="text-primary font-bold text-sm tracking-widest uppercase hover:underline"
+        >
+          Comenzar registro
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: FUERA del grid y sin @if que envuelva la grilla -->
+  @if (mostrarModal()) {
+    <app-nuevo-producto
+      (cerrar)="mostrarModal.set(false)"
+      (productoGuardado)="onProductoGuardado()"
+    />
+  }
+
+  <!-- Modal editar -->
+  @if (modalEditarAbierto() && productoSeleccionado()) {
+    <app-editar-producto
+      [producto]="productoSeleccionado()!"
+      (cerrar)="modalEditarAbierto.set(false)"
+      (productoEditado)="onProductoEditado()"
+    />
+  }
+</main>

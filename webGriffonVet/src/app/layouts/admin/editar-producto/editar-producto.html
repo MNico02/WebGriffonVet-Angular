@@ -1,0 +1,159 @@
+<div class="fixed inset-0 bg-black/40 z-50 flex items-center justify-center"
+  (click)="onOverlayClick($event)">
+
+  <div class="bg-surface-container-lowest rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto mx-4">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between px-6 py-4 border-b border-outline-variant/30">
+      <h2 class="font-headline text-lg font-bold text-on-surface">Editar Producto</h2>
+      <button (click)="cerrar.emit()" class="p-2 rounded-full hover:bg-surface-container transition-all">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="px-6 py-5 space-y-4">
+
+      <!-- Nombre -->
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">Nombre</label>
+        <input
+          type="text"
+          [(ngModel)]="form.nombre"
+          placeholder="Nombre del producto"
+          class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary"
+        />
+      </div>
+
+      <!-- Descripción -->
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">Descripción</label>
+        <textarea
+          [(ngModel)]="form.descripcion"
+          rows="3"
+          placeholder="Descripción del producto..."
+          class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary resize-none"
+        ></textarea>
+      </div>
+
+      <!-- Precio y Stock -->
+      <div class="grid grid-cols-2 gap-3">
+        <div class="flex flex-col gap-1">
+          <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">Precio</label>
+          <input
+            type="number"
+            [(ngModel)]="form.precio"
+            placeholder="0.00"
+            min="0"
+            class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary"
+          />
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">Stock</label>
+          <input
+            type="number"
+            [(ngModel)]="form.stock"
+            placeholder="0"
+            min="0"
+            class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary"
+          />
+        </div>
+      </div>
+
+      <!-- Categoría -->
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">Categoría</label>
+        @if (cargandoCategorias) {
+          <div class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 text-on-surface-variant italic">
+            Cargando categorías...
+          </div>
+        } @else {
+          <select
+            [(ngModel)]="form.id_categoria"
+            class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary"
+          >
+            <option [value]="null">Seleccionar categoría...</option>
+            @for (cat of categorias; track cat.id_categoria) {
+              <option [value]="cat.id_categoria">{{ cat.nombre }}</option>
+            }
+          </select>
+        }
+      </div>
+
+      <!-- Agregar categoría nueva -->
+      <div class="flex flex-col gap-1 pb-1 border-b border-outline-variant/20">
+        <label class="text-xs text-on-surface-variant">¿No encontrás la categoría? Agregá una nueva</label>
+        <div class="flex gap-2">
+          <input
+            type="text"
+            [(ngModel)]="nuevaCategoriaNombre"
+            placeholder="Nombre de la nueva categoría"
+            class="flex-1 bg-surface-container rounded-lg px-3 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary"
+          />
+          <button
+            (click)="agregarCategoria()"
+            [disabled]="agregandoCategoria || !nuevaCategoriaNombre.trim()"
+            class="px-4 py-2 rounded-lg text-xs font-bold border border-secondary text-secondary hover:bg-secondary-container/20 transition-all disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap"
+          >
+            {{ agregandoCategoria ? 'Guardando...' : '+ Agregar' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Imagen -->
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">Imagen del producto</label>
+
+        @if (!imagenPreview()) {
+          <label class="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-outline-variant/50 rounded-xl cursor-pointer hover:border-primary hover:bg-surface-container/50 transition-colors">
+            <span class="material-symbols-outlined text-3xl text-on-surface-variant mb-1">cloud_upload</span>
+            <span class="text-sm text-on-surface-variant">Hacé clic para subir una imagen</span>
+            <span class="text-xs text-on-surface-variant/60 mt-1">PNG, JPG hasta 5MB</span>
+            <input type="file" accept="image/*" class="hidden" (change)="onImagenSeleccionada($event)" />
+          </label>
+        } @else {
+          <div class="relative w-full">
+            <img
+              [src]="imagenPreview()"
+              alt="Preview"
+              class="w-full h-48 object-contain rounded-xl border border-outline-variant/30"
+            />
+            <button
+              (click)="quitarImagen()"
+              class="absolute top-2 right-2 p-1.5 rounded-full bg-surface-container-lowest border border-outline-variant/30 hover:bg-error-container hover:border-error/30 transition-all"
+              title="Quitar imagen"
+            >
+              <span class="material-symbols-outlined text-base text-on-surface-variant">close</span>
+            </button>
+          </div>
+        }
+      </div>
+
+    </div>
+
+    <!-- Error -->
+    @if (error()) {
+      <div class="mx-6 mb-2 px-4 py-2 rounded-lg bg-error-container text-on-error-container text-sm">
+        {{ error() }}
+      </div>
+    }
+
+    <!-- Footer -->
+    <div class="flex justify-end gap-3 px-6 py-4 border-t border-outline-variant/30">
+      <button
+        (click)="cerrar.emit()"
+        class="px-5 py-2 rounded-full text-sm font-bold text-on-surface-variant hover:bg-surface-container transition-all"
+      >
+        Cancelar
+      </button>
+      <button
+        (click)="guardar()"
+        [disabled]="guardando()"
+        class="px-5 py-2 rounded-full editorial-gradient text-white text-sm font-bold hover:opacity-90 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+      >
+        {{ guardando() ? 'Guardando...' : 'Guardar cambios' }}
+      </button>
+    </div>
+
+  </div>
+</div>
