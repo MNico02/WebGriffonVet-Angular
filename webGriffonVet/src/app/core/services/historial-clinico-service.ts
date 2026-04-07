@@ -76,9 +76,9 @@ export class HistorialClinicoService {
     return this.http.post(`${this.apiUrl}/InsertarTipoDesparasitacion`, payload);
   }
 
-  crearConsulta(payload: NuevaConsultaRequest): Observable<any> {
-    return this.http.post(`${this.apiUrl}/nuevaConsulta`, payload);
-  }
+  crearConsulta(formData: FormData): Observable<any> {
+  return this.http.post(`${this.apiUrl}/nuevaConsulta`, formData);
+}
 
   obtenerMedicamentos(): Observable<Medicamento[]> {
     return this.http.get<Medicamento[]>(`${this.apiUrl}/ObtenerMedicamentos`);

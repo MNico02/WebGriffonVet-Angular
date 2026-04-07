@@ -33,6 +33,9 @@ export class NuevaConsulta implements OnInit {
   nuevoMedicamentoNombre = '';
   agregandoMedicamento = false;
 
+  archivoSeleccionado: File | null = null;
+archivoSeleccionadoNombre = '';
+
   form: NuevaConsultaRequest = {
     id_usuario: 0,
     id_mascota: 0,
@@ -61,6 +64,7 @@ export class NuevaConsulta implements OnInit {
     tipo_estudio: '',
     resultado: '',
     observaciones: ''
+    
   };
 
   ngOnInit() {
@@ -121,33 +125,56 @@ export class NuevaConsulta implements OnInit {
   }
 
   agregarEstudio() {
-    if (!this.nuevoEstudio.tipo_estudio.trim()) return;
-    this.form.estudios.push({ ...this.nuevoEstudio });
-    this.nuevoEstudio = {
-      tipo_estudio: '',
-      resultado: '',
-      observaciones: ''
-    };
-  }
+  if (!this.nuevoEstudio.tipo_estudio.trim()) return;
+
+  this.form.estudios.push({
+    ...this.nuevoEstudio,
+    archivo: this.archivoSeleccionado // 👈 clave
+  });
+
+  this.nuevoEstudio = {
+    tipo_estudio: '',
+    resultado: '',
+    observaciones: ''
+  };
+
+  this.archivoSeleccionado = null;
+  this.archivoSeleccionadoNombre = '';
+}
 
   eliminarEstudio(index: number) {
     this.form.estudios.splice(index, 1);
   }
 
   guardar() {
-    const payload: NuevaConsultaRequest = {
-      ...this.form,
-      id_usuario: this.usuarioId(),
-      id_mascota: this.mascotaId()
+  const formData = new FormData();
+
+  const estudiosSinArchivo = this.form.estudios.map((e: any) => {
+    if (e.archivo) {
+      formData.append('archivos', e.archivo);
+    }
+
+    return {
+      tipo_estudio: e.tipo_estudio,
+      resultado: e.resultado || '',
+      observaciones: e.observaciones
     };
+  });
 
-    console.log('Payload a enviar:', payload);
+  const payload = {
+    ...this.form,
+    estudios: estudiosSinArchivo,
+    id_usuario: this.usuarioId(),
+    id_mascota: this.mascotaId()
+  };
 
-    this.service.crearConsulta(payload).subscribe(() => {
-      this.consultaGuardada.emit();
-      this.cerrar.emit();
-    });
-  }
+  formData.append('consulta', JSON.stringify(payload));
+
+  this.service.crearConsulta(formData).subscribe(() => {
+    this.consultaGuardada.emit();
+    this.cerrar.emit();
+  });
+}
 
   onOverlayClick(event: MouseEvent) {
     if ((event.target as HTMLElement).classList.contains('modal-overlay')) {
@@ -159,5 +186,26 @@ export class NuevaConsulta implements OnInit {
 
   textarea.style.height = 'auto'; // reset
   textarea.style.height = textarea.scrollHeight + 'px'; // crecer
+}
+onFileSelected(event: any) {
+  const file = event.target.files[0];
+  if (file) {
+    this.archivoSeleccionado = file;
+    this.archivoSeleccionadoNombre = file.name;
+  }
+}
+
+onDragOver(event: DragEvent) {
+  event.preventDefault();
+}
+
+onDrop(event: DragEvent) {
+  event.preventDefault();
+
+  if (event.dataTransfer?.files.length) {
+    const file = event.dataTransfer.files[0];
+    this.archivoSeleccionado = file;
+    this.archivoSeleccionadoNombre = file.name;
+  }
 }
 }

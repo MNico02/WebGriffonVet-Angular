@@ -24,7 +24,7 @@ export class NuevaAlergia implements OnInit {
   nuevaAlergiaNombre = '';
   agregandoAlergia = false;
 
-  severidades = ['LEVE', 'MEDIA', 'ALTA'];
+  severidades = ['LEVE', 'MODERADA', 'GRAVE'];
 
   form: alergiaMascotaRequest = {
     id_mascota: 0,

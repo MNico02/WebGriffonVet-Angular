@@ -153,4 +153,7 @@ export class HistorialClinicoAdmin implements AfterViewInit {
       castrado: m.castrado ?? false,
     };
   });
+  esImagen(url: string): boolean {
+  return /\.(jpg|jpeg|png|webp)$/i.test(url);
+}
 }

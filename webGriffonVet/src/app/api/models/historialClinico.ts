@@ -78,6 +78,7 @@ export interface EstudioRequest{
   tipo_estudio: string;
   resultado: string;
   observaciones: string;
+  archivo?: File | null; 
 }
 
 export interface ArchivoRequest{

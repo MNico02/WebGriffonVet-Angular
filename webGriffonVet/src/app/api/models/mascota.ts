@@ -31,12 +31,14 @@ export interface vacuna{
   nombre: string;
   fecha_aplicacion: Date;
   proxima_dosis: Date;
+  observaciones?:string;
 }
 export interface desparasitacion{
   nombre: string;
+  tipo:string;
   fecha_aplicacion: Date;
   proxima_dosis: Date;
-  tipo:string;
+  observaciones?:string;
 }
 export interface enfermedad{
   nombre:string;
