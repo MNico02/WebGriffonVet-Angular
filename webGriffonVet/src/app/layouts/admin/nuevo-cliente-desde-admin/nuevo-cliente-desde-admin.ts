@@ -33,7 +33,8 @@ export class NuevoClienteDesdeAdmin {
       fecha_nacimiento: '',
       sexo: '',
       tipo_pelaje: '',
-      observaciones: ''
+      observaciones: '',
+      castrado: false 
     }
   };
 

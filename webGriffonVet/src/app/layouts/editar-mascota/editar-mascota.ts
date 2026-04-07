@@ -35,10 +35,14 @@ export class EditarMascota implements OnInit {
     comportamiento: '',
     observaciones: '',
     fecha_nacimiento: '',
+    castrado: false,
   };
 
   ngOnInit() {
-    this.form = { ...this.mascota() };
+    this.form = {
+      ...this.mascota(),
+      castrado: this.mascota().castrado ?? false
+    };
     console.log('Payload editar mascota:', this.mascota());
   }
 

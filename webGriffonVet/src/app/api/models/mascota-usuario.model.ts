@@ -9,6 +9,7 @@ export interface MascotaUsuario {
   comportamiento:string;
   observaciones:string;
   tipo_pelaje:string;
+  castrado?: boolean;
 }
 
 export interface MascotaRequest {

@@ -39,6 +39,7 @@ export class NuevaConsulta implements OnInit {
     motivo_consulta: '',
     anamnesis: '',
     examen_general: '',
+    diagnostico_presuntivo: '',
     diagnostico: '',
     tratamiento: '',
     observaciones: '',
@@ -153,4 +154,10 @@ export class NuevaConsulta implements OnInit {
       this.cerrar.emit();
     }
   }
+  autoResize(event: Event) {
+  const textarea = event.target as HTMLTextAreaElement;
+
+  textarea.style.height = 'auto'; // reset
+  textarea.style.height = textarea.scrollHeight + 'px'; // crecer
+}
 }

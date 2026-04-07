@@ -149,7 +149,8 @@ export class HistorialClinicoAdmin implements AfterViewInit {
       tipo_pelaje: m.tipo_pelaje ?? '',
       comportamiento: m.comportamiento ?? '',
       observaciones: m.observaciones ?? '',
-      fecha_nacimiento: m.fecha_nacimiento ? m.fecha_nacimiento.substring(0, 10) : ''
+      fecha_nacimiento: m.fecha_nacimiento ? m.fecha_nacimiento.substring(0, 10) : '',
+      castrado: m.castrado ?? false,
     };
   });
 }

@@ -70,6 +70,33 @@
         </div>
       </div>
 
+      <!-- CASTRADO -->
+<div class="flex flex-col gap-2">
+  <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">
+    Castrado
+  </label>
+
+  <div class="flex gap-2">
+    
+    <!-- SI -->
+    <button (click)="form.castrado = true"
+      [class]="form.castrado === true
+        ? 'flex-1 py-2 rounded-lg text-xs font-bold border-2 border-green-600 bg-green-100 text-green-700 transition-all'
+        : 'flex-1 py-2 rounded-lg text-xs font-bold border border-outline-variant/30 bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-all'">
+      Sí
+    </button>
+
+    <!-- NO -->
+    <button (click)="form.castrado = false"
+      [class]="form.castrado === false
+        ? 'flex-1 py-2 rounded-lg text-xs font-bold border-2 border-red-600 bg-red-100 text-red-700 transition-all'
+        : 'flex-1 py-2 rounded-lg text-xs font-bold border border-outline-variant/30 bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-all'">
+      No
+    </button>
+
+  </div>
+</div>
+
       <!-- Fecha de nacimiento -->
       <div class="flex flex-col gap-1">
         <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">Fecha de nacimiento</label>

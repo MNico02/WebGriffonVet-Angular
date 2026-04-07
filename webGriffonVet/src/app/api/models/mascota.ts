@@ -7,6 +7,7 @@ export interface Mascota {
   fecha_nacimiento: string;
   sexo: string;
   tipo_pelaje: string;
+  castrado:boolean;
   comportamiento: string;
   observaciones: string;
   pesos: peso[];

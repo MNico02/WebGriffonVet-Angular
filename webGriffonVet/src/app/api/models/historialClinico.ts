@@ -56,6 +56,7 @@ export interface NuevaConsultaRequest {
   motivo_consulta: string;
   anamnesis: string;
   examen_general: string;
+  diagnostico_presuntivo: string; 
   diagnostico: string;
   tratamiento: string;
   observaciones: string;
@@ -102,6 +103,7 @@ export interface editarMascotaRequest{
     comportamiento:string;
     observaciones:string;
     fecha_nacimiento:string;
+    castrado:boolean;
 }
 
 export interface Vacuna {

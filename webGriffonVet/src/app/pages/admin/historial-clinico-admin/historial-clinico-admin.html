@@ -1,6 +1,4 @@
-
-
-<main class="flex-1 overflow-y-auto bg-surface w-full">
+<div class="w-full">
 
   @if (mascotaResource.isLoading()) {
     <div class="flex items-center justify-center h-full min-h-[400px]">
@@ -122,6 +120,23 @@
               </p>
               <p class="font-bold text-on-surface">{{ paciente.tipo_pelaje }}</p>
             </div>
+
+            <div class="bg-surface-container-low rounded-lg p-4 border border-outline-variant">
+  <p class="text-xs text-on-surface-variant uppercase tracking-widest mb-1">
+    Castrado
+  </p>
+
+  <span
+    class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest"
+    [ngClass]="
+      paciente.castrado
+        ? 'bg-green-100 text-green-700'
+        : 'bg-red-100 text-red-700'
+    "
+  >
+    {{ paciente.castrado ? 'Sí' : 'No' }}
+  </span>
+</div>
           </div>
         </div>
       }
@@ -243,6 +258,38 @@
                       </div>
                     </div>
                   }
+                  <!-- 🔥 ESTUDIOS (VA JUSTO ACÁ ABAJO) -->
+@if (c.estudios && c.estudios.length) {
+  <div>
+    <p
+      class="text-xs font-black uppercase tracking-widest text-on-surface-variant mb-2"
+    >
+      Estudios
+    </p>
+
+    <div class="space-y-2">
+      @for (e of c.estudios; track $index) {
+        <div
+          class="flex flex-col gap-1 bg-surface-container px-4 py-3 rounded-lg border border-outline-variant/20"
+        >
+          <span class="font-bold text-sm text-on-surface">
+            🧪 {{ e.tipo_estudio }}
+          </span>
+
+          @if (e.resultado) {
+            <span
+              class="text-xs bg-tertiary-container/20 text-tertiary px-2 py-0.5 rounded-full self-start"
+            >
+              {{ e.resultado }}
+            </span>
+          }
+
+    
+        </div>
+      }
+    </div>
+  </div>
+}
                 </div>
               </div>
             } @empty {
@@ -650,4 +697,5 @@
     </div>
 
   }
-</main>
+</div>
+   
