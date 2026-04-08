@@ -24,6 +24,10 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/cliente/productos/productos').then((m) => m.Productos),
       },
       {
+        path: 'turnos',
+        loadComponent: () => import('./pages/cliente/turnos/turnos').then((m) => m.Turnos),
+      },
+      {
         path: 'mis-mascotas',
         loadComponent: () => import('./pages/cliente/mascotas/mascotas').then((m) => m.Mascotas),
         canActivate: [authGuard, roleGuard(['CLIENTE'])],
@@ -61,14 +65,12 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./pages/admin/productos-admin/productos-admin').then((m) => m.ProductosAdmin),
           },
+          {
+            path: 'servicios',
+            loadComponent: () =>
+              import('./pages/admin/servicios-admin/servicios-admin').then((m) => m.ServiciosAdmin),
+          },
         ],
-      },
-      {
-        path: 'historialClinico/:id',
-        loadComponent: () =>
-          import('./pages/admin/historial-clinico-admin/historial-clinico-admin').then(
-            (m) => m.HistorialClinicoAdmin,
-          ),
       },
     ],
   },

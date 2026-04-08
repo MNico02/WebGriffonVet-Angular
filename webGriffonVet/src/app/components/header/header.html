@@ -5,7 +5,7 @@
     <nav class="hidden md:flex items-center space-x-8 font-plus-jakarta text-sm tracking-tight">
       <a class="text-slate-600 hover:text-blue-600 transition-all" routerLink="/main/home" routerLinkActive="text-blue-700 font-bold border-b-2 border-blue-600">Inicio</a>
       <a class="text-slate-600 hover:text-blue-600 transition-all" routerLink="/main/productos" routerLinkActive="text-blue-700 font-bold border-b-2 border-blue-600">Productos</a>
-      <a class="text-slate-600 hover:text-blue-600 transition-all" href="#">Turnos</a>
+      <a class="text-slate-600 hover:text-blue-600 transition-all" routerLink="/main/turnos" routerLinkActive="text-blue-700 font-bold border-b-2 border-blue-600">Turnos</a>
       @if (isLoggedIn$ | async) {
           @if(!isAdmin){
             <a class="text-slate-600 hover:text-blue-600 transition-all" routerLink="/main/mis-mascotas" routerLinkActive="text-blue-700 font-bold border-b-2 border-blue-600">Mis Mascotas</a>

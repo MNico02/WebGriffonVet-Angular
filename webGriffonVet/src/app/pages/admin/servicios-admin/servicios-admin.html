@@ -1,1 +1,316 @@
-<p>servicios-admin works!</p>
+<main class="pt-24 pb-20 max-w-4xl mx-auto px-6 sm:px-8">
+
+  <!-- Header -->
+  <header class="mb-10">
+    <h1 class="font-headline text-4xl font-extrabold tracking-tighter text-on-surface mb-6">
+      Administrá tus servicios
+    </h1>
+    <div class="relative max-w-md">
+      <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/60">
+        search
+      </span>
+      <input
+        class="bg-surface-container-highest border-none rounded-md pl-12 pr-6 py-3 w-full focus:ring-2 focus:ring-primary transition-all"
+        placeholder="Buscá por nombre o descripción..."
+        type="text"
+        [value]="searchQuery()"
+        (input)="searchQuery.set($any($event.target).value)"
+      />
+    </div>
+  </header>
+
+  <!-- Loading -->
+  @if (serviciosResource.isLoading()) {
+    <div class="flex items-center justify-center py-20 text-on-surface-variant gap-3">
+      <span class="material-symbols-outlined animate-spin">progress_activity</span>
+      <span class="text-sm">Cargando servicios...</span>
+    </div>
+  }
+
+  <!-- Error -->
+  @if (serviciosResource.error()) {
+    <div class="flex items-center justify-center py-20 text-error gap-2">
+      <span class="material-symbols-outlined">error</span>
+      <span class="text-sm">Error al cargar los servicios.</span>
+    </div>
+  }
+
+  <!-- Lista de servicios -->
+  <div class="flex flex-col gap-4">
+
+    @for (servicio of serviciosFiltrados(); track servicio.id_servicio) {
+
+      <!-- MODO LECTURA -->
+      @if (editandoId() !== servicio.id_servicio) {
+        <div class="bg-surface-container-lowest rounded-2xl p-6 shadow-sm border border-outline-variant/10 flex gap-6 items-start group transition-all duration-200 hover:shadow-md">
+
+          <!-- Icono / Avatar -->
+          <div class="w-12 h-12 rounded-xl bg-primary-fixed flex items-center justify-center shrink-0">
+            <span class="material-symbols-outlined text-primary text-xl">medical_services</span>
+          </div>
+
+          <!-- Info -->
+          <div class="flex-1 min-w-0">
+            <p class="font-headline text-xl font-bold text-on-surface">{{ servicio.nombre }}</p>
+            <p class="text-on-surface-variant text-sm mt-1 mb-4 line-clamp-2">{{ servicio.descripcion }}</p>
+
+            <!-- Precios -->
+            <div class="flex flex-wrap gap-2">
+              @for (p of servicio.precios; track p.tamanio) {
+                <span class="inline-flex items-center gap-1.5 bg-surface-container px-3 py-1.5 rounded-full text-xs text-on-surface-variant border border-outline-variant/20">
+                  <span class="font-semibold text-on-surface">{{ p.tamanio }}</span>
+                  <span class="text-outline">·</span>
+                  <span class="font-bold text-primary">${{ p.precio }}</span>
+                  <span class="text-outline">·</span>
+                  <span>{{ p.duracion }} min</span>
+                </span>
+              }
+            </div>
+          </div>
+
+          <!-- Acciones -->
+          <div class="flex items-center gap-2 shrink-0">
+            <button
+              (click)="abrirEditar(servicio)"
+              class="w-10 h-10 flex items-center justify-center rounded-full border border-outline-variant/20 text-outline hover:text-primary hover:border-primary/30 transition-colors"
+              title="Editar"
+            >
+              <span class="material-symbols-outlined text-[18px]">edit</span>
+            </button>
+            <button
+              (click)="eliminar(servicio.id_servicio)"
+              class="w-10 h-10 flex items-center justify-center rounded-full border border-red-200 text-red-400 hover:bg-red-50 hover:text-red-600 transition-colors"
+              title="Eliminar"
+            >
+              <span class="material-symbols-outlined text-[18px]">delete</span>
+            </button>
+          </div>
+        </div>
+      }
+
+      <!-- MODO EDICIÓN INLINE -->
+      @if (editandoId() === servicio.id_servicio && editForm()) {
+        <div class="bg-surface-container-lowest rounded-2xl p-6 shadow-md border-2 border-primary/20 flex flex-col gap-5">
+
+          <p class="text-xs font-bold uppercase tracking-widest text-primary">Editando servicio</p>
+
+          <!-- Nombre -->
+          <div>
+            <label class="text-xs text-on-surface-variant mb-1 block">Nombre</label>
+            <input
+              class="w-full bg-surface-container-highest rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary outline-none transition-all border-none"
+              [value]="editForm()!.nombre"
+              (input)="updateEditField('nombre', $any($event.target).value)"
+              placeholder="Nombre del servicio"
+            />
+          </div>
+
+          <!-- Descripción -->
+          <div>
+            <label class="text-xs text-on-surface-variant mb-1 block">Descripción</label>
+            <textarea
+              class="w-full bg-surface-container-highest rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary outline-none transition-all border-none resize-none"
+              rows="2"
+              [value]="editForm()!.descripcion"
+              (input)="updateEditField('descripcion', $any($event.target).value)"
+              placeholder="Descripción del servicio"
+            ></textarea>
+          </div>
+
+          <!-- Precios -->
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <label class="text-xs text-on-surface-variant">Precios por tamaño</label>
+              <button
+                (click)="agregarPrecioEdicion()"
+                class="text-xs text-primary font-semibold hover:underline flex items-center gap-1"
+              >
+                <span class="material-symbols-outlined text-sm">add</span> Agregar
+              </button>
+            </div>
+            <div class="flex flex-col gap-2">
+              @for (p of editForm()!.precios; track $index; let i = $index) {
+                <div class="flex gap-2 items-center">
+                    <div class="flex flex-col flex-1 gap-1">
+                        <span class="text-[10px] text-on-surface-variant uppercase tracking-wide font-medium">Tamaño</span>  
+                        <select
+                            class="bg-surface-container-highest rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none border-none"
+                            [(ngModel)]="editForm()!.precios[i].tamanio"
+                        >
+                            @for (t of tamanios; track t) {
+                            <option [value]="t">{{ t }}</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="flex flex-col w-24 gap-1">
+                        <span class="text-[10px] text-on-surface-variant uppercase tracking-wide font-medium">Costo ($)</span>
+                        <input class="w-full bg-surface-container-highest rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none border-none" placeholder="0.00"
+                            [value]="p.precio"
+                            (input)="updateEditPrecio(i, 'precio', $any($event.target).value)"
+                        />
+                    </div>
+                    <div class="flex flex-col w-28 gap-1">
+                        <span class="text-[10px] text-on-surface-variant uppercase tracking-wide font-medium">Duración (min)</span>
+                        <input type="number" min="0" class="w-full bg-surface-container-highest rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none border-none" placeholder="0"
+                            [value]="p.duracion"
+                            (input)="updateEditPrecio(i, 'duracion', $any($event.target).value)"
+                        />
+                    </div>    
+                        @if (editForm()!.precios.length > 1) {
+                    <button
+                      (click)="eliminarPrecioEdicion(i)"
+                      class="text-red-400 hover:text-red-600 transition-colors"
+                    >
+                      <span class="material-symbols-outlined text-[18px]">remove_circle</span>
+                    </button>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Acciones edición -->
+          <div class="flex justify-end gap-3 pt-2">
+            <button
+              (click)="cancelarEditar()"
+              class="px-5 py-2 rounded-full text-sm text-on-surface-variant border border-outline-variant/30 hover:bg-surface-container transition-colors"
+            >
+              Cancelar
+            </button>
+            <button
+              (click)="guardarEdicion()"
+              [disabled]="guardando()"
+              class="px-5 py-2 rounded-full text-sm bg-primary text-on-primary font-semibold hover:opacity-90 transition-opacity flex items-center gap-2 disabled:opacity-60"
+            >
+              @if (guardando()) {
+                <span class="material-symbols-outlined animate-spin text-sm">progress_activity</span>
+              }
+              Guardar cambios
+            </button>
+          </div>
+        </div>
+      }
+    }
+
+    <!-- CARD NUEVA (formulario inline en blanco) -->
+    @if (!nuevaCard()) {
+      <!-- Card vacía / trigger -->
+      <div
+        (click)="abrirNueva()"
+        class="cursor-pointer border-2 border-dashed border-outline-variant/30 rounded-2xl p-8 flex items-center justify-center gap-4 hover:bg-surface-container-low hover:border-primary/30 transition-all group"
+      >
+        <div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center group-hover:scale-110 transition-transform">
+          <span class="material-symbols-outlined text-primary">add</span>
+        </div>
+        <div>
+          <p class="text-on-surface font-semibold text-sm">Agregar nuevo servicio</p>
+          <p class="text-on-surface-variant text-xs mt-0.5">Hacé click para completar los datos</p>
+        </div>
+      </div>
+    }
+
+    @if (nuevaCard()) {
+      <div class="bg-surface-container-lowest rounded-2xl p-6 shadow-md border-2 border-primary/20 flex flex-col gap-5">
+
+        <p class="text-xs font-bold uppercase tracking-widest text-primary">Nuevo servicio</p>
+
+        <!-- Nombre -->
+        <div>
+          <label class="text-xs text-on-surface-variant mb-1 block">Nombre</label>
+          <input
+            class="w-full bg-surface-container-highest rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary outline-none transition-all border-none"
+            [value]="nuevoServicio().nombre"
+            (input)="updateNuevoField('nombre', $any($event.target).value)"
+            placeholder="Nombre del servicio"
+          />
+        </div>
+
+        <!-- Descripción -->
+        <div>
+          <label class="text-xs text-on-surface-variant mb-1 block">Descripción</label>
+          <textarea
+            class="w-full bg-surface-container-highest rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary outline-none transition-all border-none resize-none"
+            rows="2"
+            [value]="nuevoServicio().descripcion"
+            (input)="updateNuevoField('descripcion', $any($event.target).value)"
+            placeholder="Descripción del servicio"
+          ></textarea>
+        </div>
+
+        <!-- Precios -->
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <label class="text-xs text-on-surface-variant">Precios por tamaño</label>
+            <button
+              (click)="agregarPrecioNuevo()"
+              class="text-xs text-primary font-semibold hover:underline flex items-center gap-1"
+            >
+              <span class="material-symbols-outlined text-sm">add</span> Agregar
+            </button>
+          </div>
+          <div class="flex flex-col gap-2">
+            @for (p of nuevoServicio().precios; track $index; let i = $index) {
+                <div class="flex gap-2 items-center">
+                    <div class="flex flex-col flex-1 gap-1">
+                        <span class="text-[10px] text-on-surface-variant uppercase tracking-wide font-medium">Tamaño</span>  
+                        <select
+                            class="bg-surface-container-highest rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none border-none"
+                        [(ngModel)]="nuevoServicio().precios[i].tamanio"
+                        >
+                        @for (t of tamanios; track t) {
+                            <option [value]="t">{{ t }}</option>
+                        }
+                        </select>
+                    </div>
+                   <div class="flex flex-col w-24 gap-1">
+                        <span class="text-[10px] text-on-surface-variant uppercase tracking-wide font-medium">Costo ($)</span>
+                        <input class="w-full bg-surface-container-highest rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none border-none" placeholder="0.00"   
+                        [value]="p.precio"
+                        (input)="updateNuevoPrecio(i, 'precio', $any($event.target).value)"
+                        />
+                    </div>
+                    <div class="flex flex-col w-28 gap-1">
+                        <span class="text-[10px] text-on-surface-variant uppercase tracking-wide font-medium">Duración (min)</span>
+                        <input type="number" min="0" class="w-full bg-surface-container-highest rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none border-none" placeholder="0"
+                        [value]="p.duracion"
+                        (input)="updateNuevoPrecio(i, 'duracion', $any($event.target).value)"
+                        />
+                    </div>
+                @if (nuevoServicio().precios.length > 1) {
+                  <button
+                    (click)="eliminarPrecioNuevo(i)"
+                    class="text-red-400 hover:text-red-600 transition-colors"
+                  >
+                    <span class="material-symbols-outlined text-[18px]">remove_circle</span>
+                  </button>
+                }
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Acciones -->
+        <div class="flex justify-end gap-3 pt-2">
+          <button
+            (click)="cancelarNueva()"
+            class="px-5 py-2 rounded-full text-sm text-on-surface-variant border border-outline-variant/30 hover:bg-surface-container transition-colors"
+          >
+            Cancelar
+          </button>
+          <button
+            (click)="guardarNuevo()"
+            [disabled]="insertando()"
+            class="px-5 py-2 rounded-full text-sm bg-primary text-on-primary font-semibold hover:opacity-90 transition-opacity flex items-center gap-2 disabled:opacity-60"
+          >
+            @if (insertando()) {
+              <span class="material-symbols-outlined animate-spin text-sm">progress_activity</span>
+            }
+            Guardar servicio
+          </button>
+        </div>
+
+      </div>
+    }
+
+  </div>
+</main>
