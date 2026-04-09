@@ -1,38 +1,53 @@
-import { Component, input, output, inject, OnInit, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { ProductoService } from '../../../core/services/producto-service';
-import { Producto, ProductoEditarRequest, Categoria } from '../../../api/models/producto';
+import {
+  Component,
+  input,
+  output,
+  inject,
+  OnInit,
+  signal,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
+import { ProductoService } from "../../../core/services/producto-service";
+import {
+  Producto,
+  ProductoEditarRequest,
+  Categoria,
+} from "../../../api/models/producto";
+import { ToastService } from "../../../core/services/toast.service";
+import { ErrorModalService } from "../../../core/services/error-modal";
 
 @Component({
-  selector: 'app-editar-producto',
+  selector: "app-editar-producto",
   imports: [CommonModule, FormsModule],
-  templateUrl: './editar-producto.html',
+  templateUrl: "./editar-producto.html",
 })
 export class EditarProducto implements OnInit {
   producto = input.required<Producto>();
   private service = inject(ProductoService);
+  private toast = inject(ToastService);
+  private errorModal = inject(ErrorModalService);
 
   cerrar = output<void>();
   productoEditado = output<void>();
 
   categorias: Categoria[] = [];
   cargandoCategorias = false;
-  nuevaCategoriaNombre = '';
+  nuevaCategoriaNombre = "";
   agregandoCategoria = false;
 
   guardando = signal(false);
-  error = signal<string | null>(null);
+
   imagenPreview = signal<string | null>(null);
   imagenArchivo: File | null = null;
 
   form: ProductoEditarRequest = {
     id_producto: 0,
-    nombre: '',
-    descripcion: '',
+    nombre: "",
+    descripcion: "",
     precio: null,
     id_categoria: 0,
-    imagen_url: '',
+    imagen_url: "",
     stock: null,
   };
 
@@ -62,7 +77,8 @@ export class EditarProducto implements OnInit {
       },
       error: () => {
         this.cargandoCategorias = false;
-        this.error.set('No se pudieron cargar las categorías.');
+        //this.error.set('No se pudieron cargar las categorías.');
+        this.errorModal.mostrar("No se pudieron cargar las categorías.");
       },
     });
   }
@@ -72,13 +88,14 @@ export class EditarProducto implements OnInit {
     this.agregandoCategoria = true;
     this.service.insertarCategoria(this.nuevaCategoriaNombre.trim()).subscribe({
       next: () => {
-        this.nuevaCategoriaNombre = '';
+        this.nuevaCategoriaNombre = "";
         this.agregandoCategoria = false;
         this.cargarCategorias();
       },
       error: () => {
         this.agregandoCategoria = false;
-        this.error.set('Error al agregar la categoría.');
+        //this.error.set('Error al agregar la categoría.');
+        this.errorModal.mostrar("Error al agregar la categoría.");
       },
     });
   }
@@ -88,7 +105,8 @@ export class EditarProducto implements OnInit {
     const file = input.files?.[0];
     if (!file) return;
     if (file.size > 5 * 1024 * 1024) {
-      this.error.set('La imagen no puede superar los 5MB.');
+      //this.error.set('La imagen no puede superar los 5MB.');
+      this.errorModal.mostrar("La imagen no puede superar los 5MB.");
       return;
     }
     this.imagenArchivo = file;
@@ -100,39 +118,46 @@ export class EditarProducto implements OnInit {
   quitarImagen() {
     this.imagenArchivo = null;
     this.imagenPreview.set(null);
-    this.form.imagen_url = '';
+    this.form.imagen_url = "";
   }
 
   guardar() {
-    this.error.set(null);
+    //this.error.set(null);
 
     if (!this.form.nombre.trim()) {
-      this.error.set('El nombre es obligatorio.');
+      // this.error.set('El nombre es obligatorio.');
+      this.errorModal.mostrar("El nombre es obligatorio.");
       return;
     }
     if (this.form.precio === null || this.form.precio < 0) {
-      this.error.set('Ingresá un precio válido.');
+      // this.error.set('Ingresá un precio válido.');
+      this.errorModal.mostrar("Ingresá un precio válido.");
       return;
     }
 
     this.guardando.set(true);
     const payload: ProductoEditarRequest = { ...this.form };
 
-    this.service.actualizarProducto(payload, this.imagenArchivo ?? undefined).subscribe({
-      next: () => {
-        this.guardando.set(false);
-        this.productoEditado.emit();
-        this.cerrar.emit();
-      },
-      error: () => {
-        this.guardando.set(false);
-        this.error.set('Ocurrió un error al guardar. Intentá de nuevo.');
-      },
-    });
+    this.service
+      .actualizarProducto(payload, this.imagenArchivo ?? undefined)
+      .subscribe({
+        next: () => {
+          this.guardando.set(false);
+          this.toast.mostrar("Producto actualizado correctamente");
+          this.productoEditado.emit();
+          this.cerrar.emit();
+        },
+        error: (err) => {
+          this.guardando.set(false);
+          //this.error.set('Ocurrió un error al guardar. Intentá de nuevo.');
+          const mensaje = err?.error?.mensaje || "Ocurrió un error al guardar.";
+          this.errorModal.mostrar(mensaje);
+        },
+      });
   }
 
   onOverlayClick(event: MouseEvent) {
-    if ((event.target as HTMLElement).classList.contains('bg-black\\/40')) {
+    if ((event.target as HTMLElement).classList.contains("bg-black\\/40")) {
       this.cerrar.emit();
     }
   }

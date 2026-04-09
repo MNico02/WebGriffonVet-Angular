@@ -33,17 +33,51 @@
       </div>
 
       <!-- Agregar vacuna nueva -->
-      <div class="flex flex-col gap-1 pb-1 border-b border-outline-variant/20">
-        <label class="text-xs text-on-surface-variant">¿No encontrás la vacuna? Agregá una nueva</label>
-        <div class="flex gap-2">
-          <input type="text" [(ngModel)]="nuevaVacunaNombre" placeholder="Nombre de la nueva vacuna"
-            class="flex-1 bg-surface-container rounded-lg px-3 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary" />
-          <button (click)="insertarVacuna()" [disabled]="agregandoVacuna || !nuevaVacunaNombre.trim()"
-            class="px-4 py-2 rounded-lg text-xs font-bold border border-secondary text-secondary hover:bg-secondary-container/20 transition-all disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap">
-            {{ agregandoVacuna ? 'Guardando...' : '+ Agregar' }}
-          </button>
-        </div>
-      </div>
+      <!-- Agregar vacuna nueva -->
+<div class="mt-2 p-3 rounded-xl bg-primary/5 border border-primary/20">
+
+  <!-- Header acción -->
+  <div class="flex items-center justify-between gap-2 flex-wrap">
+    
+    <div class="flex items-center gap-2">
+      <span class="text-lg">💡</span>
+      <p class="text-sm font-semibold text-primary">
+        ¿No encontrás la vacuna?
+      </p>
+    </div>
+
+    <button
+      (click)="mostrarNuevaVacuna.set(!mostrarNuevaVacuna())"
+      class="text-xs font-bold text-primary underline hover:opacity-80"
+    >
+      + Crear nueva
+    </button>
+
+  </div>
+
+  <!-- INPUT SOLO SI SE NECESITA -->
+  @if (mostrarNuevaVacuna()) {
+    <div class="flex gap-2 mt-3">
+      
+      <input
+        type="text"
+        [(ngModel)]="nuevaVacunaNombre"
+        placeholder="Ej: Antirrábica, Séxtuple..."
+        class="flex-1 bg-white rounded-lg px-3 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary"
+      />
+
+      <button
+        (click)="insertarVacuna()"
+        [disabled]="agregandoVacuna || !nuevaVacunaNombre.trim()"
+        class="px-4 py-2 rounded-lg bg-primary text-white text-xs font-bold hover:opacity-90 transition-all disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap"
+      >
+        {{ agregandoVacuna ? 'Guardando...' : '+ Agregar' }}
+      </button>
+
+    </div>
+  }
+
+</div>
 
       <!-- Fecha de aplicación -->
       <div class="flex flex-col gap-1">

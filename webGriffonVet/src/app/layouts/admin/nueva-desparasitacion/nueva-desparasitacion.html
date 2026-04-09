@@ -33,25 +33,57 @@
       </div>
 
       <!-- Agregar desparasitación nueva -->
-      <div class="flex flex-col gap-2 pb-3 border-b border-outline-variant/20">
-        <label class="text-xs text-on-surface-variant">¿No encontrás la desparasitación? Agregá una nueva</label>
-        <div class="grid grid-cols-2 gap-2">
-          <input type="text" [(ngModel)]="nuevaDesparasitacionNombre" placeholder="Nombre"
-            class="bg-surface-container rounded-lg px-3 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary" />
-          <select
-            [(ngModel)]="nuevaDesparasitacionTipo"
-            class="bg-surface-container rounded-lg px-3 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary"
-          >
-            <option value="">Tipo</option>
-            <option value="INTERNO">INTERNO</option>
-            <option value="EXTERNO">EXTERNO</option>
-          </select>
-          </div>
-        <button (click)="insertarTipoDesparasitacion()" [disabled]="agregandoDesparasitacion || !nuevaDesparasitacionNombre.trim()"
-          class="self-start px-4 py-2 rounded-lg text-xs font-bold border border-secondary text-secondary hover:bg-secondary-container/20 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
-          {{ agregandoDesparasitacion ? 'Guardando...' : '+ Agregar' }}
-        </button>
-      </div>
+      <div class="mt-2 p-3 rounded-xl bg-primary/5 border border-primary/20">
+
+  <!-- Header -->
+  <div class="flex items-center justify-between gap-2 flex-wrap">
+    <div class="flex items-center gap-2">
+      <span class="text-lg">💡</span>
+      <p class="text-sm font-semibold text-primary">
+        ¿No encontrás la desparasitación?
+      </p>
+    </div>
+
+    <button
+      (click)="mostrarNuevaDesparasitacion = !mostrarNuevaDesparasitacion"
+      class="text-xs font-bold text-primary underline hover:opacity-80"
+    >
+      + Crear nueva
+    </button>
+  </div>
+
+  <!-- FORM -->
+  @if (mostrarNuevaDesparasitacion) {
+    <div class="grid grid-cols-2 gap-2 mt-3">
+
+      <input
+        type="text"
+        [(ngModel)]="nuevaDesparasitacionNombre"
+        placeholder="Ej: Pipeta Frontline"
+        class="bg-white rounded-lg px-3 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary col-span-2"
+      />
+
+      <select
+        [(ngModel)]="nuevaDesparasitacionTipo"
+        class="bg-white rounded-lg px-3 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary"
+      >
+        <option value="">Tipo</option>
+        <option value="INTERNO">INTERNO</option>
+        <option value="EXTERNO">EXTERNO</option>
+      </select>
+
+      <button
+        (click)="insertarTipoDesparasitacion()"
+        [disabled]="agregandoDesparasitacion || !nuevaDesparasitacionNombre.trim()"
+        class="px-4 py-2 rounded-lg bg-primary text-white text-xs font-bold hover:opacity-90 transition-all disabled:opacity-40"
+      >
+        {{ agregandoDesparasitacion ? 'Guardando...' : '+ Agregar' }}
+      </button>
+
+    </div>
+  }
+
+</div>
 
       <!-- Fecha de aplicación -->
       <div class="flex flex-col gap-1">

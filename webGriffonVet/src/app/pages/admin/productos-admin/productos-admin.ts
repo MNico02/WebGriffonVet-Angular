@@ -14,17 +14,26 @@ import { Producto } from '../../../api/models/producto';
 })
 export class ProductosAdmin {
 
+  // 🧩 MODALES
   mostrarModal = signal(false);
   modalEditarAbierto = signal(false);
+  modalEliminarProducto = signal(false);
+
+  // 🧩 DATA
   productoSeleccionado = signal<Producto | null>(null);
+  productoAEliminar = signal<Producto | null>(null);
+
+  // 🔎 BUSCADOR
   searchQuery = signal('');
 
   constructor(private productoService: ProductoService) {}
 
+  // 📦 RESOURCE
   productosResource = rxResource({
     stream: () => this.productoService.obtenerProductos(),
   });
 
+  // 🔎 FILTRO
   productosFiltrados = computed(() => {
     const query = this.searchQuery().toLowerCase().trim();
     const productos = this.productosResource.value() ?? [];
@@ -37,27 +46,54 @@ export class ProductosAdmin {
     );
   });
 
-  abrirModal() { this.mostrarModal.set(true); }
-  onProductoGuardado() { this.mostrarModal.set(false); this.productosResource.reload(); }
+  // ➕ NUEVO PRODUCTO
+  abrirModal() {
+    this.mostrarModal.set(true);
+  }
 
-  abrirEditar(p: Producto) { this.productoSeleccionado.set(p); this.modalEditarAbierto.set(true); }
-  onProductoEditado() { this.modalEditarAbierto.set(false); this.productosResource.reload(); }
+  onProductoGuardado() {
+    this.mostrarModal.set(false);
+    this.productosResource.reload();
+  }
 
-  eliminar(id: number) {
-  const confirmar = confirm('¿Seguro que querés eliminar este producto?');
+  // ✏️ EDITAR
+  abrirEditar(p: Producto) {
+    this.productoSeleccionado.set(p);
+    this.modalEditarAbierto.set(true);
+  }
 
-  if (!confirmar) return;
+  onProductoEditado() {
+    this.modalEditarAbierto.set(false);
+    this.productosResource.reload();
+  }
 
-  this.productoService.eliminarProducto(id).subscribe({
-    next: () => {
-      // refrescar lista
-      this.onProductoGuardado(); 
-      // o el método que uses para recargar
-    },
-    error: (err) => {
-      console.error('Error al eliminar', err);
-      alert('Error al eliminar el producto');
-    }
-  });
-}
+  // 🗑️ ABRIR MODAL ELIMINAR
+  abrirEliminar(producto: Producto) {
+    this.productoAEliminar.set(producto);
+    this.modalEliminarProducto.set(true);
+  }
+
+  // ❌ CANCELAR
+  cancelarEliminarProducto() {
+    this.modalEliminarProducto.set(false);
+    this.productoAEliminar.set(null);
+  }
+
+  // ✅ CONFIRMAR ELIMINACIÓN
+  eliminarProductoConfirmado() {
+    const producto = this.productoAEliminar();
+    if (!producto) return;
+
+    this.productoService.eliminarProducto(producto.id_producto).subscribe({
+      next: () => {
+        this.modalEliminarProducto.set(false);
+        this.productoAEliminar.set(null);
+        this.productosResource.reload();
+      },
+      error: (err) => {
+        console.error('Error al eliminar', err);
+        alert('Error al eliminar el producto');
+      }
+    });
+  }
 }

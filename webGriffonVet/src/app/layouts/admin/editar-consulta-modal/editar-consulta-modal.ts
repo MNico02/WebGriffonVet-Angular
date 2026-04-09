@@ -1,21 +1,20 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { HistorialClinicoService } from '../../../core/services/historial-clinico-service';
-import { inject } from '@angular/core';
-import { ToastService } from '../../../core/services/toast.service';
-import { ErrorModalService } from '../../../core/services/error-modal';
+import { Component, Input, Output, EventEmitter } from "@angular/core";
+import { FormsModule } from "@angular/forms";
+import { CommonModule } from "@angular/common";
+import { HistorialClinicoService } from "../../../core/services/historial-clinico-service";
+import { inject } from "@angular/core";
+import { ToastService } from "../../../core/services/toast.service";
+import { ErrorModalService } from "../../../core/services/error-modal";
 
 @Component({
-  selector: 'app-editar-consulta-modal',
+  selector: "app-editar-consulta-modal",
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './editar-consulta-modal.html'
+  templateUrl: "./editar-consulta-modal.html",
 })
 export class EditarConsultaModal {
-
-private toast = inject(ToastService);
-private errorModal = inject(ErrorModalService);
+  private toast = inject(ToastService);
+  private errorModal = inject(ErrorModalService);
 
   @Input() consulta: any;
   @Output() cerrar = new EventEmitter();
@@ -24,12 +23,12 @@ private errorModal = inject(ErrorModalService);
   form: any = {};
 
   nuevoEstudio = {
-    tipo_estudio: '',
-    observaciones: ''
+    tipo_estudio: "",
+    observaciones: "",
   };
 
   archivos: File[] = [];
-  archivoSeleccionadoNombre = '';
+  archivoSeleccionadoNombre = "";
 
   constructor(private historialService: HistorialClinicoService) {}
 
@@ -42,7 +41,7 @@ private errorModal = inject(ErrorModalService);
   }
 
   onOverlayClick(event: MouseEvent) {
-    if ((event.target as HTMLElement).classList.contains('modal-overlay')) {
+    if ((event.target as HTMLElement).classList.contains("modal-overlay")) {
       this.cerrar.emit();
     }
   }
@@ -62,44 +61,43 @@ private errorModal = inject(ErrorModalService);
     this.form.estudios.push({
       tipo_estudio: this.nuevoEstudio.tipo_estudio,
       observaciones: this.nuevoEstudio.observaciones,
-      resultado: ''
+      resultado: "",
     });
 
-    this.nuevoEstudio = { tipo_estudio: '', observaciones: '' };
-    this.archivoSeleccionadoNombre = '';
+    this.nuevoEstudio = { tipo_estudio: "", observaciones: "" };
+    this.archivoSeleccionadoNombre = "";
   }
 
   guardar() {
     const formData = new FormData();
 
-    formData.append('consulta', JSON.stringify(this.form));
+    formData.append("consulta", JSON.stringify(this.form));
 
-    this.archivos.forEach(f => {
-      formData.append('archivos', f);
+    this.archivos.forEach((f) => {
+      formData.append("archivos", f);
     });
 
-    this.historialService.editarConsulta(formData)
-  .subscribe({
-    next: () => {
+    this.historialService.editarConsulta(formData).subscribe({
+      next: () => {
+        // ✅ TOAST ÉXITO
+        this.toast.mostrar("Consulta actualizada correctamente");
 
-      // ✅ TOAST ÉXITO
-      this.toast.mostrar('Consulta actualizada correctamente');
+        this.consultaActualizada.emit();
+        this.cerrar.emit();
+      },
 
-      this.consultaActualizada.emit();
-      this.cerrar.emit();
-    },
+      error: (err) => {
+        console.error(err);
 
-    error: (err) => {
-      console.error(err);
+        // ❌ MODAL ERROR (mensaje del backend)
+        const mensaje =
+          err?.error?.mensaje || "Error al actualizar la consulta";
 
-      // ❌ MODAL ERROR (mensaje del backend)
-      const mensaje = err?.error?.mensaje || 'Error al actualizar la consulta';
-
-      this.errorModal.mostrar(mensaje);
-    }
-  });
+        this.errorModal.mostrar(mensaje);
+      },
+    });
   }
   eliminarEstudio(index: number) {
-  this.form.estudios.splice(index, 1);
-}
+    this.form.estudios.splice(index, 1);
+  }
 }

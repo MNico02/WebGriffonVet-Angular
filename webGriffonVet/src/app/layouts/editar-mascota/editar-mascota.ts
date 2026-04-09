@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HistorialClinicoService } from '../../core/services/historial-clinico-service';
 import { editarMascotaRequest } from '../../api/models/historialClinico';
-
+import { ToastService } from '../../core/services/toast.service';
+import { ErrorModalService } from '../../core/services/error-modal';
 @Component({
   selector: 'app-editar-mascota',
   imports: [CommonModule, FormsModule],
@@ -15,7 +16,8 @@ export class EditarMascota implements OnInit {
   usuarioId = input.required<number>();
   mascota = input.required<editarMascotaRequest>();
   private service = inject(HistorialClinicoService);
-
+private toast = inject(ToastService);
+private errorModal = inject(ErrorModalService);
   cerrar = output<void>();
   mascotaEditada = output<void>();
 
@@ -47,18 +49,66 @@ export class EditarMascota implements OnInit {
   }
 
   guardar() {
-    const payload: editarMascotaRequest = {
-      ...this.form,
-      id_mascota: this.mascotaId(),
-    };
 
-    console.log('Payload editar mascota:', payload);
+  // 🔒 VALIDACIONES
+  if (!this.form.nombre.trim()) {
+    this.errorModal.mostrar('El nombre es obligatorio');
+    return;
+  }
 
-    this.service.editarMascota(payload).subscribe(() => {
+ if (!this.form.especie.trim()) {
+    this.errorModal.mostrar('Seleccioná una especie');
+    return;
+  }
+if (!this.form.raza.trim()) {
+    this.errorModal.mostrar('Seleccioná una raza');
+    return;
+  }
+  if (!this.form.tamanio.trim()) {
+    this.errorModal.mostrar('Seleccioná un tamaño');
+    return;
+  }
+if (!this.form.fecha_nacimiento.trim()) {
+    this.errorModal.mostrar('Seleccioná la fecha de nacimiento');
+    return;
+  }
+  if (!this.form.sexo.trim()) {
+    this.errorModal.mostrar('Seleccioná el sexo');
+    return;
+  }
+
+  if (!this.form.tipo_pelaje.trim()) {
+    this.errorModal.mostrar('selecciona un pelaje');
+    return;
+  }
+
+  // 🚀 PAYLOAD
+  const payload: editarMascotaRequest = {
+    ...this.form,
+    id_mascota: this.mascotaId(),
+    id_usuario: this.usuarioId(),
+  };
+
+  console.log('Payload editar mascota:', payload);
+
+  this.service.editarMascota(payload).subscribe({
+    next: () => {
+
+      // ✅ TOAST
+      this.toast.mostrar('Mascota actualizada correctamente');
+
       this.mascotaEditada.emit();
       this.cerrar.emit();
-    });
-  }
+    },
+    error: (err) => {
+
+      const mensaje = err?.error?.mensaje || 'Error al actualizar la mascota';
+
+      // ❌ MODAL
+      this.errorModal.mostrar(mensaje);
+    }
+  });
+}
 
   onOverlayClick(event: MouseEvent) {
     if ((event.target as HTMLElement).classList.contains('modal-overlay')) {

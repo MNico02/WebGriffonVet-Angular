@@ -26,6 +26,7 @@ export interface alergia{
   nombre: string;
   severidad: string;
   observaciones: string;
+  fecha_registro: Date;
 }
 export interface vacuna{
   nombre: string;
@@ -44,6 +45,7 @@ export interface enfermedad{
   nombre:string;
   estado:string;
   fecha_diagnostico:Date;
+  observaciones:string;
 }
 export interface historia_clinica{
   id_historia_clinica: number;
