@@ -14,9 +14,11 @@ export class ServicioService {
 
   getServicios(): Observable<servicio[]> {
     return this.http
-      .get<{ servicios: servicio[] }>(`${this.apiUrl}/ObtenerServicios`, {})
-      .pipe(map((response) => response.servicios ?? []));
-  }
+    .get<{ success: number; mensaje: string; servicios: servicio[] }>(
+      `${this.apiUrl}/ObtenerServicios`
+    )
+    .pipe(map((response) => response.servicios ?? []));
+}
   insertarServicio(payload: servicioRequest): Observable<any> {
     return this.http.post(`${this.apiUrl}/InsertarServicio`, payload);
   }

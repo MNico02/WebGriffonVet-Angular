@@ -17,7 +17,7 @@ import {
   Medicamento,
   editarMascotaRequest
 } from '../../api/models/historialClinico';
-
+import { map } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
@@ -26,8 +26,14 @@ export class HistorialClinicoService {
   private apiUrl = environment.apiUrl;
 
   obtenerAlergia(): Observable<alergia[]> {
-    return this.http.get<alergia[]>(`${this.apiUrl}/ObtenerAlergias`);
-  }
+  return this.http
+    .get<{ success: number; mensaje: string; alergias: alergia[] }>(
+      `${this.apiUrl}/ObtenerAlergias`
+    )
+    .pipe(
+      map(res => res.alergias ?? [])
+    );
+}
 
   insertarAlergiaCatalogo(nombre: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/InsertarAlergiaCatalogo`, { nombre });
@@ -38,8 +44,14 @@ export class HistorialClinicoService {
   }
 
   obtenerVacunas(): Observable<Vacuna[]> {
-    return this.http.get<Vacuna[]>(`${this.apiUrl}/ObtenerVacunas`);
-  }
+  return this.http
+    .get<{ success: number; mensaje: string; vacunas: Vacuna[] }>(
+      `${this.apiUrl}/ObtenerVacunas`
+    )
+    .pipe(
+      map(res => res.vacunas ?? [])
+    );
+}
 
   insertarVacuna(nombre: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/InsertarVacuna`, { nombre });
@@ -53,8 +65,14 @@ export class HistorialClinicoService {
     return this.http.post(`${this.apiUrl}/InsertarPeso`, payload);
   }
   obtenerEnfermedades(): Observable<enfermedad[]> {
-    return this.http.get<enfermedad[]>(`${this.apiUrl}/ObtenerEnfermedades`);
-  }
+  return this.http
+    .get<{ success: number; mensaje: string; enfermedades: enfermedad[] }>(
+      `${this.apiUrl}/ObtenerEnfermedades`
+    )
+    .pipe(
+      map(res => res.enfermedades ?? [])
+    );
+}
 
   insertarEnfermedadCatalogo(nombre: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/InsertarEnfermedadCatalogo`, { nombre });
@@ -65,8 +83,14 @@ export class HistorialClinicoService {
   }
 
   obtenerDesparasitaciones(): Observable<desparasitacion[]> {
-    return this.http.get<desparasitacion[]>(`${this.apiUrl}/ObtenerDesparasitaciones`);
-  }
+  return this.http
+    .get<{ success: number; mensaje: string; desparasitaciones: desparasitacion[] }>(
+      `${this.apiUrl}/ObtenerDesparasitaciones`
+    )
+    .pipe(
+      map(res => res.desparasitaciones ?? [])
+    );
+}
 
   insertarDesparasitacion(payload: desparasitacionMascotaRequest): Observable<any> {
     return this.http.post(`${this.apiUrl}/InsertarDesparasitacion`, payload);
@@ -81,8 +105,14 @@ export class HistorialClinicoService {
 }
 
   obtenerMedicamentos(): Observable<Medicamento[]> {
-    return this.http.get<Medicamento[]>(`${this.apiUrl}/ObtenerMedicamentos`);
-  }
+  return this.http
+    .get<{ success: number; mensaje: string; medicamentos: Medicamento[] }>(
+      `${this.apiUrl}/ObtenerMedicamentos`
+    )
+    .pipe(
+      map(res => res.medicamentos ?? [])
+    );
+}
 
   insertarMedicamento(nombre: string): Observable<Medicamento> {
     return this.http.post<Medicamento>(`${this.apiUrl}/InsertarMedicamento`, { nombre });
@@ -92,6 +122,11 @@ export class HistorialClinicoService {
     return this.http.put(`${this.apiUrl}/actualizarMascotas`, payload);
   }
   editarConsulta(formData: FormData): Observable<any> {
-  return this.http.put(`${this.apiUrl}/ActualizarConsultaClinica`, formData);
-}
+    return this.http.put(`${this.apiUrl}/ActualizarConsultaClinica`, formData);
+  }
+  eliminarConsulta(payload: any): Observable<any> {
+  return this.http.delete(`${this.apiUrl}/EliminarConsulta`, {
+    body: payload
+    });
+  }
 }

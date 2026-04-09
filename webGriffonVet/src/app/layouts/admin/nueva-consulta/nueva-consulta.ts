@@ -5,6 +5,11 @@ import { NuevoTratamientoRequest, NuevaConsultaRequest } from '../../../api/mode
 import { HistorialClinicoService } from '../../../core/services/historial-clinico-service';
 import { Medicamento } from '../../../api/models/historialClinico';
 
+import { ToastService } from '../../../core/services/toast.service';
+import { ErrorModalService } from '../../../core/services/error-modal';
+
+
+
 export interface NuevoEstudioRequest {
   tipo_estudio: string;
   resultado: string;
@@ -21,6 +26,9 @@ export class NuevaConsulta implements OnInit {
   mascotaId = input.required<number>();
   usuarioId = input.required<number>();
   private service = inject(HistorialClinicoService);
+
+  private toast = inject(ToastService);
+private errorModal = inject(ErrorModalService);
 
   cerrar = output<void>();
   consultaGuardada = output<void>();
@@ -170,10 +178,24 @@ archivoSeleccionadoNombre = '';
 
   formData.append('consulta', JSON.stringify(payload));
 
-  this.service.crearConsulta(formData).subscribe(() => {
+  this.service.crearConsulta(formData).subscribe({
+  next: () => {
+
+    // ✅ TOAST ÉXITO
+    this.toast.mostrar('Consulta creada correctamente');
+
     this.consultaGuardada.emit();
     this.cerrar.emit();
-  });
+  },
+
+  error: (err) => {
+    console.error(err);
+
+    // ❌ MODAL ERROR
+    const mensaje = err?.error?.mensaje || 'Error al crear la consulta';
+    this.errorModal.mostrar(mensaje);
+  }
+});
 }
 
   onOverlayClick(event: MouseEvent) {

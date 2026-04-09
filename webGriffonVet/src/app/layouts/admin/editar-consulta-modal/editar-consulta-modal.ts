@@ -2,6 +2,9 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HistorialClinicoService } from '../../../core/services/historial-clinico-service';
+import { inject } from '@angular/core';
+import { ToastService } from '../../../core/services/toast.service';
+import { ErrorModalService } from '../../../core/services/error-modal';
 
 @Component({
   selector: 'app-editar-consulta-modal',
@@ -10,6 +13,9 @@ import { HistorialClinicoService } from '../../../core/services/historial-clinic
   templateUrl: './editar-consulta-modal.html'
 })
 export class EditarConsultaModal {
+
+private toast = inject(ToastService);
+private errorModal = inject(ErrorModalService);
 
   @Input() consulta: any;
   @Output() cerrar = new EventEmitter();
@@ -73,10 +79,25 @@ export class EditarConsultaModal {
     });
 
     this.historialService.editarConsulta(formData)
-      .subscribe(() => {
-        this.consultaActualizada.emit();
-        this.cerrar.emit();
-      });
+  .subscribe({
+    next: () => {
+
+      // ✅ TOAST ÉXITO
+      this.toast.mostrar('Consulta actualizada correctamente');
+
+      this.consultaActualizada.emit();
+      this.cerrar.emit();
+    },
+
+    error: (err) => {
+      console.error(err);
+
+      // ❌ MODAL ERROR (mensaje del backend)
+      const mensaje = err?.error?.mensaje || 'Error al actualizar la consulta';
+
+      this.errorModal.mostrar(mensaje);
+    }
+  });
   }
   eliminarEstudio(index: number) {
   this.form.estudios.splice(index, 1);

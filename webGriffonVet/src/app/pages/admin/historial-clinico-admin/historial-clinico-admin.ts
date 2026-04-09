@@ -12,14 +12,21 @@ import { NuevaAlergia } from '../../../layouts/admin/nueva-alergia/nueva-alergia
 import { EditarMascota } from '../../../layouts/editar-mascota/editar-mascota';
 import { editarMascotaRequest } from '../../../api/models/historialClinico';
 import { EditarConsultaModal } from '../../../layouts/admin/editar-consulta-modal/editar-consulta-modal';
+import { HistorialClinicoService } from '../../../core/services/historial-clinico-service';
+import { ToastService } from '../../../core/services/toast.service';
 @Component({
   selector: 'app-historial-clinico-admin',
-  imports: [CommonModule, NuevaConsulta, NuevaVacunacion, NuevaDesparasitacion, NuevoPeso, NuevaEnfermedad, NuevaAlergia, EditarMascota,EditarConsultaModal],
+  imports: [CommonModule, NuevaConsulta, NuevaVacunacion, NuevaDesparasitacion, NuevoPeso, NuevaEnfermedad, NuevaAlergia, EditarMascota,EditarConsultaModal ],
   templateUrl: './historial-clinico-admin.html',
   styleUrl: './historial-clinico-admin.css',
 })
 export class HistorialClinicoAdmin implements AfterViewInit {  
+
   private mascotaService = inject(MascotaService);
+  private historialService = inject(HistorialClinicoService);
+  private toast = inject(ToastService);
+
+
 
   mascotaId = input.required<number>();
   usuarioId = input.required<number>();
@@ -40,15 +47,16 @@ export class HistorialClinicoAdmin implements AfterViewInit {
   modalEnfermedadAbierto = signal(false);
   modalAlergiaAbierto = signal(false);
   modalEditarAbierto = signal(false);
-
-modalEditarConsulta = signal(false);
-consultaSeleccionada = signal<any | null>(null);
+  modalEditarConsulta = signal(false);
+  modalEliminarConsulta = signal(false);
+  consultaSeleccionada = signal<any | null>(null);
 
   @ViewChild('tabsContainer') tabsContainer!: ElementRef<HTMLDivElement>;
 
   thumbWidth = 100;
   thumbLeft = 0;
 
+consultaAEliminar = signal<any | null>(null);
   tabs = [
     { id: 'info',           label: 'Info General',   icono: '📋' },
     { id: 'consultas',      label: 'Consultas',       icono: '🧾', count: true },
@@ -156,6 +164,7 @@ consultaSeleccionada = signal<any | null>(null);
       castrado: m.castrado ?? false,
     };
   });
+
   esImagen(url: string): boolean {
   return /\.(jpg|jpeg|png|webp)$/i.test(url);
 }
@@ -163,5 +172,36 @@ consultaSeleccionada = signal<any | null>(null);
 abrirEditarConsulta(c: any) {
   this.consultaSeleccionada.set(c);
   this.modalEditarConsulta.set(true);
+}
+confirmarEliminarConsulta(c: any) {
+  this.consultaAEliminar.set(c);
+  this.modalEliminarConsulta.set(true);
+}
+
+cancelarEliminar() {
+  this.modalEliminarConsulta.set(false);
+  this.consultaAEliminar.set(null);
+}
+
+eliminarConsultaConfirmada() {
+  const c = this.consultaAEliminar();
+
+  if (!c) return;
+
+  this.historialService.eliminarConsulta({
+    id_consulta: c.id_consulta
+  }).subscribe({
+    next: () => {
+      this.mascotaResource.reload();
+      this.modalEliminarConsulta.set(false);
+      this.consultaAEliminar.set(null);
+      this.toast.mostrar('Consulta eliminada correctamente');
+    },
+    error: (err) => {
+      console.error(err);
+      this.modalEliminarConsulta.set(false);
+      this.toast.mostrar('Error al eliminar la consulta', 'error');
+    }
+  });
 }
 }

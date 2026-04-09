@@ -249,6 +249,15 @@
             >
               Editar
             </button>
+
+             <!-- 🗑 ELIMINAR -->
+  <button
+    (click)="confirmarEliminarConsulta(c)"
+    class="px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest 
+    bg-red-500 text-white hover:bg-red-600 transition-all shadow-sm flex items-center gap-1"
+  >
+    🗑 Eliminar
+  </button>
             <span
               class="text-xs text-on-surface-variant bg-surface-container px-3 py-1 rounded-full border border-outline-variant/30"
             >
@@ -935,4 +944,37 @@
   </div>
 
   }
+  @if (modalEliminarConsulta()) {
+  <div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+
+    <div class="bg-white rounded-xl shadow-xl p-6 w-[380px] animate-fade-in">
+
+      <p class="text-center text-sm font-semibold text-gray-800 mb-6">
+        ¿Estás seguro que deseas eliminar esta consulta?
+      </p>
+
+      <p class="text-center text-xs text-gray-500 mb-6">
+        Motivo: {{ consultaAEliminar()?.motivo_consulta }}
+      </p>
+
+      <div class="flex justify-end gap-2">
+        <button
+          (click)="cancelarEliminar()"
+          class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-sm"
+        >
+          Cancelar
+        </button>
+
+        <button
+          (click)="eliminarConsultaConfirmada()"
+          class="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 text-sm"
+        >
+          Eliminar
+        </button>
+      </div>
+
+    </div>
+  </div>
+}
+
 </div>

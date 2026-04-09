@@ -15,7 +15,7 @@ export class ProductoService {
   // ──────────────── CATEGORÍAS ────────────────
 
   obtenerCategorias(): Observable<Categoria[]> {
-  return this.http.get<any>(`${this.apiUrl}/ObtenerCateorias`).pipe(
+  return this.http.get<any>(`${this.apiUrl}/ObtenerCategorias`).pipe(
     map(response => {
       const data = typeof response === 'string' ? JSON.parse(response) : response;
       return Array.isArray(data) ? data : (data.categorias ?? []);
