@@ -55,47 +55,63 @@
       </p>
     } @else {
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        @for (servicio of servicios(); track servicio.id_informacion; let i = $index) {
+  @for (servicio of servicios(); track servicio.id_informacion; let i = $index) {
+    <div
+      class="group relative overflow-hidden rounded-2xl min-h-[380px] flex flex-col transition-all border"
+      [class]="i === 1 ? 'bg-primary text-white hover:translate-y-[-4px] border-transparent' : 'bg-surface-container-lowest hover:shadow-2xl border-slate-100'"
+    >
+      <!-- Imagen superior -->
+      <div class="w-full h-44 overflow-hidden shrink-0 relative">
+        @if (servicio.imagen_url) {
+          <img
+            [src]="servicio.imagen_url"
+            [alt]="servicio.titulo"
+            class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+          <!-- overlay sutil -->
           <div
-            class="group relative overflow-hidden rounded-lg p-8 min-h-[350px] flex flex-col justify-between transition-all border"
-            [class]="i === 1 ? 'bg-primary text-white hover:translate-y-[-4px]' : 'bg-surface-container-lowest hover:shadow-2xl border-slate-100'"
+            class="absolute inset-0"
+            [class]="i === 1 ? 'bg-primary/40' : 'bg-black/5 group-hover:bg-black/10'"
+          ></div>
+        } @else {
+          <div
+            class="w-full h-full flex items-center justify-center"
+            [class]="i === 1 ? 'bg-white/10' : 'bg-primary-container/20'"
           >
-            <div
-              class="w-16 h-16 rounded-full flex items-center justify-center"
-              [class]="i === 1 ? 'bg-white/20' : 'bg-primary-container/10'"
-            >
-              @if (servicio.imagen_url) {
-                <img [src]="servicio.imagen_url" [alt]="servicio.titulo" class="w-10 h-10 object-contain" />
-              } @else {
-                <span class="material-symbols-outlined text-4xl" [class]="i === 1 ? 'text-white' : 'text-primary'">pets</span>
-              }
-            </div>
-            <div>
-              <span
-                class="text-xs font-bold uppercase tracking-widest mb-2 block"
-                [class]="i === 1 ? 'text-blue-100' : 'text-primary'"
-              >{{ servicio.categoria }}</span>
-              <h3
-                class="font-headline text-2xl font-bold mb-2"
-                [class]="i === 1 ? 'text-white' : 'text-blue-900'"
-              >{{ servicio.titulo }}</h3>
-              <p
-                class="text-sm mb-6"
-                [class]="i === 1 ? 'text-blue-100' : 'text-on-surface-variant'"
-              >{{ servicio.descripcion }}</p>
-              <button
-                class="flex items-center gap-2 font-bold text-xs uppercase tracking-widest group-hover:gap-4 transition-all"
-                [class]="i === 1 ? 'text-white' : 'text-primary'"
-              >
-                Ver más <span class="material-symbols-outlined text-sm">arrow_forward</span>
-              </button>
-            </div>
-            @if (i !== 1) {
-              <div class="absolute top-0 left-0 w-full h-1 bg-primary transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
-            }
+            <span
+              class="material-symbols-outlined text-6xl"
+              [class]="i === 1 ? 'text-white/60' : 'text-primary/40'"
+            >pets</span>
           </div>
         }
       </div>
+
+      <!-- Contenido -->
+      <div class="flex flex-col flex-1 justify-between p-6">
+        <div>
+          <span
+            class="text-xs font-bold uppercase tracking-widest mb-2 block"
+            [class]="i === 1 ? 'text-blue-100' : 'text-primary'"
+          >{{ servicio.categoria }}</span>
+          <h3
+            class="font-headline text-xl font-bold mb-2"
+            [class]="i === 1 ? 'text-white' : 'text-blue-900'"
+          >{{ servicio.titulo }}</h3>
+          <p
+            class="text-sm"
+            [class]="i === 1 ? 'text-blue-100' : 'text-on-surface-variant'"
+          >{{ servicio.descripcion }}</p>
+        </div>
+
+        
+      </div>
+
+      @if (i !== 1) {
+        <div class="absolute top-0 left-0 w-full h-1 bg-primary transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+      }
+    </div>
+  }
+</div>
     }
   </section>
 
@@ -106,7 +122,7 @@
         <h2 class="text-4xl font-extrabold text-primary tracking-tighter">Consejos del Veterinario</h2>
         <p class="text-on-surface-variant mt-2 text-lg">Guías expertas para el bienestar de tu mascota.</p>
       </div>
-      <a class="text-secondary font-bold flex items-center gap-2 group" href="#">
+      <a class="text-secondary font-bold flex items-center gap-2 group" href="#" routerLink="/main/blog">
         Ver todos los artículos
         <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
       </a>

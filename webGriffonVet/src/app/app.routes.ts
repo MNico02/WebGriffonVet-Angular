@@ -32,6 +32,10 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/cliente/mascotas/mascotas').then((m) => m.Mascotas),
         canActivate: [authGuard, roleGuard(['CLIENTE'])],
       },
+      {
+        path: 'blog',
+        loadComponent: () => import('./pages/cliente/blog/blog').then((m) => m.Blog),
+      },
     ],
   },
   {

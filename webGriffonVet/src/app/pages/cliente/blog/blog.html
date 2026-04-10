@@ -1,0 +1,165 @@
+<header class="max-w-7xl mx-auto px-8 py-16 text-center">
+  <br />
+  <h2
+    class="text-4xl md:text-6xl font-extrabold font-headline text-primary tracking-tighter mb-8 max-w-4xl mx-auto leading-[1.1]"
+  >
+    Consejos de Salud para tu Mascota
+  </h2>
+  <p
+    class="text-on-surface-variant text-lg md:text-xl max-w-2xl mx-auto mb-12 font-medium opacity-80"
+  >
+    Explora artículos creados por nuestros especialistas veterinarios para garantizar el bienestar
+    integral de tu compañero más fiel.
+  </p>
+  <div class="max-w-2xl mx-auto relative group">
+    <div class="absolute inset-y-0 left-5 flex items-center pointer-events-none text-outline">
+      <span class="material-symbols-outlined">search</span>
+    </div>
+    <input
+      class="w-full pl-14 pr-6 py-5 bg-surface-container-highest rounded-lg border-none focus:ring-2 focus:ring-secondary text-on-surface placeholder-on-surface-variant transition-all text-lg shadow-sm"
+      placeholder="Buscar artículos por tema o palabra clave..."
+      type="text"
+      (input)="onBusqueda($event)"
+    />
+  </div>
+</header>
+
+<section class="max-w-7xl mx-auto px-8 mb-12">
+  <div class="flex flex-wrap gap-3 justify-center">
+    @for (cat of categorias(); track cat) {
+      <button
+        (click)="seleccionarCategoria(cat)"
+        [class]="
+          cat === categoriaActiva()
+            ? 'bg-secondary text-on-secondary px-6 py-2 rounded-full text-sm font-semibold shadow-md'
+            : 'bg-secondary-fixed text-on-secondary-fixed-variant px-6 py-2 rounded-full text-sm font-semibold hover:bg-secondary-container transition-colors'
+        "
+      >
+        {{ cat }}
+      </button>
+    }
+  </div>
+</section>
+
+@if (loading()) {
+  <div class="text-center py-20 text-on-surface-variant">
+    <span class="material-symbols-outlined text-5xl animate-spin">progress_activity</span>
+    <p class="mt-4 text-lg">Cargando artículos...</p>
+  </div>
+}
+
+@if (error()) {
+  <div class="text-center py-20">
+    <span class="material-symbols-outlined text-5xl text-error">error</span>
+    <p class="mt-4 text-lg text-error">{{ error() }}</p>
+  </div>
+}
+
+@if (!loading() && !error()) {
+  <section class="max-w-7xl mx-auto px-8">
+
+    @if (noticiasFiltradas().length === 0) {
+      <div class="text-center py-20 text-on-surface-variant">
+        <span class="material-symbols-outlined text-5xl">search_off</span>
+        <p class="mt-4 text-lg">No se encontraron artículos.</p>
+      </div>
+    }
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+      @for (noticia of noticiasPagina(); track noticia.id_informacion) {
+        <article
+          class="group bg-surface-container-lowest rounded-lg overflow-hidden flex flex-col transition-all duration-300 hover:shadow-[rgba(25,28,30,0.06)_0px_40px_10px_0px]"
+        >
+          <div class="relative h-64 overflow-hidden">
+            @if (noticia.imagen_url) {
+              <img
+                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                [src]="noticia.imagen_url"
+                [alt]="noticia.titulo"
+              />
+            } @else {
+              <div
+                class="w-full h-full bg-surface-container-high flex items-center justify-center"
+              >
+                <span class="material-symbols-outlined text-5xl text-outline">pets</span>
+              </div>
+            }
+            <div class="absolute top-4 left-4">
+              <span
+                class="bg-white/90 backdrop-blur-md text-tertiary font-bold text-xs px-4 py-1.5 rounded-full shadow-sm"
+              >
+                {{ noticia.categoria | uppercase }}
+              </span>
+            </div>
+          </div>
+
+          <div class="p-8 flex-1 flex flex-col">
+            <h2
+              class="text-2xl font-bold font-headline text-primary mb-4 leading-tight group-hover:text-secondary transition-colors"
+            >
+              {{ noticia.titulo }}
+            </h2>
+            <p class="text-on-surface-variant text-sm leading-relaxed mb-6 opacity-80">
+              {{ noticia.descripcion }}
+            </p>
+            <div
+              class="mt-auto pt-6 flex items-center justify-between border-t border-outline-variant/15"
+            >
+              @if (noticia.fecha_publicacion) {
+                <span class="text-xs text-on-surface-variant">
+                  {{ formatearFecha(noticia.fecha_publicacion) }}
+                </span>
+              }
+              <span class="text-xs font-semibold text-outline ml-auto">
+                {{ calcularLectura(noticia.descripcion) }}
+              </span>
+            </div>
+          </div>
+        </article>
+      }
+    </div>
+
+    @if (totalPaginas() > 1) {
+      <div class="mt-20 text-center pb-12">
+        <div class="flex items-center justify-center gap-2">
+
+          <button
+            (click)="irAPagina(paginaActual() - 1)"
+            [disabled]="paginaActual() === 1"
+            class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-high transition-colors text-on-surface disabled:opacity-30 disabled:cursor-not-allowed"
+          >
+            <span class="material-symbols-outlined text-base">chevron_left</span>
+          </button>
+
+          @for (p of paginas(); track p) {
+            <button
+              (click)="irAPagina(p)"
+              [class]="
+                p === paginaActual()
+                  ? 'w-10 h-10 rounded-full flex items-center justify-center bg-primary text-on-primary font-bold'
+                  : 'w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-high transition-colors text-on-surface font-medium'
+              "
+            >
+              {{ p }}
+            </button>
+          }
+
+          <button
+            (click)="irAPagina(paginaActual() + 1)"
+            [disabled]="paginaActual() === totalPaginas()"
+            class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-high transition-colors text-on-surface disabled:opacity-30 disabled:cursor-not-allowed"
+          >
+            <span class="material-symbols-outlined text-base">chevron_right</span>
+          </button>
+
+        </div>
+
+        <p class="mt-4 text-xs text-on-surface-variant">
+          Página {{ paginaActual() }} de {{ totalPaginas() }}
+          · {{ noticiasFiltradas().length }} artículos
+        </p>
+      </div>
+    }
+
+  </section>
+}

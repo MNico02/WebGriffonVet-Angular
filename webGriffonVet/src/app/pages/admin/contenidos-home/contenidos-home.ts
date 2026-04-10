@@ -8,27 +8,11 @@ import {
   ServicioHome,
   NoticiasHome,
   infoHomeRequest,
+  infoHomeEdit,
 } from '../../../api/models/home';
 
 type TipoFiltro = 'todos' | 'noticias' | 'servicios';
 type TipoEdicion = 'noticia' | 'servicio';
-
-interface EditFormState {
-  id_informacion: number;
-  titulo: string;
-  descripcion: string;
-  id_categoria: number | null;
-  imagen_url: string;
-  fecha_publicacion: string;
-}
-
-interface NuevoItemState {
-  titulo: string;
-  descripcion: string;
-  id_categoria: number | null;
-  imagen_url: string;
-  fecha_publicacion: string;
-}
 
 @Component({
   selector: 'app-info-home-admin',
@@ -37,8 +21,10 @@ interface NuevoItemState {
   styleUrl: './contenidos-home.css',
 })
 export class ContenidosHome implements OnInit {
-
-  constructor(private homeService: HomeService, private productoService: ProductoService) {}
+  constructor(
+    private homeService: HomeService,
+    private productoService: ProductoService,
+  ) {}
 
   ngOnInit(): void {
     this.cargarCategorias();
@@ -50,10 +36,10 @@ export class ContenidosHome implements OnInit {
   });
 
   // ── Estado categorías ─────────────────────────────────────────────
-  categorias           = signal<Categoria[]>([]);
-  cargandoCategorias   = signal(false);
+  categorias = signal<Categoria[]>([]);
+  cargandoCategorias = signal(false);
   nuevaCategoriaNombre = signal('');
-  agregandoCategoria   = signal(false);
+  agregandoCategoria = signal(false);
 
   cargarCategorias(): void {
     this.cargandoCategorias.set(true);
@@ -87,43 +73,47 @@ export class ContenidosHome implements OnInit {
   }
 
   // ── Estado UI ─────────────────────────────────────────────────────
-  searchQuery  = signal('');
-  filtroTipo   = signal<TipoFiltro>('todos');
-  editandoId   = signal<number | null>(null);
+  searchQuery = signal('');
+  filtroTipo = signal<TipoFiltro>('todos');
+  editandoId = signal<number | null>(null);
   editandoTipo = signal<TipoEdicion | null>(null);
-  guardando    = signal(false);
-  insertando   = signal(false);
-  nuevaCard    = signal(false);
-  nuevoTipo    = signal<TipoEdicion>('noticia');
+  guardando = signal(false);
+  insertando = signal(false);
+  nuevaCard = signal(false);
+  nuevoTipo = signal<TipoEdicion>('noticia');
 
-  editForm = signal<EditFormState | null>(null);
+  editForm = signal<infoHomeEdit | null>(null);
 
-  nuevoItem = signal<NuevoItemState>({
+  nuevoItem = signal<infoHomeRequest>({
     titulo: '',
     descripcion: '',
-    id_categoria: null,
+    id_categoria: 0,
     imagen_url: '',
     fecha_publicacion: '',
   });
+  nuevoImagenPreview = signal<string | null>(null);
+  nuevoImagenArchivo: File | null = null;
+
+  // ── Imagen edición ────────────────────────────────────────────────
+  editImagenPreview = signal<string | null>(null);
+  editImagenArchivo: File | null = null;
 
   // ── Computed filtrados ────────────────────────────────────────────
   noticiasFiltradas = computed(() => {
-    const query    = this.searchQuery().toLowerCase().trim();
+    const query = this.searchQuery().toLowerCase().trim();
     const noticias = this.homeResource.value()?.noticias ?? [];
     if (!query) return noticias;
-    return noticias.filter(n =>
-      n.titulo.toLowerCase().includes(query) ||
-      n.descripcion?.toLowerCase().includes(query)
+    return noticias.filter(
+      (n) => n.titulo.toLowerCase().includes(query) || n.descripcion?.toLowerCase().includes(query),
     );
   });
 
   serviciosFiltrados = computed(() => {
-    const query     = this.searchQuery().toLowerCase().trim();
+    const query = this.searchQuery().toLowerCase().trim();
     const servicios = this.homeResource.value()?.servicios ?? [];
     if (!query) return servicios;
-    return servicios.filter(s =>
-      s.titulo.toLowerCase().includes(query) ||
-      s.descripcion?.toLowerCase().includes(query)
+    return servicios.filter(
+      (s) => s.titulo.toLowerCase().includes(query) || s.descripcion?.toLowerCase().includes(query),
     );
   });
 
@@ -131,12 +121,15 @@ export class ContenidosHome implements OnInit {
   abrirEditarNoticia(item: NoticiasHome) {
     this.editandoId.set(item.id_informacion);
     this.editandoTipo.set('noticia');
+    this.editImagenArchivo = null;
+    this.editImagenPreview.set(item.imagen_url ?? null); // muestra la imagen actual
+
     this.editForm.set({
-      id_informacion:    item.id_informacion,
-      titulo:            item.titulo,
-      descripcion:       item.descripcion,
-      id_categoria:      item.id_categoria,
-      imagen_url:        item.imagen_url,
+      id_informacion: item.id_informacion,
+      titulo: item.titulo,
+      descripcion: item.descripcion,
+      id_categoria: item.id_categoria,
+      imagen_url: item.imagen_url,
       fecha_publicacion: item.fecha_publicacion,
     });
   }
@@ -144,12 +137,14 @@ export class ContenidosHome implements OnInit {
   abrirEditarServicio(item: ServicioHome) {
     this.editandoId.set(item.id_informacion);
     this.editandoTipo.set('servicio');
+    this.editImagenArchivo = null;
+    this.editImagenPreview.set(item.imagen_url ?? null);
     this.editForm.set({
-      id_informacion:    item.id_informacion,
-      titulo:            item.titulo,
-      descripcion:       item.descripcion,
-      id_categoria:      item.id_categoria,
-      imagen_url:        item.imagen_url,
+      id_informacion: item.id_informacion,
+      titulo: item.titulo,
+      descripcion: item.descripcion,
+      id_categoria: item.id_categoria,
+      imagen_url: item.imagen_url,
       fecha_publicacion: '',
     });
   }
@@ -158,12 +153,14 @@ export class ContenidosHome implements OnInit {
     this.editandoId.set(null);
     this.editandoTipo.set(null);
     this.editForm.set(null);
+    this.editImagenArchivo = null;
+    this.editImagenPreview.set(null);
   }
 
-  updateEditField(field: keyof Omit<EditFormState, 'id_informacion'>, value: string) {
+  updateEditField(field: keyof Omit<infoHomeEdit, 'id_informacion'>, value: string) {
     const form = this.editForm();
     if (!form) return;
-    const parsed = field === 'id_categoria' ? (Number(value) || null) : value;
+    const parsed = field === 'id_categoria' ? Number(value) || null : value;
     this.editForm.set({ ...form, [field]: parsed });
   }
 
@@ -172,15 +169,16 @@ export class ContenidosHome implements OnInit {
     if (!form) return;
     this.guardando.set(true);
 
-    const payload: infoHomeRequest = {
-      titulo:            form.titulo,
-      descripcion:       form.descripcion,
-      id_categoria:      form.id_categoria ?? 0,
-      imagen_url:        form.imagen_url,
+    const payload: infoHomeEdit = {
+      id_informacion: form.id_informacion,
+      titulo: form.titulo,
+      descripcion: form.descripcion,
+      id_categoria: form.id_categoria ?? 0,
+      imagen_url: form.imagen_url,
       fecha_publicacion: form.fecha_publicacion,
     };
 
-    this.homeService.actualizarInfoHome(form.id_informacion, payload).subscribe({
+    this.homeService.actualizarInfoHome(payload).subscribe({
       next: () => {
         this.guardando.set(false);
         this.cancelarEditar();
@@ -209,11 +207,13 @@ export class ContenidosHome implements OnInit {
   // ── Nuevo ítem ────────────────────────────────────────────────────
   abrirNueva() {
     this.nuevaCard.set(true);
+    this.nuevoImagenArchivo = null;
+    this.nuevoImagenPreview.set(null);
     this.nuevoItem.set({
-      titulo:            '',
-      descripcion:       '',
-      id_categoria:      null,
-      imagen_url:        '',
+      titulo: '',
+      descripcion: '',
+      id_categoria: 0,
+      imagen_url: '',
       fecha_publicacion: '',
     });
   }
@@ -222,26 +222,31 @@ export class ContenidosHome implements OnInit {
     this.nuevaCard.set(false);
   }
 
-  updateNuevoField(field: keyof NuevoItemState, value: string) {
-    const parsed = field === 'id_categoria' ? (Number(value) || null) : value;
+  updateNuevoField(field: keyof infoHomeEdit, value: string) {
+    const parsed = field === 'id_categoria' ? Number(value) || null : value;
     this.nuevoItem.set({ ...this.nuevoItem(), [field]: parsed as any });
   }
 
   guardarNuevo() {
     const item = this.nuevoItem();
     this.insertando.set(true);
-
+    const fechaPublicacion =
+      this.nuevoTipo() === 'noticia' && item.fecha_publicacion?.trim()
+        ? item.fecha_publicacion
+        : null;
     const payload: infoHomeRequest = {
-      titulo:            item.titulo,
-      descripcion:       item.descripcion,
-      id_categoria:      item.id_categoria ?? 0,
-      imagen_url:        item.imagen_url,
-      fecha_publicacion: this.nuevoTipo() === 'noticia' ? item.fecha_publicacion : '',
+      titulo: item.titulo,
+      descripcion: item.descripcion,
+      id_categoria: item.id_categoria ?? 0,
+      imagen_url: '',
+      fecha_publicacion: fechaPublicacion,
     };
 
-    this.homeService.insertarInfoHome(payload).subscribe({
+    this.homeService.insertarInfoHome(this.nuevoImagenArchivo, payload).subscribe({
       next: () => {
         this.insertando.set(false);
+        this.nuevoImagenArchivo = null;
+        this.nuevoImagenPreview.set(null);
         this.cancelarNueva();
         this.homeResource.reload();
       },
@@ -251,5 +256,36 @@ export class ContenidosHome implements OnInit {
         this.insertando.set(false);
       },
     });
+  }
+  // ── Handlers imagen nuevo ─────────────────────────────────────────
+  onNuevoImagenSeleccionada(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    this.nuevoImagenArchivo = file;
+    const reader = new FileReader();
+    reader.onload = () => this.nuevoImagenPreview.set(reader.result as string);
+    reader.readAsDataURL(file);
+  }
+
+  quitarNuevoImagen(): void {
+    this.nuevoImagenArchivo = null;
+    this.nuevoImagenPreview.set(null);
+  }
+
+  // ── Handlers imagen edición ───────────────────────────────────────
+  onEditImagenSeleccionada(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    this.editImagenArchivo = file;
+    const reader = new FileReader();
+    reader.onload = () => this.editImagenPreview.set(reader.result as string);
+    reader.readAsDataURL(file);
+  }
+
+  quitarEditImagen(): void {
+    this.editImagenArchivo = null;
+    this.editImagenPreview.set(null);
   }
 }

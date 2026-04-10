@@ -199,25 +199,42 @@
                 ></textarea>
               </div>
 
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label class="text-xs text-on-surface-variant mb-1 block">URL de imagen</label>
-                  <input
-                    class="w-full bg-surface-container-highest rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary outline-none border-none"
-                    [value]="editForm()!.imagen_url"
-                    (input)="updateEditField('imagen_url', $any($event.target).value)"
-                    placeholder="https://..."
-                  />
-                </div>
-                <div>
-                  <label class="text-xs text-on-surface-variant mb-1 block">Fecha de publicación</label>
-                  <input
-                    type="date"
-                    class="w-full bg-surface-container-highest rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary outline-none border-none"
-                    [value]="editForm()!.fecha_publicacion | date:'yyyy-MM-dd'"
-                    (input)="updateEditField('fecha_publicacion', $any($event.target).value)"
-                  />
-                </div>
+              <!-- Imagen -->
+              <div>
+                <label class="text-xs text-on-surface-variant mb-1 block">Imagen</label>
+                @if (!editImagenPreview()) {
+                  <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-outline-variant/50 rounded-xl cursor-pointer hover:border-primary hover:bg-surface-container/50 transition-colors">
+                    <span class="material-symbols-outlined text-2xl text-on-surface-variant mb-1">cloud_upload</span>
+                    <span class="text-sm text-on-surface-variant">Hacé clic para subir una imagen</span>
+                    <span class="text-xs text-on-surface-variant/60 mt-1">PNG, JPG hasta 5MB</span>
+                    <input type="file" accept="image/*" class="hidden" (change)="onEditImagenSeleccionada($event)" />
+                  </label>
+                } @else {
+                  <div class="relative w-full">
+                    <img
+                      [src]="editImagenPreview()"
+                      alt="Preview"
+                      class="w-full h-40 object-contain rounded-xl border border-outline-variant/30"
+                    />
+                    <button
+                      (click)="quitarEditImagen()"
+                      class="absolute top-2 right-2 p-1.5 rounded-full bg-surface-container-lowest border border-outline-variant/30 hover:bg-error-container hover:border-error/30 transition-all"
+                      title="Quitar imagen"
+                    >
+                      <span class="material-symbols-outlined text-base text-on-surface-variant">close</span>
+                    </button>
+                  </div>
+                }
+              </div>
+
+              <div>
+                <label class="text-xs text-on-surface-variant mb-1 block">Fecha de publicación</label>
+                <input
+                  type="date"
+                  class="w-full bg-surface-container-highest rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary outline-none border-none"
+                  [value]="editForm()!.fecha_publicacion | date:'yyyy-MM-dd'"
+                  (input)="updateEditField('fecha_publicacion', $any($event.target).value)"
+                />
               </div>
 
               <div class="flex justify-end gap-3 pt-2">
@@ -359,14 +376,32 @@
                 ></textarea>
               </div>
 
+              <!-- Imagen -->
               <div>
-                <label class="text-xs text-on-surface-variant mb-1 block">URL de imagen</label>
-                <input
-                  class="w-full bg-surface-container-highest rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary outline-none border-none"
-                  [value]="editForm()!.imagen_url"
-                  (input)="updateEditField('imagen_url', $any($event.target).value)"
-                  placeholder="https://..."
-                />
+                <label class="text-xs text-on-surface-variant mb-1 block">Imagen</label>
+                @if (!editImagenPreview()) {
+                  <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-outline-variant/50 rounded-xl cursor-pointer hover:border-primary hover:bg-surface-container/50 transition-colors">
+                    <span class="material-symbols-outlined text-2xl text-on-surface-variant mb-1">cloud_upload</span>
+                    <span class="text-sm text-on-surface-variant">Hacé clic para subir una imagen</span>
+                    <span class="text-xs text-on-surface-variant/60 mt-1">PNG, JPG hasta 5MB</span>
+                    <input type="file" accept="image/*" class="hidden" (change)="onEditImagenSeleccionada($event)" />
+                  </label>
+                } @else {
+                  <div class="relative w-full">
+                    <img
+                      [src]="editImagenPreview()"
+                      alt="Preview"
+                      class="w-full h-40 object-contain rounded-xl border border-outline-variant/30"
+                    />
+                    <button
+                      (click)="quitarEditImagen()"
+                      class="absolute top-2 right-2 p-1.5 rounded-full bg-surface-container-lowest border border-outline-variant/30 hover:bg-error-container hover:border-error/30 transition-all"
+                      title="Quitar imagen"
+                    >
+                      <span class="material-symbols-outlined text-base text-on-surface-variant">close</span>
+                    </button>
+                  </div>
+                }
               </div>
 
               <div class="flex justify-end gap-3 pt-2">
@@ -460,7 +495,7 @@
             } @else {
               <select
                 class="w-full bg-surface-container-highest rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary outline-none border-none"
-                [value]="nuevoItem().id_categoria ?? ''"
+                [value]="nuevoItem().id_categoria "
                 (change)="updateNuevoField('id_categoria', $any($event.target).value)"
               >
                 <option value="">Seleccionar categoría...</option>
@@ -503,28 +538,45 @@
             ></textarea>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label class="text-xs text-on-surface-variant mb-1 block">URL de imagen</label>
-              <input
-                class="w-full bg-surface-container-highest rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary outline-none border-none"
-                [value]="nuevoItem().imagen_url"
-                (input)="updateNuevoField('imagen_url', $any($event.target).value)"
-                placeholder="https://..."
-              />
-            </div>
-            @if (nuevoTipo() === 'noticia') {
-              <div>
-                <label class="text-xs text-on-surface-variant mb-1 block">Fecha de publicación</label>
-                <input
-                  type="date"
-                  class="w-full bg-surface-container-highest rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary outline-none border-none"
-                  [value]="nuevoItem().fecha_publicacion"
-                  (input)="updateNuevoField('fecha_publicacion', $any($event.target).value)"
+          <!-- Imagen -->
+          <div>
+            <label class="text-xs text-on-surface-variant mb-1 block">Imagen</label>
+            @if (!nuevoImagenPreview()) {
+              <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-outline-variant/50 rounded-xl cursor-pointer hover:border-primary hover:bg-surface-container/50 transition-colors">
+                <span class="material-symbols-outlined text-2xl text-on-surface-variant mb-1">cloud_upload</span>
+                <span class="text-sm text-on-surface-variant">Hacé clic para subir una imagen</span>
+                <span class="text-xs text-on-surface-variant/60 mt-1">PNG, JPG hasta 5MB</span>
+                <input type="file" accept="image/*" class="hidden" (change)="onNuevoImagenSeleccionada($event)" />
+              </label>
+            } @else {
+              <div class="relative w-full">
+                <img
+                  [src]="nuevoImagenPreview()"
+                  alt="Preview"
+                  class="w-full h-40 object-contain rounded-xl border border-outline-variant/30"
                 />
+                <button
+                  (click)="quitarNuevoImagen()"
+                  class="absolute top-2 right-2 p-1.5 rounded-full bg-surface-container-lowest border border-outline-variant/30 hover:bg-error-container hover:border-error/30 transition-all"
+                  title="Quitar imagen"
+                >
+                  <span class="material-symbols-outlined text-base text-on-surface-variant">close</span>
+                </button>
               </div>
             }
           </div>
+
+          @if (nuevoTipo() === 'noticia') {
+  <div>
+    <label class="text-xs text-on-surface-variant mb-1 block">Fecha de publicación</label>
+    <input
+      type="date"
+      class="w-full bg-surface-container-highest rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary outline-none border-none"
+      [value]="nuevoItem().fecha_publicacion || ''"
+      (change)="updateNuevoField('fecha_publicacion', $any($event.target).value)"
+    />
+  </div>
+}
 
           <div class="flex justify-end gap-3 pt-2">
             <button
