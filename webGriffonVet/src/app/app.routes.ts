@@ -70,6 +70,11 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./pages/admin/servicios-admin/servicios-admin').then((m) => m.ServiciosAdmin),
           },
+          {
+            path: 'contenidos',
+            loadComponent: () =>
+              import('./pages/admin/contenidos-home/contenidos-home').then((m) => m.ContenidosHome),
+          },
         ],
       },
     ],

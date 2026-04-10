@@ -7,13 +7,14 @@ import { EditarMascota } from '../../../layouts/editar-mascota/editar-mascota';
 import { editarMascotaRequest } from '../../../api/models/historialClinico';
 import { AuthService } from '../../../core/services/auth';
 import { NuevaMascota } from '../../../layouts/cliente/nueva-mascota/nueva-mascota';
+import { HistorialClinicoAdmin } from '../../admin/historial-clinico-admin/historial-clinico-admin';
 
 @Component({
   selector: 'app-mascotas',
   standalone: true,
   templateUrl: './mascotas.html',
   styleUrl: './mascotas.css',
-  imports: [CommonModule, EditarMascota, NuevaMascota]
+  imports: [CommonModule, EditarMascota, NuevaMascota, HistorialClinicoAdmin]
 })
 export class Mascotas implements OnInit {
 
@@ -26,6 +27,10 @@ export class Mascotas implements OnInit {
   modalEditarAbierto = signal(false);
   mascotaSeleccionada = signal<editarMascotaRequest | null>(null);
   modalAgregarAbierto = signal(false);
+  mascotaSeleccionadaId = signal<number | null>(null);
+  usuarioSeleccionadoId = signal<number | null>(null);
+
+
 
   constructor(
     private service: MascotaService,
@@ -71,6 +76,16 @@ export class Mascotas implements OnInit {
   onMascotaAgregada() {
     this.modalAgregarAbierto.set(false);
     this.cargarMascotas();
+  }
+    abrirHistorial(m: MascotaUsuario) {
+    // Si clickeás la misma, la cierra (toggle)
+    if (this.mascotaSeleccionadaId() === m.id_mascota) {
+      this.mascotaSeleccionadaId.set(null);
+      this.usuarioSeleccionadoId.set(null);
+    } else {
+      this.mascotaSeleccionadaId.set(m.id_mascota);
+      this.usuarioSeleccionadoId.set(this.auth.getIdUsuario());
+    }
   }
 
   private cargarMascotas(): void {

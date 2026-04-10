@@ -60,103 +60,50 @@
               <span class="material-symbols-outlined text-outline">pets</span>
             </div>
 
-            <!-- PANEL DE DETALLES EXPANDIBLE -->
-            @if (mascotaExpandida === m.id_mascota) {
-              <div
-                class="mt-4 mb-4 border-t border-outline-variant/20 pt-4 grid grid-cols-2 gap-3 text-sm animate-[fadeIn_0.2s_ease]"
-              >
-                @if (m.sexo) {
-                  <div class="flex flex-col">
-                    <span class="text-xs text-on-surface-variant uppercase tracking-widest mb-0.5"
-                      >Sexo</span
-                    >
-                    <span class="text-on-surface font-medium capitalize">{{ m.sexo }}</span>
-                  </div>
-                }
-
-                @if (m.tamanio) {
-                  <div class="flex flex-col">
-                    <span class="text-xs text-on-surface-variant uppercase tracking-widest mb-0.5"
-                      >Tamaño</span
-                    >
-                    <span class="text-on-surface font-medium capitalize">{{ m.tamanio }}</span>
-                  </div>
-                }
-
-                @if (m.tipo_pelaje) {
-                  <div class="flex flex-col">
-                    <span class="text-xs text-on-surface-variant uppercase tracking-widest mb-0.5"
-                      >Pelaje</span
-                    >
-                    <span class="text-on-surface font-medium capitalize">{{ m.tipo_pelaje }}</span>
-                  </div>
-                }
-
-                @if (m.comportamiento) {
-                  <div class="flex flex-col">
-                    <span class="text-xs text-on-surface-variant uppercase tracking-widest mb-0.5"
-                      >Comportamiento</span
-                    >
-                    <span class="text-on-surface font-medium capitalize">{{
-                      m.comportamiento
-                    }}</span>
-                  </div>
-                }
-
-                @if (m.observaciones) {
-                  <div class="col-span-2 flex flex-col">
-                    <span class="text-xs text-on-surface-variant uppercase tracking-widest mb-0.5"
-                      >Observaciones</span
-                    >
-                    <span class="text-on-surface font-medium">{{ m.observaciones }}</span>
-                  </div>
-                }
-              </div>
-            }
-
             <!-- BOTONES -->
             <div class="flex gap-2 mt-4">
               <button
-                (click)="toggleDetalles(m.id_mascota)"
+                (click)="abrirHistorial(m)"
                 class="flex-1 bg-surface-container text-primary font-bold py-3 rounded-full text-xs uppercase tracking-widest hover:bg-primary hover:text-white transition-colors"
               >
-                {{ mascotaExpandida === m.id_mascota ? 'Ocultar' : 'Ver detalles' }}
-              </button>
-
-              <button
-                (click)="abrirEditar(m)"
-                class="w-12 h-12 flex items-center justify-center border border-outline-variant/20 rounded-full text-outline hover:text-primary transition-colors"
-              >
-                <span class="material-symbols-outlined">edit</span>
+                {{
+                  mascotaSeleccionadaId() === m.id_mascota
+                    ? 'Ocultar historia clinica'
+                    : 'Ver historia clinica'
+                }}
               </button>
             </div>
           </div>
         </div>
       }
+      <div class="mt-12 flex justify-center">
+        <div
+          class="group border-2 border-dashed border-outline-variant/30 pet-card-radius p-10 flex flex-col items-center justify-center text-center hover:bg-surface-container-low transition-all max-w-sm w-full"
+        >
+          <div
+            class="w-20 h-20 rounded-full bg-primary-fixed flex items-center justify-center mb-6"
+          >
+            <span class="material-symbols-outlined text-4xl">add</span>
+          </div>
+
+          <h3 class="font-headline text-xl font-bold text-on-surface mb-2">
+            ¿Nueva incorporación?
+          </h3>
+
+          <p class="text-on-surface-variant text-sm mb-6 px-4">Registrá a tu nueva mascota.</p>
+
+          <button
+            (click)="abrirAgregar()"
+            class="text-primary font-bold text-sm tracking-widest uppercase hover:underline"
+          >
+            Comenzar registro
+          </button>
+        </div>
+      </div>
     </div>
   }
 
   <!-- CARD AGREGAR (SIEMPRE VISIBLE) -->
-  <div class="mt-12 flex justify-center">
-    <div
-      class="group border-2 border-dashed border-outline-variant/30 pet-card-radius p-10 flex flex-col items-center justify-center text-center hover:bg-surface-container-low transition-all max-w-sm w-full"
-    >
-      <div class="w-20 h-20 rounded-full bg-primary-fixed flex items-center justify-center mb-6">
-        <span class="material-symbols-outlined text-4xl">add</span>
-      </div>
-
-      <h3 class="font-headline text-xl font-bold text-on-surface mb-2">¿Nueva incorporación?</h3>
-
-      <p class="text-on-surface-variant text-sm mb-6 px-4">Registrá a tu nueva mascota.</p>
-
-      <button
-        (click)="abrirAgregar()"
-        class="text-primary font-bold text-sm tracking-widest uppercase hover:underline"
-      >
-        Comenzar registro
-      </button>
-    </div>
-  </div>
 
   <!-- MENSAJE SI NO HAY DATOS -->
   @if (!loading && mascotas.length === 0) {
@@ -171,6 +118,14 @@
       (cerrar)="modalEditarAbierto.set(false)"
       (mascotaEditada)="onMascotaEditada()"
     />
+  }
+  @if (mascotaSeleccionadaId() !== null) {
+    <div class="mt-8">
+      <app-historial-clinico-admin
+        [mascotaId]="mascotaSeleccionadaId()!"
+        [usuarioId]="usuarioSeleccionadoId()!"
+      />
+    </div>
   }
   @if (modalAgregarAbierto()) {
     <app-nueva-mascota

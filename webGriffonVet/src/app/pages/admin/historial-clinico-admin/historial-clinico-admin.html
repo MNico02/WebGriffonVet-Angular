@@ -211,12 +211,14 @@
             </p>
           </div>
         </div>
+        @if (esAdmin()) {
         <button
           (click)="modalAbierto.set(true)"
           class="px-4 py-2 rounded-full editorial-gradient text-white text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-all"
         >
           + Nueva Consulta
         </button>
+      }
         @if (modalAbierto()) {
         <app-nueva-consulta-modal
           [mascotaId]="mascotaId()"
@@ -241,6 +243,7 @@
                 Motivo: {{ c.motivo_consulta }}
               </p>
             </div>
+            @if (esAdmin()) {
             <!-- 🔥 BOTÓN EDITAR -->
             <button
               (click)="abrirEditarConsulta(c)"
@@ -258,6 +261,7 @@
   >
     🗑 Eliminar
   </button>
+}
             <span
               class="text-xs text-on-surface-variant bg-surface-container px-3 py-1 rounded-full border border-outline-variant/30"
             >
@@ -402,12 +406,14 @@
             </p>
           </div>
         </div>
+        @if (esAdmin()) {
         <button
           (click)="modalVacunacionAbierto.set(true)"
           class="px-4 py-2 rounded-full editorial-gradient text-white text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-all"
         >
           + Nueva Vacunación
         </button>
+      }
         @if (modalVacunacionAbierto()) {
         <app-nueva-vacunacion-modal
           [mascotaId]="mascotaId()"
@@ -477,12 +483,14 @@
             <p class="text-on-surface-variant text-sm">Interna y externa</p>
           </div>
         </div>
+        @if (esAdmin()) {
         <button
           (click)="modalDesparasitacionAbierto.set(true)"
           class="px-4 py-2 rounded-full editorial-gradient text-white text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-all"
         >
           + Nueva Desparasitación
         </button>
+      }
         @if (modalDesparasitacionAbierto()) {
         <app-nueva-desparasitacion
           [mascotaId]="mascotaId()"
@@ -554,12 +562,14 @@
             </p>
           </div>
         </div>
+        @if (esAdmin()) {
         <button
           (click)="modalPesoAbierto.set(true)"
           class="px-4 py-2 rounded-full editorial-gradient text-white text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-all"
         >
           + Registrar Peso
         </button>
+      }
         @if (modalPesoAbierto()) {
         <app-nuevo-peso
           [mascotaId]="mascotaId()"
@@ -626,12 +636,14 @@
             </p>
           </div>
         </div>
+        @if (esAdmin()) {
         <button
           (click)="modalEnfermedadAbierto.set(true)"
           class="px-4 py-2 rounded-full editorial-gradient text-white text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-all"
         >
           + Registrar Enfermedad
         </button>
+      }
         @if (modalEnfermedadAbierto()) {
         <app-nueva-enfermedad
           [mascotaId]="mascotaId()"
@@ -709,12 +721,14 @@
             </p>
           </div>
         </div>
+        @if (esAdmin()) {
         <button
           (click)="modalAlergiaAbierto.set(true)"
           class="px-4 py-2 rounded-full editorial-gradient text-white text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-all"
         >
           + Registrar Alergia
         </button>
+      }
         @if (modalAlergiaAbierto()) {
         <app-nueva-alergia
           [mascotaId]="mascotaId()"
@@ -794,11 +808,13 @@
             </p>
           </div>
         </div>
+        @if (esAdmin()) {
         <button
           class="px-4 py-2 rounded-full editorial-gradient text-white text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-all"
         >
           + Nuevo
         </button>
+      }
       </div>
 
       <div class="overflow-x-auto rounded-lg border border-outline-variant">
@@ -877,11 +893,13 @@
             </p>
           </div>
         </div>
+        @if (esAdmin()) {
         <button
           class="px-4 py-2 rounded-full editorial-gradient text-white text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-all"
         >
           + Cargar
         </button>
+      }
       </div>
 
       <div class="overflow-x-auto rounded-lg border border-outline-variant">

@@ -27,7 +27,7 @@ export class HistorialClinicoAdmin implements AfterViewInit {
   private toast = inject(ToastService);
 
 
-
+  esAdmin = input<boolean>(false);   
   mascotaId = input.required<number>();
   usuarioId = input.required<number>();
 
