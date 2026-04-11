@@ -150,19 +150,20 @@ consultaAEliminar = signal<any | null>(null);
     const m = this.mascotaResource.value();
     if (!m) return null;
     return {
-      id_usuario: this.usuarioId(),
-      id_mascota: this.mascotaId(),
-      nombre: m.nombre ?? '',
-      especie: m.especie ?? '',
-      raza: m.raza ?? '',
-      tamanio: m.tamanio ?? '',
-      sexo: m.sexo ?? '',
-      tipo_pelaje: m.tipo_pelaje ?? '',
-      comportamiento: m.comportamiento ?? '',
-      observaciones: m.observaciones ?? '',
-      fecha_nacimiento: m.fecha_nacimiento ? m.fecha_nacimiento.substring(0, 10) : '',
-      castrado: m.castrado ?? false,
-    };
+    id_usuario: this.usuarioId(),
+    id_mascota: this.mascotaId(),
+    nombre: m.nombre ?? '',
+    id_especie: m.id_especie ?? null,
+    especie: m.especie ?? '',
+    raza: m.raza ?? '',
+    tamanio: m.tamanio ?? '',
+    sexo: m.sexo ?? '',
+    tipo_pelaje: m.tipo_pelaje ?? '',
+    comportamiento: m.comportamiento ?? '',
+    observaciones: m.observaciones ?? '',
+    fecha_nacimiento: m.fecha_nacimiento ? m.fecha_nacimiento.substring(0, 10) : '',
+    castrado: m.castrado ?? false,
+  };
   });
 
   esImagen(url: string): boolean {

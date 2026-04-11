@@ -96,7 +96,8 @@ export interface editarMascotaRequest{
     id_mascota:number;
     id_usuario:number;
     nombre:string;
-    especie:string;
+    id_especie: number | null;
+  especie?: string;
     raza:string;
     tamanio:string;
     sexo:string;

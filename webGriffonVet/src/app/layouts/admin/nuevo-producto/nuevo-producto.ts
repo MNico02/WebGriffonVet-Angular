@@ -12,6 +12,7 @@ import { ProductoService } from "../../../core/services/producto-service";
 import { Categoria, ProductoRequest } from "../../../api/models/producto";
 import { ToastService } from "../../../core/services/toast.service";
 import { ErrorModalService } from "../../../core/services/error-modal";
+import { ChangeDetectorRef } from '@angular/core';
 interface ProductoForm {
   nombre: string;
   descripcion: string;
@@ -31,6 +32,7 @@ export class NuevoProducto implements OnInit {
   @Output() productoGuardado = new EventEmitter<void>();
   private toast = inject(ToastService);
   private errorModal = inject(ErrorModalService);
+  private cdr = inject(ChangeDetectorRef);
   guardando = signal(false);
 
   imagenPreview = signal<string | null>(null);
@@ -40,7 +42,7 @@ export class NuevoProducto implements OnInit {
   agregandoCategoria = false;
   nuevaCategoriaNombre = "";
   categorias: Categoria[] = [];
-
+mostrarNuevaCategoria = false;
   formProducto: ProductoForm = {
     nombre: "",
     descripcion: "",
@@ -61,12 +63,14 @@ export class NuevoProducto implements OnInit {
       next: (cats) => {
         this.categorias = cats;
         this.cargandoCategorias = false;
+         this.cdr.detectChanges();
       },
       error: (err) => {
         this.cargandoCategorias = false;
 
         const mensaje = err?.error?.mensaje || "Error al cargar las categorías";
         this.errorModal.mostrar(mensaje);
+         this.cdr.detectChanges();
       },
     });
   }
@@ -93,25 +97,40 @@ export class NuevoProducto implements OnInit {
   }
 
   agregarCategoria(): void {
-    const nombre = this.nuevaCategoriaNombre.trim();
-    if (!nombre) return;
+  const nombre = this.nuevaCategoriaNombre.trim();
+  if (!nombre) return;
 
-    this.agregandoCategoria = true;
-    this.productoService.insertarCategoria(nombre).subscribe({
-      next: () => {
-        this.cargarCategorias();
-        this.nuevaCategoriaNombre = "";
-        this.agregandoCategoria = false;
-        this.toast.mostrar("Categoría agregada correctamente");
-      },
-      error: (err) => {
-        this.agregandoCategoria = false;
+  this.agregandoCategoria = true;
 
-        const mensaje = err?.error?.mensaje || "Error al agregar la categoría";
-        this.errorModal.mostrar(mensaje);
-      },
-    });
-  }
+  this.productoService.insertarCategoria(nombre).subscribe({
+    next: () => {
+      this.nuevaCategoriaNombre = '';
+      this.agregandoCategoria = false;
+
+      this.mostrarNuevaCategoria = false;
+
+      this.cargarCategorias();
+
+      setTimeout(() => {
+        if (!this.categorias.length) return;
+
+        const ultima = this.categorias.reduce((max, c) =>
+          c.id_categoria > max.id_categoria ? c : max
+        );
+
+        this.formProducto.id_categoria = ultima.id_categoria;
+      }, 300);
+
+      this.toast.mostrar("Categoría agregada correctamente");
+    },
+    error: (err) => {
+      this.agregandoCategoria = false;
+
+      const mensaje = err?.error?.mensaje || "Error al agregar la categoría";
+      this.errorModal.mostrar(mensaje);
+    },
+  });
+}
 
   guardar(): void {
     // 🔒 VALIDACIONES

@@ -13,7 +13,7 @@ import { servicio, servicioRequest, precio } from '../../../api/models/servicio'
 })
 export class ServiciosAdmin {
 
-  readonly tamanios = ['Chico', 'Mediano', 'Grande'] as const;
+  readonly tamanios = ['CHICO', 'MEDIANO', 'GRANDE','MUY GRANDE'] as const;
 
   searchQuery = signal('');
   editandoId = signal<number | null>(null);
@@ -28,7 +28,7 @@ export class ServiciosAdmin {
   nuevoServicio = signal<servicioRequest>({
     nombre: '',
     descripcion: '',
-    precios: [{ tamanio: 'Chico', precio: '', duracion: 0 as any }],
+    precios: [{ tamanio: 'CHICO', precio: '', duracion: 0 as any }],
   });
 
   constructor(private servicioService: ServicioService) {}

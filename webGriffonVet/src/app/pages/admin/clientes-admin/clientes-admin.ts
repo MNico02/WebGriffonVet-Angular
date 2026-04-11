@@ -70,8 +70,8 @@ abrirModal() {
 getIconoMascota(mascota: any): string {
   const especie = mascota.especie?.toUpperCase();
 
-  if (especie === 'PERRO') return 'pets'; // podés cambiar
-  if (especie === 'GATO') return 'pets'; // icono tipo gato
+  if (especie === 'CANINO') return 'pets';
+    if (especie === 'FELINO') return 'pets';
 
   return 'pets'; // fallback
 }

@@ -49,16 +49,12 @@
             Especie
           </label>
 
-          <select
-            [(ngModel)]="formMascota.especie"
-            class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary"
-          >
-            <option value="" disabled>Seleccionar...</option>
-
-            @for (e of especies; track e) {
-              <option [value]="e">{{ e }}</option>
-            }
-          </select>
+          <select [(ngModel)]="formMascota.id_especie" class="input">
+  <option [ngValue]="null">Especie</option>
+  @for (e of especies; track e.id_especie) {
+    <option [ngValue]="e.id_especie">{{ e.nombre }}</option>
+  }
+</select>
         </div>
 
         <div class="flex flex-col gap-1">
@@ -210,12 +206,12 @@
         type="button"
         (click)="guardar()"
         [disabled]="
-          !formMascota.nombre ||
-          !formMascota.especie ||
-          !formMascota.tamanio ||
-          !formMascota.sexo ||
-          !formMascota.fecha_nacimiento
-        "
+    !formMascota.nombre ||
+    !formMascota.id_especie ||
+    !formMascota.tamanio ||
+    !formMascota.sexo ||
+    !formMascota.fecha_nacimiento
+  "
         class="px-5 py-2 rounded-full editorial-gradient text-white text-sm font-bold hover:opacity-90 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
       >
         Guardar

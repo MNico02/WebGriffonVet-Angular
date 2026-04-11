@@ -18,7 +18,12 @@
     <div class="grid grid-cols-2 gap-3">
 
       <input [(ngModel)]="formCliente.mascota.nombre" placeholder="Nombre" class="input"/>
-      <input [(ngModel)]="formCliente.mascota.especie" placeholder="Especie" class="input"/>
+      <select [(ngModel)]="formCliente.mascota.id_especie" class="input">
+        <option [ngValue]="null">Especie</option>
+        @for (especie of especies; track especie.id_especie) {
+          <option [ngValue]="especie.id_especie">{{ especie.nombre }}</option>
+        }
+      </select>
       <input [(ngModel)]="formCliente.mascota.raza" placeholder="Raza" class="input"/>
 
       <!-- TAMAÑO -->

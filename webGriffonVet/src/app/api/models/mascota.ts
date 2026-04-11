@@ -1,6 +1,7 @@
 export interface Mascota {
   id_mascota: number;
   nombre: string;
+   id_especie?: number;
   especie: string;
   raza: string;
   tamanio: string;

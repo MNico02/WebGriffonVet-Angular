@@ -90,21 +90,23 @@
 
     <!-- Card Agregar: siempre al final de la grilla -->
     <div class="mt-12 flex justify-center">
-      <div
-        class="group border-2 border-dashed border-outline-variant/30 pet-card-radius p-10 flex flex-col items-center justify-center text-center hover:bg-surface-container-low transition-all max-w-sm w-full"
-      >
-        <div class="w-20 h-20 rounded-full bg-primary-fixed flex items-center justify-center mb-6">
-          <span class="material-symbols-outlined text-4xl">add</span>
-        </div>
-        <p class="text-on-surface-variant text-sm mb-6 px-4">Registrá un producto nuevo</p>
-        <button
-          (click)="abrirModal()"
-          class="text-primary font-bold text-sm tracking-widest uppercase hover:underline"
-        >
-          Comenzar registro
-        </button>
-      </div>
+  <button
+    (click)="abrirModal()"
+    class="group border-2 border-dashed border-outline-variant/30 pet-card-radius p-10 flex flex-col items-center justify-center text-center hover:bg-surface-container-low transition-all max-w-sm w-full"
+  >
+    <div class="w-20 h-20 rounded-full bg-primary-fixed flex items-center justify-center mb-6">
+      <span class="material-symbols-outlined text-4xl">add</span>
     </div>
+
+    <p class="text-on-surface-variant text-sm mb-2 px-4">
+      Registrá un producto nuevo
+    </p>
+
+    <span class="text-primary font-bold text-sm tracking-widest uppercase group-hover:underline">
+      Comenzar registro
+    </span>
+  </button>
+</div>
   </div>
 
   <!-- Modal: FUERA del grid y sin @if que envuelva la grilla -->

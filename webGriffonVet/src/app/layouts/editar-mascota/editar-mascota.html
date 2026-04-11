@@ -25,11 +25,11 @@
       <div class="grid grid-cols-2 gap-3">
         <div class="flex flex-col gap-1">
           <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">Especie</label>
-          <select [(ngModel)]="form.especie"
+          <select [(ngModel)]="form.id_especie"
             class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary">
-            <option value="" disabled>Seleccionar...</option>
-            @for (e of especies; track e) {
-              <option [value]="e">{{ e }}</option>
+            <option [ngValue]="null" disabled>Seleccionar...</option>
+            @for (e of especies; track e.id_especie) {
+              <option [ngValue]="e.id_especie">{{ e.nombre }}</option>
             }
           </select>
         </div>

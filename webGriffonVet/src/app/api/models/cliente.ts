@@ -10,6 +10,7 @@ export interface Cliente {
 export interface Mascota {
   id_mascota: number;
   nombre_mascota: string;
+  id_especie?: number;
   especie: string;
   sexo?: string;
 }

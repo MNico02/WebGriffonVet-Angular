@@ -51,6 +51,7 @@ export class Mascotas implements OnInit {
       id_usuario: this.auth.getIdUsuario(),
       id_mascota: m.id_mascota,
       nombre: m.nombre ?? '',
+      id_especie: m.id_especie ?? null,
       especie: m.especie ?? '',
       raza: m.raza ?? '',
       tamanio: m.tamanio ?? '',

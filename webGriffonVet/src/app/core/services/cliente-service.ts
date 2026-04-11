@@ -4,6 +4,11 @@ import { Observable, map } from 'rxjs';
 import { Cliente } from '../../api/models/cliente';
 import { environment } from '../../../environments/environment.development';
 
+export interface Especie {
+  id_especie: number;
+  nombre: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -13,14 +18,18 @@ export class ClienteService {
   constructor(private http: HttpClient) {}
 
   getClientes(): Observable<Cliente[]> {
-    return this.http.get<{ clientes: Cliente[] }>(`${this.apiUrl}/obtenerClientes`)
+    return this.http
+      .get<{ clientes: Cliente[] }>(`${this.apiUrl}/obtenerClientes`)
       .pipe(map(response => response.clientes));
   }
 
- 
+  getEspecies(): Observable<Especie[]> {
+    return this.http
+      .get<{ especies: Especie[] }>(`${this.apiUrl}/ObtenerEspecies`)
+      .pipe(map(response => response.especies));
+  }
+
   insertarCliente(data: any) {
     return this.http.post(`${this.apiUrl}/insertarClienteMascotaAdmin`, data);
   }
 }
-
-
