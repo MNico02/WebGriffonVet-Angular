@@ -9,13 +9,13 @@ export class ToastService {
   mensaje = signal('');
   tipo = signal<'success' | 'error'>('success');
 
-  mostrar(mensaje: string, tipo: 'success' | 'error' = 'success') {
-    this.mensaje.set(mensaje);
-    this.tipo.set(tipo);
-    this.visible.set(true);
+  mostrar(mensaje: string, tipo: 'success' | 'error' = 'success', duracion = 3000) {
+  this.mensaje.set(mensaje);
+  this.tipo.set(tipo);
+  this.visible.set(true);
 
-    setTimeout(() => {
-      this.visible.set(false);
-    }, 3000);
-  }
+  setTimeout(() => {
+    this.visible.set(false);
+  }, duracion);
+}
 }

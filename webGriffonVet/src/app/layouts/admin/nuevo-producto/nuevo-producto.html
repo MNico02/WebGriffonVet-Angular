@@ -71,7 +71,8 @@
           <select
             [(ngModel)]="formProducto.id_categoria"
             class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary"
-          >
+          
+            >
             <option [value]="null">Seleccionar categoría...</option>
             @for (cat of categorias; track cat.id_categoria) {
               <option [value]="cat.id_categoria">{{ cat.nombre }}</option>

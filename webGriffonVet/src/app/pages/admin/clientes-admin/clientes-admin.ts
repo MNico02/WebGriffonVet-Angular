@@ -8,17 +8,18 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { HistorialClinicoAdmin } from '../historial-clinico-admin/historial-clinico-admin';
 import { FormsModule } from '@angular/forms';
 import { NuevoClienteDesdeAdmin } from '../../../layouts/admin/nuevo-cliente-desde-admin/nuevo-cliente-desde-admin';
-
+import { NuevaMascota } from '../../../layouts/cliente/nueva-mascota/nueva-mascota';
 @Component({
   selector: 'app-clientes-admin',
-  imports: [CommonModule, HistorialClinicoAdmin, NuevoClienteDesdeAdmin],
+  imports: [CommonModule, HistorialClinicoAdmin, NuevoClienteDesdeAdmin,NuevaMascota],
   templateUrl: './clientes-admin.html',
   styleUrl: './clientes-admin.css',
 })
 export class ClientesAdmin  {
 
   clientes: Cliente[] = [];
-
+mostrarModalCliente = signal(false);
+mostrarModalMascota = signal(false);
   constructor(
     private service: ClienteService,
     private router: Router,
@@ -28,7 +29,7 @@ export class ClientesAdmin  {
   clientesResource = rxResource({
     stream: () => this.service.getClientes()
   });
-
+usuarioParaNuevaMascota = signal<number | null>(null);
   mascotaSeleccionadaId = signal<number | null>(null);
   usuarioSeleccionadoId = signal<number | null>(null);
   searchQuery = signal('');
@@ -59,10 +60,16 @@ export class ClientesAdmin  {
   mostrarModal = signal(false);
 
 abrirModal() {
-  this.mostrarModal.set(true);
+  this.mostrarModalCliente.set(true);
 }
-   cerrarModal() {
-  this.mostrarModal.set(false);
+
+abrirModalMascota(idUsuario: number) {
+  this.usuarioParaNuevaMascota.set(idUsuario);
+  this.mostrarModalMascota.set(true);
+}
+
+cerrarModalMascota() {
+  this.mostrarModalMascota.set(false);
 }
 
 

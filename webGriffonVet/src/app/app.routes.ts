@@ -12,6 +12,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/cliente/registro/registro').then((m) => m.Registro),
   },
   {
+  path: 'activar',
+  loadComponent: () => import('./pages/cliente/activar/activar').then(m => m.Activar),
+},
+  {
     path: 'main',
     loadComponent: () => import('./layouts/cliente/main-layout/main').then((m) => m.Main),
     children: [

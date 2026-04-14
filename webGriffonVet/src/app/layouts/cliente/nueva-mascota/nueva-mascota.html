@@ -49,12 +49,15 @@
             Especie
           </label>
 
-          <select [(ngModel)]="formMascota.id_especie" class="input">
-  <option [ngValue]="null">Especie</option>
-  @for (e of especies; track e.id_especie) {
-    <option [ngValue]="e.id_especie">{{ e.nombre }}</option>
-  }
-</select>
+          <select
+            [(ngModel)]="formMascota.id_especie"
+            class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary w-full"
+          >
+            <option [ngValue]="null">Especie</option>
+            @for (e of especies; track e.id_especie) {
+            <option [ngValue]="e.id_especie">{{ e.nombre }}</option>
+            }
+          </select>
         </div>
 
         <div class="flex flex-col gap-1">
@@ -83,18 +86,18 @@
 
         <div class="flex gap-2">
           @for (s of sexos; track s) {
-            <button
-              type="button"
-              (click)="formMascota.sexo = s"
-              [ngClass]="{
+          <button
+            type="button"
+            (click)="formMascota.sexo = s"
+            [ngClass]="{
                 'flex-1 py-2 rounded-lg text-xs font-bold border-2 border-primary bg-primary-container/30 text-primary':
                   formMascota.sexo === s,
                 'flex-1 py-2 rounded-lg text-xs font-bold border border-outline-variant/30 bg-surface-container text-on-surface-variant hover:bg-surface-container-high':
                   formMascota.sexo !== s
               }"
-            >
-              {{ s }}
-            </button>
+          >
+            {{ s }}
+          </button>
           }
         </div>
       </div>
@@ -109,18 +112,18 @@
 
         <div class="flex gap-2">
           @for (t of tamanios; track t) {
-            <button
-              type="button"
-              (click)="formMascota.tamanio = t"
-              [ngClass]="{
+          <button
+            type="button"
+            (click)="formMascota.tamanio = t"
+            [ngClass]="{
                 'flex-1 py-2 rounded-lg text-xs font-bold border-2 border-primary bg-primary-container/30 text-primary':
                   formMascota.tamanio === t,
                 'flex-1 py-2 rounded-lg text-xs font-bold border border-outline-variant/30 bg-surface-container text-on-surface-variant hover:bg-surface-container-high':
                   formMascota.tamanio !== t
               }"
-            >
-              {{ t }}
-            </button>
+          >
+            {{ t }}
+          </button>
           }
         </div>
       </div>

@@ -1,28 +1,42 @@
 <main class="pt-24">
   <!-- Hero Section -->
   <section class="max-w-7xl mx-auto px-6 mb-24">
-    <div class="relative overflow-hidden rounded-xl bg-surface-container-low min-h-[600px] flex items-center">
+    <div
+      class="relative overflow-hidden rounded-xl bg-surface-container-low min-h-[600px] flex items-center"
+    >
       <div class="absolute inset-0 z-0">
         <img
           alt="Happy pets at Sanctuary"
           class="w-full h-full object-cover opacity-90"
           src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_mexTtAuWJwtTMI5XDAlQfGp0JdXT5Tsry1QjfpgSjHJoIRilzYjTskjxyK3Z_JbjFHeyI2YTHfCJnDambuf0ncdPPRJ56kWx6Fgfsm7n6Y9w38S3ylSmzmr3GKGhfp92k0niNgw-kUWlwhi58KQURWm8D6bCfxMMPACnADDUscQI9vOvrJcQb3rfRL8MPAeURkIdjJ8zEDFNlSEShatb1_YNntlJ02xelHxTId06_v_MrJzSx3IxYUkcusxRuSA1Gxr1OflYjA"
         />
-        <div class="absolute inset-0 bg-gradient-to-r from-surface via-surface/40 to-transparent"></div>
+        <div
+          class="absolute inset-0 bg-gradient-to-r from-surface via-surface/40 to-transparent"
+        ></div>
       </div>
       <div class="relative z-10 max-w-2xl px-12 py-16">
-        <span class="inline-block px-4 py-1 rounded-full bg-primary-container/20 text-primary font-bold text-xs uppercase tracking-widest mb-6">
+        <span
+          class="inline-block px-4 py-1 rounded-full bg-primary-container/20 text-primary font-bold text-xs uppercase tracking-widest mb-6"
+        >
           Veterinaria Griffon
         </span>
-        <h1 class="font-headline text-6xl font-extrabold tracking-tighter text-on-surface mb-6 leading-[1.1]">
-          El refugio digital <br />para tu <span class="text-primary-container">compañero.</span>
+        <h1
+          class="font-headline text-6xl font-extrabold tracking-tighter text-on-surface mb-6 leading-[1.1]"
+        >
+          El refugio digital <br />para tu
+          <span class="text-primary-container">compañero.</span>
         </h1>
-        <p class="text-on-surface-variant text-lg mb-10 max-w-md font-medium leading-relaxed">
-          Combinamos precisión médica con un entorno diseñado para la calma. Porque la salud de tu mascota merece un santuario.
+        <p
+          class="text-on-surface-variant text-lg mb-10 max-w-md font-medium leading-relaxed"
+        >
+          Combinamos precisión médica con un entorno diseñado para la calma.
+          Porque la salud de tu mascota merece un santuario.
         </p>
         <div class="flex flex-wrap gap-4">
-          <button routerLink="/main/mis-mascotas"
-            class="editorial-gradient px-8 py-4 rounded-full text-white font-bold text-sm uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-[1.02] transition-transform active:scale-95">
+          <button
+            routerLink="/main/mis-mascotas"
+            class="editorial-gradient px-8 py-4 rounded-full text-white font-bold text-sm uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-[1.02] transition-transform active:scale-95"
+          >
             Reservar Turno
           </button>
         </div>
@@ -32,9 +46,13 @@
 
   <!-- Services Section -->
   <section class="max-w-7xl mx-auto px-6 mb-32">
-    <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
+    <div
+      class="flex flex-col md:flex-row justify-between items-end mb-12 gap-4"
+    >
       <div class="max-w-xl">
-        <h2 class="font-headline text-4xl font-bold tracking-tight text-on-surface mb-4">
+        <h2
+          class="font-headline text-4xl font-bold tracking-tight text-on-surface mb-4"
+        >
           Servicios Especializados
         </h2>
         <p class="text-on-surface-variant font-medium">
@@ -44,25 +62,28 @@
     </div>
 
     @if (homeResource.isLoading()) {
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        @for (i of [1,2,3]; track i) {
-          <div class="rounded-lg bg-surface-container-lowest p-8 min-h-[350px] animate-pulse"></div>
-        }
-      </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      @for (i of [1,2,3]; track i) {
+      <div
+        class="rounded-lg bg-surface-container-lowest p-8 min-h-[350px] animate-pulse"
+      ></div>
+      }
+    </div>
     } @else if (homeResource.error()) {
-      <p class="text-error text-center py-8">
-        No se pudieron cargar los servicios. Intenta nuevamente.
-      </p>
+    <p class="text-error text-center py-8">
+      No se pudieron cargar los servicios. Intenta nuevamente.
+    </p>
     } @else {
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-  @for (servicio of servicios(); track servicio.id_informacion; let i = $index) {
-    <div
-      class="group relative overflow-hidden rounded-2xl min-h-[380px] flex flex-col transition-all border"
-      [class]="i === 1 ? 'bg-primary text-white hover:translate-y-[-4px] border-transparent' : 'bg-surface-container-lowest hover:shadow-2xl border-slate-100'"
-    >
-      <!-- Imagen superior -->
-      <div class="w-full h-44 overflow-hidden shrink-0 relative">
-        @if (servicio.imagen_url) {
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      @for (servicio of servicios(); track servicio.id_informacion; let i =
+      $index) {
+      <div
+        class="group relative overflow-hidden rounded-2xl min-h-[380px] flex flex-col transition-all border"
+        [class]="i === 1 ? 'bg-primary text-white hover:translate-y-[-4px] border-transparent' : 'bg-surface-container-lowest hover:shadow-2xl border-slate-100'"
+      >
+        <!-- Imagen superior -->
+        <div class="w-full h-44 overflow-hidden shrink-0 relative">
+          @if (servicio.imagen_url) {
           <img
             [src]="servicio.imagen_url"
             [alt]="servicio.titulo"
@@ -73,7 +94,7 @@
             class="absolute inset-0"
             [class]="i === 1 ? 'bg-primary/40' : 'bg-black/5 group-hover:bg-black/10'"
           ></div>
-        } @else {
+          } @else {
           <div
             class="w-full h-full flex items-center justify-center"
             [class]="i === 1 ? 'bg-white/10' : 'bg-primary-container/20'"
@@ -81,37 +102,43 @@
             <span
               class="material-symbols-outlined text-6xl"
               [class]="i === 1 ? 'text-white/60' : 'text-primary/40'"
-            >pets</span>
+              >pets</span
+            >
           </div>
-        }
-      </div>
-
-      <!-- Contenido -->
-      <div class="flex flex-col flex-1 justify-between p-6">
-        <div>
-          <span
-            class="text-xs font-bold uppercase tracking-widest mb-2 block"
-            [class]="i === 1 ? 'text-blue-100' : 'text-primary'"
-          >{{ servicio.categoria }}</span>
-          <h3
-            class="font-headline text-xl font-bold mb-2"
-            [class]="i === 1 ? 'text-white' : 'text-blue-900'"
-          >{{ servicio.titulo }}</h3>
-          <p
-            class="text-sm"
-            [class]="i === 1 ? 'text-blue-100' : 'text-on-surface-variant'"
-          >{{ servicio.descripcion }}</p>
+          }
         </div>
 
-        
-      </div>
+        <!-- Contenido -->
+        <div class="flex flex-col flex-1 justify-between p-6">
+          <div>
+            <span
+              class="text-xs font-bold uppercase tracking-widest mb-2 block"
+              [class]="i === 1 ? 'text-blue-100' : 'text-primary'"
+              >{{ servicio.categoria }}</span
+            >
+            <h3
+              class="font-headline text-xl font-bold mb-2"
+              [class]="i === 1 ? 'text-white' : 'text-blue-900'"
+            >
+              {{ servicio.titulo }}
+            </h3>
+            <p
+              class="text-sm"
+              [class]="i === 1 ? 'text-blue-100' : 'text-on-surface-variant'"
+            >
+              {{ servicio.descripcion }}
+            </p>
+          </div>
+        </div>
 
-      @if (i !== 1) {
-        <div class="absolute top-0 left-0 w-full h-1 bg-primary transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+        @if (i !== 1) {
+        <div
+          class="absolute top-0 left-0 w-full h-1 bg-primary transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"
+        ></div>
+        }
+      </div>
       }
     </div>
-  }
-</div>
     }
   </section>
 
@@ -119,78 +146,122 @@
   <section class="max-w-7xl mx-auto px-8">
     <div class="flex justify-between items-end mb-12">
       <div>
-        <h2 class="text-4xl font-extrabold text-primary tracking-tighter">Consejos del Veterinario</h2>
-        <p class="text-on-surface-variant mt-2 text-lg">Guías expertas para el bienestar de tu mascota.</p>
+        <h2 class="text-4xl font-extrabold text-primary tracking-tighter">
+          Consejos del Veterinario
+        </h2>
+        <p class="text-on-surface-variant mt-2 text-lg">
+          Guías expertas para el bienestar de tu mascota.
+        </p>
       </div>
-      <a class="text-secondary font-bold flex items-center gap-2 group" href="#" routerLink="/main/blog">
+      <a
+        class="text-secondary font-bold flex items-center gap-2 group"
+        href="#"
+        routerLink="/main/blog"
+      >
         Ver todos los artículos
-        <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+        <span
+          class="material-symbols-outlined group-hover:translate-x-1 transition-transform"
+          >arrow_forward</span
+        >
       </a>
     </div>
 
     @if (homeResource.isLoading()) {
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <div class="lg:col-span-7 h-[600px] rounded-lg bg-surface-container-low animate-pulse"></div>
-        <div class="lg:col-span-5 flex flex-col gap-6">
-          @for (i of [1,2,3]; track i) {
-            <div class="h-40 rounded-lg bg-surface-container-low animate-pulse"></div>
-          }
-        </div>
-      </div>
-    } @else if (homeResource.error()) {
-      <p class="text-error text-center py-8">
-        No se pudieron cargar las noticias. Intenta nuevamente.
-      </p>
-    } @else {
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-
-        <!-- Noticia destacada -->
-        @if (noticiaDestacada(); as noticia) {
-          <div class="lg:col-span-7 group cursor-pointer">
-            <div class="relative h-[600px] rounded-lg overflow-hidden bg-surface-container-low">
-              <img
-                [src]="noticia.imagen_url"
-                [alt]="noticia.titulo"
-                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-              <div class="absolute inset-0 bg-gradient-to-t from-primary/90 via-transparent to-transparent"></div>
-              <div class="absolute bottom-0 p-12 text-on-primary">
-                <span class="inline-block px-3 py-1 bg-tertiary rounded-md text-xs font-bold mb-4">
-                  {{ noticia.categoria | uppercase }}
-                </span>
-                <h3 class="text-4xl font-bold mb-4 leading-tight">{{ noticia.titulo }}</h3>
-                <p class="text-white/70 text-lg max-w-lg mb-6">{{ noticia.descripcion }}</p>
-                <p class="text-sm font-medium text-white/60">{{ noticia.fecha_publicacion | date:'longDate' }}</p>
-              </div>
-            </div>
-          </div>
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div
+        class="lg:col-span-7 h-[600px] rounded-lg bg-surface-container-low animate-pulse"
+      ></div>
+      <div class="lg:col-span-5 flex flex-col gap-6">
+        @for (i of [1,2,3]; track i) {
+        <div
+          class="h-40 rounded-lg bg-surface-container-low animate-pulse"
+        ></div>
         }
-
-        <!-- Noticias laterales -->
-        <div class="lg:col-span-5 flex flex-col gap-6">
-          @for (noticia of noticiasLaterales(); track noticia.id_informacion) {
-            <div class="bg-surface-container-low rounded-lg p-4 flex gap-6 hover:bg-surface-container transition-colors group cursor-pointer">
-              <div class="w-40 h-40 flex-shrink-0 rounded-md overflow-hidden bg-surface-variant">
-                <img
-                  [src]="noticia.imagen_url"
-                  [alt]="noticia.titulo"
-                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                />
-              </div>
-              <div class="flex flex-col justify-center">
-                <span class="text-xs font-bold text-on-tertiary-fixed-variant mb-2">
-                  {{ noticia.categoria | uppercase }}
-                </span>
-                <h4 class="text-xl font-bold text-primary leading-snug mb-2 group-hover:text-secondary transition-colors">
-                  {{ noticia.titulo }}
-                </h4>
-                <p class="text-sm text-on-surface-variant line-clamp-2">{{ noticia.descripcion }}</p>
-              </div>
-            </div>
-          }
-        </div>
-
       </div>
+    </div>
+    } @else if (homeResource.error()) {
+    <p class="text-error text-center py-8">
+      No se pudieron cargar las noticias. Intenta nuevamente.
+    </p>
+    } @else {
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      
+      
+      <!-- Noticia destacada -->
+      @if (noticiaDestacada(); as noticia) {
+      <div class="lg:col-span-7 group cursor-pointer">
+        <div
+          class="relative h-[600px] rounded-lg overflow-hidden bg-surface-container-low"
+        >
+          @if (noticia.imagen_url) {
+          <img
+            [src]="noticia.imagen_url"
+            [alt]="noticia.titulo"
+            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            (error)="noticia.imagen_url = null"
+          />
+          } @else {
+          <div class="w-full h-full bg-surface-container-low"></div>
+          }
+          <div
+            class="absolute inset-0 bg-gradient-to-t from-primary/90 via-transparent to-transparent"
+          ></div>
+          <div class="absolute bottom-0 p-12 text-on-primary">
+            <span
+              class="inline-block px-3 py-1 bg-tertiary rounded-md text-xs font-bold mb-4"
+            >
+              {{ noticia.categoria | uppercase }}
+            </span>
+            <h3 class="text-4xl font-bold mb-4 leading-tight">
+              {{ noticia.titulo }}
+            </h3>
+            <p class="text-white/70 text-lg max-w-lg mb-6">
+              {{ noticia.descripcion }}
+            </p>
+            <p class="text-sm font-medium text-white/60">
+              {{ noticia.fecha_publicacion | date:'longDate' }}
+            </p>
+          </div>
+        </div>
+      </div>
+      }
+
+      <!-- Noticias laterales -->
+      <div class="lg:col-span-5 flex flex-col gap-6">
+        @for (noticia of noticiasLaterales(); track noticia.id_informacion) {
+        <div
+  class="bg-surface-container-low rounded-lg p-4 flex gap-6 hover:bg-surface-container transition-colors group cursor-pointer"
+>
+  @if (noticia.imagen_url) {
+    <div class="w-40 h-40 flex-shrink-0 rounded-md overflow-hidden">
+      <img
+        [src]="noticia.imagen_url"
+        [alt]="noticia.titulo"
+        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+        (error)="noticia.imagen_url = null"
+      />
+    </div>
+  }
+
+  <div class="flex flex-col justify-center flex-1">
+    <span class="text-xs font-bold text-on-tertiary-fixed-variant mb-2">
+      {{ noticia.categoria | uppercase }}
+    </span>
+
+    <h4
+      class="text-xl font-bold text-primary leading-snug mb-2 group-hover:text-secondary transition-colors"
+    >
+      {{ noticia.titulo }}
+    </h4>
+
+    <p class="text-sm text-on-surface-variant line-clamp-2">
+      {{ noticia.descripcion }}
+    </p>
+  </div>
+</div>
+        }
+      </div>
+    </div>
     }
   </section>
 </main>

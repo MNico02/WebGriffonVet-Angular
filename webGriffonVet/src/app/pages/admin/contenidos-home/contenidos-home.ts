@@ -1,26 +1,36 @@
-import { Component, signal, computed, OnInit } from '@angular/core';
-import { DatePipe } from '@angular/common';
-import { rxResource } from '@angular/core/rxjs-interop';
-import { HomeService } from '../../../core/services/home-service';
-import { ProductoService } from '../../../core/services/producto-service';
-import { Categoria } from '../../../api/models/producto';
+import { Component, signal, computed, OnInit } from "@angular/core";
+import { DatePipe } from "@angular/common";
+import { rxResource } from "@angular/core/rxjs-interop";
+import { HomeService } from "../../../core/services/home-service";
+import { ProductoService } from "../../../core/services/producto-service";
+import { Categoria } from "../../../api/models/producto";
+import { ToastService } from "../../../core/services/toast.service";
+import { ErrorModalService } from "../../../core/services/error-modal";
+import { inject } from "@angular/core";
+import { ChangeDetectorRef } from "@angular/core";
 import {
   ServicioHome,
   NoticiasHome,
   infoHomeRequest,
   infoHomeEdit,
-} from '../../../api/models/home';
+} from "../../../api/models/home";
 
-type TipoFiltro = 'todos' | 'noticias' | 'servicios';
-type TipoEdicion = 'noticia' | 'servicio';
+type TipoFiltro = "todos" | "noticias" | "servicios";
+type TipoEdicion = "noticia" | "servicio";
 
 @Component({
-  selector: 'app-info-home-admin',
+  selector: "app-info-home-admin",
   imports: [DatePipe],
-  templateUrl: './contenidos-home.html',
-  styleUrl: './contenidos-home.css',
+  templateUrl: "./contenidos-home.html",
+  styleUrl: "./contenidos-home.css",
 })
 export class ContenidosHome implements OnInit {
+  private toast = inject(ToastService);
+  private errorModal = inject(ErrorModalService);
+  private cdr = inject(ChangeDetectorRef);
+  modalEliminar = signal(false);
+  itemAEliminar = signal<number | null>(null);
+mostrarNuevaCategoria = signal(false);
   constructor(
     private homeService: HomeService,
     private productoService: ProductoService,
@@ -38,7 +48,7 @@ export class ContenidosHome implements OnInit {
   // ── Estado categorías ─────────────────────────────────────────────
   categorias = signal<Categoria[]>([]);
   cargandoCategorias = signal(false);
-  nuevaCategoriaNombre = signal('');
+  nuevaCategoriaNombre = signal("");
   agregandoCategoria = signal(false);
 
   cargarCategorias(): void {
@@ -47,10 +57,12 @@ export class ContenidosHome implements OnInit {
       next: (cats) => {
         this.categorias.set(cats);
         this.cargandoCategorias.set(false);
+        this.cdr.detectChanges();
       },
-      error: () => {
-        console.error('Error al cargar categorías');
-        this.cargandoCategorias.set(false);
+      error: (err) => {
+        const mensaje = err?.error?.mensaje || "Error al cargar categorías";
+        this.errorModal.mostrar(mensaje);
+        this.cdr.detectChanges();
       },
     });
   }
@@ -62,34 +74,36 @@ export class ContenidosHome implements OnInit {
     this.productoService.insertarCategoria(nombre).subscribe({
       next: () => {
         this.cargarCategorias();
-        this.nuevaCategoriaNombre.set('');
+        this.nuevaCategoriaNombre.set("");
         this.agregandoCategoria.set(false);
+        this.toast.mostrar("Categoría agregada correctamente");
       },
-      error: () => {
-        console.error('Error al agregar categoría');
+      error: (err) => {
         this.agregandoCategoria.set(false);
+        const mensaje = err?.error?.mensaje || "Error al agregar categoría";
+        this.errorModal.mostrar(mensaje);
       },
     });
   }
 
   // ── Estado UI ─────────────────────────────────────────────────────
-  searchQuery = signal('');
-  filtroTipo = signal<TipoFiltro>('todos');
+  searchQuery = signal("");
+  filtroTipo = signal<TipoFiltro>("todos");
   editandoId = signal<number | null>(null);
   editandoTipo = signal<TipoEdicion | null>(null);
   guardando = signal(false);
   insertando = signal(false);
   nuevaCard = signal(false);
-  nuevoTipo = signal<TipoEdicion>('noticia');
+  nuevoTipo = signal<TipoEdicion>("noticia");
 
   editForm = signal<infoHomeEdit | null>(null);
 
   nuevoItem = signal<infoHomeRequest>({
-    titulo: '',
-    descripcion: '',
+    titulo: "",
+    descripcion: "",
     id_categoria: 0,
-    imagen_url: '',
-    fecha_publicacion: '',
+    imagen_url: "",
+    fecha_publicacion: "",
   });
   nuevoImagenPreview = signal<string | null>(null);
   nuevoImagenArchivo: File | null = null;
@@ -104,7 +118,9 @@ export class ContenidosHome implements OnInit {
     const noticias = this.homeResource.value()?.noticias ?? [];
     if (!query) return noticias;
     return noticias.filter(
-      (n) => n.titulo.toLowerCase().includes(query) || n.descripcion?.toLowerCase().includes(query),
+      (n) =>
+        n.titulo.toLowerCase().includes(query) ||
+        n.descripcion?.toLowerCase().includes(query),
     );
   });
 
@@ -113,14 +129,16 @@ export class ContenidosHome implements OnInit {
     const servicios = this.homeResource.value()?.servicios ?? [];
     if (!query) return servicios;
     return servicios.filter(
-      (s) => s.titulo.toLowerCase().includes(query) || s.descripcion?.toLowerCase().includes(query),
+      (s) =>
+        s.titulo.toLowerCase().includes(query) ||
+        s.descripcion?.toLowerCase().includes(query),
     );
   });
 
   // ── Edición ───────────────────────────────────────────────────────
   abrirEditarNoticia(item: NoticiasHome) {
     this.editandoId.set(item.id_informacion);
-    this.editandoTipo.set('noticia');
+    this.editandoTipo.set("noticia");
     this.editImagenArchivo = null;
     this.editImagenPreview.set(item.imagen_url ?? null); // muestra la imagen actual
 
@@ -132,20 +150,39 @@ export class ContenidosHome implements OnInit {
       imagen_url: item.imagen_url,
       fecha_publicacion: item.fecha_publicacion,
     });
+
+    // 🔥 FIX DEL SELECT
+    const id = item.id_categoria;
+
+    this.updateEditField("id_categoria", "");
+
+    setTimeout(() => {
+      this.updateEditField("id_categoria", String(id));
+    });
   }
 
   abrirEditarServicio(item: ServicioHome) {
     this.editandoId.set(item.id_informacion);
-    this.editandoTipo.set('servicio');
+    this.editandoTipo.set("servicio");
     this.editImagenArchivo = null;
     this.editImagenPreview.set(item.imagen_url ?? null);
+
     this.editForm.set({
       id_informacion: item.id_informacion,
       titulo: item.titulo,
       descripcion: item.descripcion,
       id_categoria: item.id_categoria,
       imagen_url: item.imagen_url,
-      fecha_publicacion: '',
+      fecha_publicacion: "",
+    });
+
+    // 🔥 FIX
+    const id = item.id_categoria;
+
+    this.updateEditField("id_categoria", "");
+
+    setTimeout(() => {
+      this.updateEditField("id_categoria", String(id));
     });
   }
 
@@ -157,10 +194,13 @@ export class ContenidosHome implements OnInit {
     this.editImagenPreview.set(null);
   }
 
-  updateEditField(field: keyof Omit<infoHomeEdit, 'id_informacion'>, value: string) {
+  updateEditField(
+    field: keyof Omit<infoHomeEdit, "id_informacion">,
+    value: string,
+  ) {
     const form = this.editForm();
     if (!form) return;
-    const parsed = field === 'id_categoria' ? Number(value) || null : value;
+    const parsed = field === "id_categoria" ? Number(value) || null : value;
     this.editForm.set({ ...form, [field]: parsed });
   }
 
@@ -183,38 +223,56 @@ export class ContenidosHome implements OnInit {
         this.guardando.set(false);
         this.cancelarEditar();
         this.homeResource.reload();
+        this.toast.mostrar("Contenido actualizado correctamente");
       },
       error: (err) => {
-        console.error('Error al actualizar', err);
-        alert('Error al actualizar el contenido');
         this.guardando.set(false);
+        const mensaje =
+          err?.error?.mensaje || "Error al actualizar el contenido";
+        this.errorModal.mostrar(mensaje);
       },
     });
   }
 
   // ── Eliminar ──────────────────────────────────────────────────────
   eliminar(id: number) {
-    if (!confirm('¿Seguro que querés eliminar este contenido?')) return;
+    this.itemAEliminar.set(id);
+    this.modalEliminar.set(true);
+  }
+
+  cancelarEliminar() {
+    this.modalEliminar.set(false);
+    this.itemAEliminar.set(null);
+  }
+
+  eliminarConfirmado() {
+    const id = this.itemAEliminar();
+    if (!id) return;
+
     this.homeService.eliminarInfoHome(id).subscribe({
-      next: () => this.homeResource.reload(),
+      next: () => {
+        this.toast.mostrar("Contenido eliminado correctamente");
+        this.homeResource.reload();
+        this.cancelarEliminar();
+      },
       error: (err) => {
-        console.error('Error al eliminar', err);
-        alert('Error al eliminar el contenido');
+        const mensaje = err?.error?.mensaje || "Error al eliminar el contenido";
+        this.errorModal.mostrar(mensaje);
+        this.cancelarEliminar();
       },
     });
   }
-
   // ── Nuevo ítem ────────────────────────────────────────────────────
   abrirNueva() {
     this.nuevaCard.set(true);
     this.nuevoImagenArchivo = null;
     this.nuevoImagenPreview.set(null);
     this.nuevoItem.set({
-      titulo: '',
-      descripcion: '',
+      titulo: "",
+      descripcion: "",
       id_categoria: 0,
-      imagen_url: '',
-      fecha_publicacion: '',
+      imagen_url: "",
+      fecha_publicacion: "",
     });
   }
 
@@ -223,7 +281,7 @@ export class ContenidosHome implements OnInit {
   }
 
   updateNuevoField(field: keyof infoHomeEdit, value: string) {
-    const parsed = field === 'id_categoria' ? Number(value) || null : value;
+    const parsed = field === "id_categoria" ? Number(value) || null : value;
     this.nuevoItem.set({ ...this.nuevoItem(), [field]: parsed as any });
   }
 
@@ -231,31 +289,36 @@ export class ContenidosHome implements OnInit {
     const item = this.nuevoItem();
     this.insertando.set(true);
     const fechaPublicacion =
-      this.nuevoTipo() === 'noticia' && item.fecha_publicacion?.trim()
+      this.nuevoTipo() === "noticia" && item.fecha_publicacion?.trim()
         ? item.fecha_publicacion
         : null;
     const payload: infoHomeRequest = {
       titulo: item.titulo,
       descripcion: item.descripcion,
       id_categoria: item.id_categoria ?? 0,
-      imagen_url: '',
+      imagen_url: "",
       fecha_publicacion: fechaPublicacion,
     };
 
-    this.homeService.insertarInfoHome(this.nuevoImagenArchivo, payload).subscribe({
-      next: () => {
-        this.insertando.set(false);
-        this.nuevoImagenArchivo = null;
-        this.nuevoImagenPreview.set(null);
-        this.cancelarNueva();
-        this.homeResource.reload();
-      },
-      error: (err) => {
-        console.error('Error al insertar', err);
-        alert('Error al guardar el contenido');
-        this.insertando.set(false);
-      },
-    });
+    this.homeService
+      .insertarInfoHome(this.nuevoImagenArchivo, payload)
+      .subscribe({
+        next: () => {
+          this.insertando.set(false);
+          this.nuevoImagenArchivo = null;
+          this.nuevoImagenPreview.set(null);
+          this.cancelarNueva();
+          this.homeResource.reload();
+          this.toast.mostrar("Contenido creado correctamente");
+        },
+        error: (err) => {
+          this.insertando.set(false);
+
+          const mensaje =
+            err?.error?.mensaje || "Error al guardar el contenido";
+          this.errorModal.mostrar(mensaje);
+        },
+      });
   }
   // ── Handlers imagen nuevo ─────────────────────────────────────────
   onNuevoImagenSeleccionada(event: Event): void {

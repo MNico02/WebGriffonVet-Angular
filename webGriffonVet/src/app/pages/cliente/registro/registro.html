@@ -46,12 +46,7 @@
           {{ cargando ? 'Registrando...' : 'Crear cuenta' }}
         </button>
 
-        @if (error) {
-          <p class="mt-4 text-center text-sm text-red-500 font-medium">{{ error }}</p>
-        }
-        @if (exito) {
-          <p class="mt-4 text-center text-sm text-green-600 font-medium">¡Cuenta creada! Redirigiendo...</p>
-        }
+       
 
         <div class="flex items-center gap-3 my-6">
           <div class="flex-1 h-px bg-outline-variant"></div>
@@ -71,3 +66,5 @@
     </div>
   </div>
 </div>
+<app-toast></app-toast>
+<app-error-modal></app-error-modal>

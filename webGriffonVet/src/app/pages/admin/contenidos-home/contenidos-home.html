@@ -160,32 +160,45 @@
                     class="w-full bg-surface-container-highest rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary outline-none border-none"
                     [value]="editForm()!.id_categoria ?? ''"
                     (change)="updateEditField('id_categoria', $any($event.target).value)"
-                  >
+                  
+                    >
                     <option value="">Seleccionar categoría...</option>
                     @for (cat of categorias(); track cat.id_categoria) {
                       <option [value]="cat.id_categoria">{{ cat.nombre }}</option>
                     }
                   </select>
                 }
-                <div class="flex flex-col gap-1 pt-1 border-t border-outline-variant/20">
-                  <label class="text-xs text-on-surface-variant">¿No encontrás la categoría? Agregá una nueva</label>
-                  <div class="flex gap-2">
-                    <input
-                      type="text"
-                      class="flex-1 bg-surface-container-highest rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none border-none"
-                      placeholder="Nombre de la nueva categoría"
-                      [value]="nuevaCategoriaNombre()"
-                      (input)="nuevaCategoriaNombre.set($any($event.target).value)"
-                    />
-                    <button
-                      (click)="agregarCategoria()"
-                      [disabled]="agregandoCategoria() || !nuevaCategoriaNombre().trim()"
-                      class="px-4 py-2 rounded-lg text-xs font-bold border border-secondary text-secondary hover:bg-secondary-container/20 transition-all disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap"
-                    >
-                      {{ agregandoCategoria() ? 'Guardando...' : '+ Agregar' }}
-                    </button>
-                  </div>
-                </div>
+                <div class="mt-3 p-3 rounded-xl border border-dashed border-primary/30 bg-primary/5 flex flex-col gap-2">
+
+  <div class="flex items-center gap-2 text-primary">
+    <span class="material-symbols-outlined text-sm">add_circle</span>
+    <span class="text-xs font-bold uppercase tracking-wider">
+      Agregar nueva categoría
+    </span>
+  </div>
+
+  <div class="flex gap-2">
+    <input
+      type="text"
+      class="flex-1 bg-surface-container-highest rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none border-none"
+      placeholder="Ej: Clínica, Promos, Servicios..."
+      [value]="nuevaCategoriaNombre()"
+      (input)="nuevaCategoriaNombre.set($any($event.target).value)"
+    />
+
+    <button
+      (click)="agregarCategoria()"
+      [disabled]="agregandoCategoria() || !nuevaCategoriaNombre().trim()"
+      class="px-4 py-2 rounded-lg text-xs font-bold bg-primary text-white hover:opacity-90 transition-all disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap flex items-center gap-1"
+    >
+      @if (agregandoCategoria()) {
+        <span class="material-symbols-outlined animate-spin text-sm">progress_activity</span>
+      }
+      Agregar
+    </button>
+  </div>
+
+</div>
               </div>
 
               <div>
@@ -344,25 +357,37 @@
                     }
                   </select>
                 }
-                <div class="flex flex-col gap-1 pt-1 border-t border-outline-variant/20">
-                  <label class="text-xs text-on-surface-variant">¿No encontrás la categoría? Agregá una nueva</label>
-                  <div class="flex gap-2">
-                    <input
-                      type="text"
-                      class="flex-1 bg-surface-container-highest rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none border-none"
-                      placeholder="Nombre de la nueva categoría"
-                      [value]="nuevaCategoriaNombre()"
-                      (input)="nuevaCategoriaNombre.set($any($event.target).value)"
-                    />
-                    <button
-                      (click)="agregarCategoria()"
-                      [disabled]="agregandoCategoria() || !nuevaCategoriaNombre().trim()"
-                      class="px-4 py-2 rounded-lg text-xs font-bold border border-secondary text-secondary hover:bg-secondary-container/20 transition-all disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap"
-                    >
-                      {{ agregandoCategoria() ? 'Guardando...' : '+ Agregar' }}
-                    </button>
-                  </div>
-                </div>
+                <div class="mt-3 p-3 rounded-xl border border-dashed border-primary/30 bg-primary/5 flex flex-col gap-2">
+
+  <div class="flex items-center gap-2 text-primary">
+    <span class="material-symbols-outlined text-sm">add_circle</span>
+    <span class="text-xs font-bold uppercase tracking-wider">
+      Agregar nueva categoría
+    </span>
+  </div>
+
+  <div class="flex gap-2">
+    <input
+      type="text"
+      class="flex-1 bg-surface-container-highest rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none border-none"
+      placeholder="Ej: Clínica, Promos, Servicios..."
+      [value]="nuevaCategoriaNombre()"
+      (input)="nuevaCategoriaNombre.set($any($event.target).value)"
+    />
+
+    <button
+      (click)="agregarCategoria()"
+      [disabled]="agregandoCategoria() || !nuevaCategoriaNombre().trim()"
+      class="px-4 py-2 rounded-lg text-xs font-bold bg-primary text-white hover:opacity-90 transition-all disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap flex items-center gap-1"
+    >
+      @if (agregandoCategoria()) {
+        <span class="material-symbols-outlined animate-spin text-sm">progress_activity</span>
+      }
+      Agregar
+    </button>
+  </div>
+
+</div>
               </div>
 
               <div>
@@ -506,25 +531,37 @@
             }
 
             <!-- Agregar categoría nueva -->
-            <div class="flex flex-col gap-1 pt-1 border-t border-outline-variant/20">
-              <label class="text-xs text-on-surface-variant">¿No encontrás la categoría? Agregá una nueva</label>
-              <div class="flex gap-2">
-                <input
-                  type="text"
-                  class="flex-1 bg-surface-container-highest rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none border-none"
-                  placeholder="Nombre de la nueva categoría"
-                  [value]="nuevaCategoriaNombre()"
-                  (input)="nuevaCategoriaNombre.set($any($event.target).value)"
-                />
-                <button
-                  (click)="agregarCategoria()"
-                  [disabled]="agregandoCategoria() || !nuevaCategoriaNombre().trim()"
-                  class="px-4 py-2 rounded-lg text-xs font-bold border border-secondary text-secondary hover:bg-secondary-container/20 transition-all disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap"
-                >
-                  {{ agregandoCategoria() ? 'Guardando...' : '+ Agregar' }}
-                </button>
-              </div>
-            </div>
+           <div class="mt-3 p-3 rounded-xl border border-dashed border-primary/30 bg-primary/5 flex flex-col gap-2">
+
+  <div class="flex items-center gap-2 text-primary">
+    <span class="material-symbols-outlined text-sm">add_circle</span>
+    <span class="text-xs font-bold uppercase tracking-wider">
+      Agregar nueva categoría
+    </span>
+  </div>
+
+  <div class="flex gap-2">
+    <input
+      type="text"
+      class="flex-1 bg-surface-container-highest rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none border-none"
+      placeholder="Ej: Clínica, Promos, Servicios..."
+      [value]="nuevaCategoriaNombre()"
+      (input)="nuevaCategoriaNombre.set($any($event.target).value)"
+    />
+
+    <button
+      (click)="agregarCategoria()"
+      [disabled]="agregandoCategoria() || !nuevaCategoriaNombre().trim()"
+      class="px-4 py-2 rounded-lg text-xs font-bold bg-primary text-white hover:opacity-90 transition-all disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap flex items-center gap-1"
+    >
+      @if (agregandoCategoria()) {
+        <span class="material-symbols-outlined animate-spin text-sm">progress_activity</span>
+      }
+      Agregar
+    </button>
+  </div>
+
+</div>
           </div>
 
           <div>
@@ -599,5 +636,32 @@
 
     </div>
   }
+@if (modalEliminar() && itemAEliminar()) {
+  <div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
 
+    <div class="bg-white rounded-xl shadow-xl p-6 w-[380px] animate-fade-in">
+
+      <p class="text-center text-sm font-medium text-gray-600 mb-4">
+        ¿Seguro que querés eliminar este contenido?
+      </p>
+
+      <div class="flex justify-end gap-2">
+        <button
+          (click)="cancelarEliminar()"
+          class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-sm"
+        >
+          Cancelar
+        </button>
+
+        <button
+          (click)="eliminarConfirmado()"
+          class="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 text-sm"
+        >
+          Eliminar
+        </button>
+      </div>
+
+    </div>
+  </div>
+}
 </main>

@@ -32,4 +32,7 @@ export class ClienteService {
   insertarCliente(data: any) {
     return this.http.post(`${this.apiUrl}/insertarClienteMascotaAdmin`, data);
   }
+  insertarMascota(data: any) {
+  return this.http.post(`${this.apiUrl}/insertarMascotas`, data);
+}
 }
