@@ -1,188 +1,212 @@
-<body
-  class="bg-surface font-body text-on-surface antialiased selection:bg-primary-fixed selection:text-on-primary-fixed"
->
-  <!-- Botón mobile -->
-  <div
-    class="lg:hidden fixed top-0 left-0 right-0 z-50 bg-slate-100 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 px-4 py-3 flex items-center gap-3"
-  >
-    <button
-      (click)="toggle()"
-      class="p-1.5 rounded-lg text-slate-500 hover:bg-slate-200/60 dark:hover:bg-slate-800 transition-colors"
-    >
-      <span class="material-symbols-outlined text-[20px]">menu</span>
-    </button>
-    <h1 class="text-lg font-black text-blue-900 dark:text-blue-200">Panel Admin</h1>
-  </div>
+<main class="min-h-screen bg-surface">
+  <div class="max-w-7xl mx-auto p-8 space-y-8">
 
-  <!-- Overlay mobile -->
-  @if (!collapsed()) {
-    <div class="lg:hidden fixed inset-0 bg-black/40 z-30" (click)="toggle()"></div>
-  }
+    <section class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+      <div>
+        <h3 class="text-3xl font-extrabold text-on-surface font-headline tracking-tight">
+          Vista General Administrativa
+        </h3>
+        <p class="text-on-surface-variant font-body mt-1">
+          @if (!loading()) {
+            Bienvenido de nuevo. Tenés {{ totalAlertas() }} alertas de salud para revisar.
+          } @else {
+            Cargando resumen general del sistema...
+          }
+        </p>
+      </div>
+      <div class="bg-surface-container-low px-4 py-2 rounded-full flex items-center gap-2 text-sm font-bold text-primary">
+        <span class="material-symbols-outlined text-sm">calendar_month</span>
+        {{ today | date:"dd 'de' MMMM, yyyy" }}
+      </div>
+    </section>
 
-  <!-- LAYOUT PRINCIPAL -->
-  <div class="flex min-h-screen">
-    <!-- SIDEBAR -->
-    <aside
-      [class]="
-        'h-screen bg-slate-100 dark:bg-slate-950 flex flex-col py-6 font-plus-jakarta font-medium z-40 transition-all duration-300 ease-in-out overflow-hidden flex-shrink-0' +
-        (collapsed() ? ' w-[68px]' : ' w-64')
-      "
-    >
-      <!-- HEADER -->
-      <div class="px-4 mb-10 flex items-center justify-between min-w-0">
-        <h1
-          class="text-lg font-black text-blue-900 dark:text-blue-200 whitespace-nowrap transition-all duration-300 overflow-hidden"
-          [style.width]="collapsed() ? '0' : 'auto'"
-          [style.opacity]="collapsed() ? '0' : '1'"
-        >
-          Panel Admin
-        </h1>
-        <button
-          (click)="toggle()"
-          class="ml-auto p-1.5 rounded-lg text-slate-500 hover:bg-slate-200/60 dark:hover:bg-slate-800 dark:text-slate-400 transition-colors flex-shrink-0"
-        >
-          <span class="material-symbols-outlined text-[20px]">
-            {{ collapsed() ? 'menu_open' : 'menu' }}
-          </span>
-        </button>
+    @if (loading()) {
+      <section class="bg-surface-container-lowest p-8 rounded-xl border border-outline-variant/10 shadow-sm">
+        <p class="text-on-surface-variant">Cargando dashboard...</p>
+      </section>
+    } @else {
+
+    <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+      <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant/10 hover:shadow-md transition-shadow">
+        <div class="w-10 h-10 bg-primary/10 text-primary rounded-lg flex items-center justify-center mb-4">
+          <span class="material-symbols-outlined">group</span>
+        </div>
+        <p class="text-on-surface-variant text-xs font-label uppercase tracking-widest">Total Clientes</p>
+        <h4 class="text-2xl font-black mt-1 font-headline">{{ resumen()?.total_clientes ?? 0 }}</h4>
+        <p class="text-on-surface-variant text-[10px] mt-2 font-medium">Usuarios clientes activos</p>
       </div>
 
-      <!-- NAV -->
-      <nav class="flex-1 px-2 space-y-1">
-        <a
-          routerLink="/admin/dashboard"
-          routerLinkActive
-          #rla0="routerLinkActive"
-          [routerLinkActiveOptions]="{ exact: true }"
-          [class]="
-            'mx-2 px-4 py-3 flex items-center gap-3 rounded-full transition-transform hover:translate-x-1 ' +
-            (rla0.isActive
-              ? 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100'
-              : 'text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800')
-          "
-        >
-          <span class="material-symbols-outlined">dashboard</span>
-          <span [style.width]="collapsed() ? '0' : 'auto'" [style.opacity]="collapsed() ? '0' : '1'"
-            >Dashboard</span
-          >
-        </a>
+      <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant/10 hover:shadow-md transition-shadow">
+        <div class="w-10 h-10 bg-primary-container/20 text-on-primary-container rounded-lg flex items-center justify-center mb-4">
+          <span class="material-symbols-outlined">pets</span>
+        </div>
+        <p class="text-on-surface-variant text-xs font-label uppercase tracking-widest">Total Mascotas</p>
+        <h4 class="text-2xl font-black mt-1 font-headline">{{ resumen()?.total_mascotas ?? 0 }}</h4>
+        <p class="text-on-surface-variant text-[10px] mt-2 font-medium">Mascotas activas registradas</p>
+      </div>
 
-        <a
-          routerLink="/admin/dashboard/clientes"
-          routerLinkActive
-          #rla1="routerLinkActive"
-          [class]="
-            'mx-2 px-4 py-3 flex items-center gap-3 rounded-full transition-transform hover:translate-x-1 ' +
-            (rla1.isActive
-              ? 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100'
-              : 'text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800')
-          "
-        >
-          <span class="material-symbols-outlined">group</span>
-          <span [style.width]="collapsed() ? '0' : 'auto'" [style.opacity]="collapsed() ? '0' : '1'"
-            >Clientes</span
-          >
-        </a>
+      <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant/10 hover:shadow-md transition-shadow">
+        <div class="w-10 h-10 bg-tertiary-container/20 text-on-tertiary-container rounded-lg flex items-center justify-center mb-4">
+          <span class="material-symbols-outlined">person_add</span>
+        </div>
+        <p class="text-on-surface-variant text-xs font-label uppercase tracking-widest">Nuevos (Mes)</p>
+        <h4 class="text-2xl font-black mt-1 font-headline">{{ resumen()?.clientes_nuevos_mes ?? 0 }}</h4>
+        <p class="text-on-surface-variant text-[10px] mt-2 font-medium">Clientes este mes</p>
+      </div>
 
-        <a
-          routerLink="/admin/dashboard/productos"
-          routerLinkActive
-          #rla2="routerLinkActive"
-          [class]="
-            'mx-2 px-4 py-3 flex items-center gap-3 rounded-full transition-transform hover:translate-x-1 ' +
-            (rla2.isActive
-              ? 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100'
-              : 'text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800')
-          "
-        >
-          <span class="material-symbols-outlined">inventory_2</span>
-          <span [style.width]="collapsed() ? '0' : 'auto'" [style.opacity]="collapsed() ? '0' : '1'"
-            >Productos</span
-          >
-        </a>
-        <a
-          routerLink="/admin/dashboard/servicios"
-          routerLinkActive
-          #rla3="routerLinkActive"
-          [class]="
-            'mx-2 px-4 py-3 flex items-center gap-3 rounded-full transition-transform hover:translate-x-1 ' +
-            (rla3.isActive
-              ? 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100'
-              : 'text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800')
-          "
-        >
-          <span class="material-symbols-outlined">service_toolbox</span>
-          <span [style.width]="collapsed() ? '0' : 'auto'" [style.opacity]="collapsed() ? '0' : '1'"
-            >Servicios</span
-          >
-        </a>
-        <a
-          routerLink="/admin/dashboard/contenidos"
-          routerLinkActive
-          #rla4="routerLinkActive"
-          [class]="
-            'mx-2 px-4 py-3 flex items-center gap-3 rounded-full transition-transform hover:translate-x-1 ' +
-            (rla4.isActive
-              ? 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100'
-              : 'text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800')
-          "
-        >
-          <span class="material-symbols-outlined">article</span>
-          <span [style.width]="collapsed() ? '0' : 'auto'" [style.opacity]="collapsed() ? '0' : '1'"
-            >Contenidos</span
-          >
-        </a>
+      <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant/10 hover:shadow-md transition-shadow">
+        <div class="w-10 h-10 bg-secondary-container/20 text-on-secondary-container rounded-lg flex items-center justify-center mb-4">
+          <span class="material-symbols-outlined">add_task</span>
+        </div>
+        <p class="text-on-surface-variant text-xs font-label uppercase tracking-widest">Mascotas (Mes)</p>
+        <h4 class="text-2xl font-black mt-1 font-headline">{{ resumen()?.mascotas_nuevas_mes ?? 0 }}</h4>
+        <p class="text-on-surface-variant text-[10px] mt-2 font-medium">Nuevos registros</p>
+      </div>
 
-         <a
-          routerLink="/main/Home"
-          [class]="'mx-2 px-4 py-3 flex items-center gap-3 rounded-full transition-transform hover:translate-x-1 '"
-          [title]="collapsed() ? 'Inicio' : ''"
-        >
-          <span
-            class="material-symbols-outlined flex-shrink-0"
-            [style.font-variation-settings]="rla0.isActive ? '\'FILL\' 1' : ''"
-            >Home</span
-          >
-          <span
-            class="whitespace-nowrap overflow-hidden transition-all duration-200"
-            [style.width]="collapsed() ? '0' : 'auto'"
-            [style.opacity]="collapsed() ? '0' : '1'"
-            >Home</span
-          >
-        </a>
-        <button
-          (click)="logout()"
-          class="w-full text-slate-500 dark:text-slate-400 mx-2 px-4 py-3 hover:bg-red-50 dark:hover:bg-red-950/30 hover:text-red-500 flex items-center gap-3 rounded-full transition-transform hover:translate-x-1"
-        >
-          <span class="material-symbols-outlined">logout</span>
-          <span [style.width]="collapsed() ? '0' : 'auto'" [style.opacity]="collapsed() ? '0' : '1'"
-            >Logout</span
-          >
+      <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant/10 hover:shadow-md transition-shadow">
+        <div class="w-10 h-10 bg-blue-100 text-blue-700 rounded-lg flex items-center justify-center mb-4">
+          <span class="material-symbols-outlined">medical_services</span>
+        </div>
+        <p class="text-on-surface-variant text-xs font-label uppercase tracking-widest">Consultas</p>
+        <h4 class="text-2xl font-black mt-1 font-headline">{{ resumen()?.consultas_mes ?? 0 }}</h4>
+        <p class="text-on-surface-variant text-[10px] mt-2 font-medium">Completadas este mes</p>
+      </div>
+    </section>
+
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+      <section class="xl:col-span-2 bg-surface-container-lowest rounded-xl p-8 border border-outline-variant/10">
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <h3 class="text-xl font-bold font-headline">Distribución por Especie</h3>
+            <p class="text-sm text-on-surface-variant">Desglose de pacientes activos por categoría</p>
+          </div>
+        </div>
+        @if (especies().length > 0) {
+          <div class="flex items-end gap-6 md:gap-12 h-64 mt-4">
+            @for (especie of especies(); track especie.id_especie; let i = $index) {
+              <div class="flex-1 flex flex-col items-center gap-4 h-full group">
+                <div class="w-full flex-1 flex flex-col justify-end gap-1">
+                  <div class="w-full rounded-t-lg transition-all relative" [class]="getColorBarra(i)" [style.height]="getAlturaBarra(especie.cantidad)">
+                    <div class="absolute -top-8 left-1/2 -translate-x-1/2 text-sm font-black">{{ especie.cantidad }}</div>
+                  </div>
+                </div>
+                <span class="font-label text-xs uppercase tracking-wider font-bold text-center">{{ especie.especie }}</span>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="h-64 flex items-center justify-center text-on-surface-variant">
+            No hay datos de especies para mostrar.
+          </div>
+        }
+      </section>
+
+      <section class="bg-surface-container-lowest rounded-xl p-6 border border-outline-variant/10 overflow-hidden">
+        <h3 class="text-xl font-bold font-headline mb-1">Alertas de Salud</h3>
+        <p class="text-xs text-on-surface-variant mb-6 uppercase tracking-widest font-label font-bold">Próximos 3 días</p>
+        @if (alertasSalud().length > 0) {
+          <div class="space-y-4">
+            @for (alerta of alertasSalud(); track $index) {
+              <div class="flex items-center gap-4 p-3 bg-surface rounded-lg">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm" [ngClass]="getClaseCirculoAlerta(alerta.dias_restantes)">
+                  {{ getTextoDias(alerta.dias_restantes) }}
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-bold truncate">{{ alerta.mascota }} <span class="text-on-surface-variant font-medium">({{ alerta.cliente }})</span></p>
+                  <p class="text-xs text-on-surface-variant truncate">{{ alerta.nombre_item }}@if (alerta.subtipo) { · {{ alerta.subtipo }} }</p>
+                </div>
+                <div class="shrink-0 text-primary">
+                  <span class="material-symbols-outlined text-lg">{{ getIconoAlerta(alerta) }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="py-10 text-center text-on-surface-variant">No hay alertas en los próximos 3 días.</div>
+        }
+        <button class="w-full mt-6 py-2 text-primary font-bold text-xs uppercase tracking-widest hover:bg-primary-container/10 rounded-lg transition-colors" type="button">
+          Ver todas las alertas
         </button>
-      </nav>
+      </section>
+    </div>
 
-      
-    </aside>
-
-    <!-- CONTENIDO (ACA ESTÁ EL FIX REAL) -->
-    <!-- CONTENIDO -->
-    <div class="flex-1 min-w-0 overflow-hidden">
-      <div class="w-full h-full">
-        <div class="w-full px-4 sm:px-6 md:px-8 lg:px-10 pt-14 lg:pt-6">
-          <main class="min-h-screen">
-            <router-outlet />
-          </main>
-
-          <!-- Footer -->
-          <footer
-            class="bg-slate-50 dark:bg-slate-950 w-full mt-auto flex flex-col md:flex-row justify-between items-center px-4 md:px-12 py-8 text-xs uppercase tracking-widest border-t border-slate-200 dark:border-slate-800"
-          >
-            <div class="text-blue-900 dark:text-blue-100 font-bold">
-              © 2024 The Clinical Sanctuary
+    <section class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div class="lg:col-span-2 bg-surface-container-low rounded-xl p-6 border border-outline-variant/10">
+        <h4 class="font-headline font-bold text-lg mb-4">Hogares con Múltiples Mascotas</h4>
+        <div class="h-full flex flex-col justify-center">
+          <div class="flex items-center justify-between p-4 bg-white rounded-xl shadow-sm">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center">
+                <span class="material-symbols-outlined">pets</span>
+              </div>
+              <div>
+                <p class="text-sm font-bold">Clientes con más de una mascota</p>
+                <p class="text-xs text-on-surface-variant">Indicador de fidelización</p>
+              </div>
             </div>
-          </footer>
+            <div class="text-right">
+              <p class="text-2xl font-black font-headline text-primary">{{ extras()?.clientes_con_multiples_mascotas ?? 0 }}</p>
+              <p class="text-xs text-on-surface-variant">hogares</p>
+            </div>
+          </div>
+          <div class="mt-4 p-4 bg-white rounded-xl shadow-sm">
+            <p class="text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-2">Especie más registrada</p>
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-on-surface">{{ extras()?.especie_mas_registrada?.especie || 'Sin datos' }}</span>
+              <span class="text-primary font-black text-lg">{{ extras()?.especie_mas_registrada?.cantidad ?? 0 }}</span>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+
+      <div class="bg-primary p-6 rounded-xl text-white relative overflow-hidden group">
+        <div class="absolute -right-4 -bottom-4 opacity-10 rotate-12 transition-transform group-hover:rotate-0 duration-500">
+          <span class="material-symbols-outlined text-9xl">history</span>
+        </div>
+        <p class="text-[10px] font-label uppercase tracking-[0.2em] opacity-80 mb-2">Última Consulta</p>
+        <h4 class="text-xl font-black font-headline">{{ extras()?.ultima_consulta_fecha ? 'Consulta registrada' : 'Sin consultas' }}</h4>
+        <p class="text-sm mt-1 opacity-90">
+          @if (extras()?.ultima_consulta_fecha) { Último movimiento clínico del sistema } @else { Aún no hay actividad clínica registrada }
+        </p>
+        <div class="mt-8 flex items-center gap-2">
+          <span class="material-symbols-outlined text-sm">schedule</span>
+          <span class="text-xs font-bold">{{ extras()?.ultima_consulta_fecha | date:'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+      </div>
+
+      <div class="bg-surface-container-highest p-6 rounded-xl border border-outline-variant/10 flex flex-col justify-between">
+        <div>
+          <p class="text-[10px] font-label uppercase tracking-[0.2em] text-on-surface-variant font-bold mb-2">Próximo Vencimiento</p>
+          <h4 class="text-lg font-bold font-headline text-error">{{ extras()?.proximo_vencimiento?.nombre_item || 'Sin vencimientos próximos' }}</h4>
+          <p class="text-xs text-on-surface-variant mt-1 leading-relaxed">
+            @if (extras()?.proximo_vencimiento?.mascota) {
+              {{ extras()?.proximo_vencimiento?.tipo }} para {{ extras()?.proximo_vencimiento?.mascota }} ({{ extras()?.proximo_vencimiento?.cliente }})
+            } @else {
+              No hay vacunas o desparasitaciones próximas registradas.
+            }
+          </p>
+        </div>
+        <div class="mt-4 pt-4 border-t border-outline-variant/20">
+          <div class="flex items-center justify-between w-full">
+            <span class="text-xs font-bold text-on-surface">
+              @if (extras()?.proximo_vencimiento?.dias_restantes !== undefined) {
+                {{ extras()?.proximo_vencimiento?.dias_restantes }} día(s) restantes
+              } @else {
+                Sin información
+              }
+            </span>
+            <span class="material-symbols-outlined text-lg">arrow_right_alt</span>
+          </div>
+        </div>
+      </div>
+    </section>
+    }
   </div>
-</body>
+</main>
+
+<button
+  class="fixed bottom-8 right-8 w-16 h-16 cta-gradient rounded-full flex items-center justify-center text-white shadow-2xl hover:scale-110 active:scale-95 transition-all z-50"
+  type="button"
+>
+  <span class="material-symbols-outlined text-3xl">add</span>
+</button>

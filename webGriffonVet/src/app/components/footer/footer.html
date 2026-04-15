@@ -1,22 +1,144 @@
-<footer class="w-full mt-auto bg-slate-50 border-t border-slate-200 font-manrope text-xs uppercase tracking-widest">
-<div class="flex flex-col md:flex-row justify-between items-center px-12 py-12 w-full max-w-7xl mx-auto">
-<div class="flex flex-col items-center md:items-start mb-8 md:mb-0">
-<div class="font-plus-jakarta font-bold text-blue-800 text-lg mb-4">The Clinical Sanctuary</div>
-<p class="text-slate-400 text-center md:text-left normal-case tracking-normal max-w-xs">© 2024 The Clinical Sanctuary. Celestial Care for Every Companion.</p>
-</div>
-<div class="flex flex-wrap justify-center gap-8">
-<a class="text-slate-400 hover:text-blue-500 underline underline-offset-4 transition-all" href="#">Privacy Policy</a>
-<a class="text-slate-400 hover:text-blue-500 underline underline-offset-4 transition-all" href="#">Terms of Service</a>
-<a class="text-slate-400 hover:text-blue-500 underline underline-offset-4 transition-all" href="#">Emergency Care</a>
-<a class="text-slate-400 hover:text-blue-500 underline underline-offset-4 transition-all" href="#">Contact Us</a>
-</div>
-<div class="mt-8 md:mt-0 flex gap-4">
-<div class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 hover:bg-primary-container hover:text-white transition-all cursor-pointer">
-<span class="material-symbols-outlined text-sm">share</span>
-</div>
-<div class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 hover:bg-primary-container hover:text-white transition-all cursor-pointer">
-<span class="material-symbols-outlined text-sm">mail</span>
-</div>
-</div>
-</div>
+<footer class="w-full mt-20 bg-white border-t border-slate-200">
+  <!-- Línea superior de identidad -->
+  <div class="h-1 w-full bg-primary"></div>
+
+  <div class="max-w-7xl mx-auto px-6 md:px-10 py-14">
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-10">
+
+      <!-- Marca -->
+      <section>
+        <h3 class="text-2xl font-extrabold text-primary mb-3">
+          GriffonVet
+        </h3>
+
+        <p class="text-slate-600 leading-relaxed mb-5">
+          Seguimiento clínico inteligente para la salud de tu mascota, con atención profesional,
+          recordatorios y acompañamiento en cada etapa.
+        </p>
+
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary font-semibold text-sm">
+          <span class="material-symbols-outlined text-base">favorite</span>
+          Cuidado veterinario con confianza
+        </div>
+      </section>
+
+      <!-- Contacto -->
+      <section>
+        <h4 class="text-sm font-extrabold uppercase tracking-[0.18em] text-slate-800 mb-4">
+          Contacto
+        </h4>
+
+        <ul class="space-y-3 text-slate-600">
+          <li class="flex items-start gap-3">
+            <span class="material-symbols-outlined text-primary mt-0.5">location_on</span>
+            <span>Almafuerte, Córdoba, Argentina</span>
+          </li>
+
+          <li class="flex items-start gap-3">
+            <span class="material-symbols-outlined text-primary mt-0.5">call</span>
+            <span>+54 9</span>
+          </li>
+
+          <li class="flex items-start gap-3">
+            <span class="material-symbols-outlined text-primary mt-0.5">mail</span>
+            <span>silvano@gmail.com</span>
+          </li>
+
+          <li class="flex items-start gap-3">
+            <span class="material-symbols-outlined text-primary mt-0.5">language</span>
+            <span>www.-----.com</span>
+          </li>
+        </ul>
+      </section>
+
+      <!-- Horarios -->
+      <section>
+        <h4 class="text-sm font-extrabold uppercase tracking-[0.18em] text-slate-800 mb-4">
+          Horarios
+        </h4>
+
+        <ul class="space-y-3 text-slate-600">
+          <li class="flex items-start justify-between gap-4 border-b border-slate-100 pb-2">
+            <span>Lunes a Viernes</span>
+            <span class="font-semibold text-slate-800">8:00am - 12:00pm  16pm - 20pm </span>
+          </li>
+
+          <li class="flex items-start justify-between gap-4 border-b border-slate-100 pb-2">
+            <span>Sábados</span>
+            <span class="font-semibold text-slate-800">8:00am - 12:00pm</span>
+          </li>
+
+          <li class="flex items-start justify-between gap-4">
+            <span>Domingos</span>
+            <span class="font-semibold text-slate-800">Cerrado</span>
+          </li>
+        </ul>
+
+        <div class="mt-5 rounded-2xl border border-red-200 bg-red-50 px-4 py-3">
+          <div class="flex items-center gap-2 text-red-600 font-bold">
+            <span class="material-symbols-outlined">warning</span>
+            Emergencias 24hs
+          </div>
+          <p class="text-sm text-red-500 mt-1">
+            Atención prioritaria para casos urgentes.
+          </p>
+        </div>
+      </section>
+
+      <!-- Navegación -->
+      <section>
+        <h4 class="text-sm font-extrabold uppercase tracking-[0.18em] text-slate-800 mb-4">
+          Navegación
+        </h4>
+
+        <nav class="grid grid-cols-1 gap-3 text-slate-600">
+          <a
+            routerLink="/main/home"
+            class="hover:text-primary transition-colors w-fit"
+          >
+            Inicio
+          </a>
+
+          <a
+            routerLink="/main/productos"
+            class="hover:text-primary transition-colors w-fit"
+          >
+            Productos
+          </a>
+
+          <a
+            routerLink="/main/turnos"
+            class="hover:text-primary transition-colors w-fit"
+          >
+            Turnos
+          </a>
+
+          <a
+            routerLink="/main/mis-mascotas"
+            class="hover:text-primary transition-colors w-fit"
+          >
+            Mis Mascotas
+          </a>
+
+          
+        </nav>
+
+        
+      </section>
+    </div>
+  </div>
+
+  <!-- Bottom -->
+  <div class="border-t border-slate-200">
+    <div class="max-w-7xl mx-auto px-6 md:px-10 py-5 flex flex-col md:flex-row items-center justify-between gap-3 text-sm text-slate-500">
+      <p>
+        © 2026 GriffonVet. Todos los derechos reservados.
+      </p>
+
+      <div class="flex flex-wrap items-center justify-center gap-4">
+        <a class="hover:text-primary transition-colors">Privacidad</a>
+        <a class="hover:text-primary transition-colors">Términos</a>
+    </div>
+    </div>
+  </div>
 </footer>

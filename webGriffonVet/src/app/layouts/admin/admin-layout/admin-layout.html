@@ -1,3 +1,195 @@
-<router-outlet></router-outlet>
+<body
+  class="bg-surface font-body text-on-surface antialiased selection:bg-primary-fixed selection:text-on-primary-fixed"
+>
+  <!-- Botón mobile -->
+  <div
+    class="lg:hidden fixed top-0 left-0 right-0 z-50 bg-slate-100 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 px-4 py-3 flex items-center gap-3"
+  >
+    <button
+      (click)="toggle()"
+      class="p-1.5 rounded-lg text-slate-500 hover:bg-slate-200/60 dark:hover:bg-slate-800 transition-colors"
+    >
+      <span class="material-symbols-outlined text-[20px]">menu</span>
+    </button>
+    <h1 class="text-lg font-black text-blue-900 dark:text-blue-200">
+      Panel Admin
+    </h1>
+  </div>
+
+  <!-- Overlay mobile -->
+  @if (!collapsed()) {
+  <div
+    class="lg:hidden fixed inset-0 bg-black/40 z-30"
+    (click)="toggle()"
+  ></div>
+  }
+
+  <!-- LAYOUT PRINCIPAL -->
+  <div class="flex min-h-screen">
+    <!-- SIDEBAR -->
+    <aside
+      [class]="
+        'h-screen bg-slate-100 dark:bg-slate-950 flex flex-col py-6 font-plus-jakarta font-medium z-40 transition-all duration-300 ease-in-out overflow-hidden flex-shrink-0' +
+        (collapsed() ? ' w-[68px]' : ' w-64')
+      "
+    >
+      <!-- HEADER -->
+      <div class="px-4 mb-10 flex items-center justify-between min-w-0">
+        <h1
+          class="text-lg font-black text-blue-900 dark:text-blue-200 whitespace-nowrap transition-all duration-300 overflow-hidden"
+          [style.width]="collapsed() ? '0' : 'auto'"
+          [style.opacity]="collapsed() ? '0' : '1'"
+        >
+          Panel Admin
+        </h1>
+        <button
+          (click)="toggle()"
+          class="ml-auto p-1.5 rounded-lg text-slate-500 hover:bg-slate-200/60 dark:hover:bg-slate-800 dark:text-slate-400 transition-colors flex-shrink-0"
+        >
+          <span class="material-symbols-outlined text-[20px]">
+            {{ collapsed() ? 'menu_open' : 'menu' }}
+          </span>
+        </button>
+      </div>
+
+      <!-- NAV -->
+      <nav class="flex-1 px-2 space-y-1">
+        <a
+          routerLink="/admin/dashboard"
+          routerLinkActive
+          #rla0="routerLinkActive"
+          [routerLinkActiveOptions]="{ exact: true }"
+          [class]="
+            'mx-2 px-4 py-3 flex items-center gap-3 rounded-full transition-transform hover:translate-x-1 ' +
+            (rla0.isActive
+              ? 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100'
+              : 'text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800')
+          "
+        >
+          <span class="material-symbols-outlined">dashboard</span>
+          <span
+            [style.width]="collapsed() ? '0' : 'auto'"
+            [style.opacity]="collapsed() ? '0' : '1'"
+            >Dashboard</span
+          >
+        </a>
+
+        <a
+          routerLink="/admin/clientes"
+          routerLinkActive
+          #rla1="routerLinkActive"
+          [class]="
+            'mx-2 px-4 py-3 flex items-center gap-3 rounded-full transition-transform hover:translate-x-1 ' +
+            (rla1.isActive
+              ? 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100'
+              : 'text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800')
+          "
+        >
+          <span class="material-symbols-outlined">group</span>
+          <span
+            [style.width]="collapsed() ? '0' : 'auto'"
+            [style.opacity]="collapsed() ? '0' : '1'"
+            >Clientes</span
+          >
+        </a>
+
+        <a
+          routerLink="/admin/productos"
+          routerLinkActive
+          #rla2="routerLinkActive"
+          [class]="
+            'mx-2 px-4 py-3 flex items-center gap-3 rounded-full transition-transform hover:translate-x-1 ' +
+            (rla2.isActive
+              ? 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100'
+              : 'text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800')
+          "
+        >
+          <span class="material-symbols-outlined">inventory_2</span>
+          <span
+            [style.width]="collapsed() ? '0' : 'auto'"
+            [style.opacity]="collapsed() ? '0' : '1'"
+            >Productos</span
+          >
+        </a>
+        <a
+          routerLink="/admin/servicios"
+          routerLinkActive
+          #rla3="routerLinkActive"
+          [class]="
+            'mx-2 px-4 py-3 flex items-center gap-3 rounded-full transition-transform hover:translate-x-1 ' +
+            (rla3.isActive
+              ? 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100'
+              : 'text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800')
+          "
+        >
+          <span class="material-symbols-outlined">service_toolbox</span>
+          <span
+            [style.width]="collapsed() ? '0' : 'auto'"
+            [style.opacity]="collapsed() ? '0' : '1'"
+            >Servicios</span
+          >
+        </a>
+        <a
+          routerLink="/admin/contenidos"
+          routerLinkActive
+          #rla4="routerLinkActive"
+          [class]="
+            'mx-2 px-4 py-3 flex items-center gap-3 rounded-full transition-transform hover:translate-x-1 ' +
+            (rla4.isActive
+              ? 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100'
+              : 'text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800')
+          "
+        >
+          <span class="material-symbols-outlined">article</span>
+          <span
+            [style.width]="collapsed() ? '0' : 'auto'"
+            [style.opacity]="collapsed() ? '0' : '1'"
+            >Contenidos</span
+          >
+        </a>
+
+        <a
+          routerLink="/main/Home"
+          [class]="'mx-2 px-4 py-3 flex items-center gap-3 rounded-full transition-transform hover:translate-x-1 '"
+          [title]="collapsed() ? 'Inicio' : ''"
+        >
+          <span
+            class="material-symbols-outlined flex-shrink-0"
+            [style.font-variation-settings]="rla0.isActive ? '\'FILL\' 1' : ''"
+            >Home</span
+          >
+          <span
+            class="whitespace-nowrap overflow-hidden transition-all duration-200"
+            [style.width]="collapsed() ? '0' : 'auto'"
+            [style.opacity]="collapsed() ? '0' : '1'"
+            >Home</span
+          >
+        </a>
+        <button
+          (click)="logout()"
+          class="w-full text-slate-500 dark:text-slate-400 mx-2 px-4 py-3 hover:bg-red-50 dark:hover:bg-red-950/30 hover:text-red-500 flex items-center gap-3 rounded-full transition-transform hover:translate-x-1"
+        >
+          <span class="material-symbols-outlined">logout</span>
+          <span
+            [style.width]="collapsed() ? '0' : 'auto'"
+            [style.opacity]="collapsed() ? '0' : '1'"
+            >Logout</span
+          >
+        </button>
+      </nav>
+    </aside>
+
+    <div class="flex-1 min-w-0 overflow-hidden">
+      <div class="w-full h-full">
+        <div class="w-full px-4 sm:px-6 md:px-8 lg:px-10 pt-14 lg:pt-6">
+          <main class="min-h-screen">
+            <router-outlet />
+          </main>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
 <app-toast></app-toast>
 <app-error-modal></app-error-modal>

@@ -1,8 +1,12 @@
 <main class="pt-28 pb-20 max-w-7xl mx-auto px-6">
   <!-- HEADER -->
-  <header class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+  <header
+    class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6"
+  >
     <div class="max-w-2xl">
-      <h1 class="font-headline text-5xl font-extrabold tracking-tight text-on-surface mb-4">
+      <h1
+        class="font-headline text-5xl font-extrabold tracking-tight text-on-surface mb-4"
+      >
         Mis Mascotas
       </h1>
       <p class="text-on-surface-variant text-lg leading-relaxed">
@@ -13,128 +17,214 @@
 
   <!-- GRID MASCOTAS -->
   @if (mascotas.length > 0) {
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      @for (m of mascotas; track m.id_mascota) {
-        <div
-          class="group bg-surface-container-lowest pet-card-radius transition-all duration-300 hover:translate-y-[-4px] hover:shadow-[0_12px_40px_rgba(25,28,29,0.06)]"
-        >
-          <!-- IMAGEN -->
-          <div class="relative overflow-hidden pet-card-radius-top h-64">
-            <img
-              class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-              [src]="
-                m.especie === 'CANINO'
-                  ? 'https://images.unsplash.com/photo-1558788353-f76d92427f16'
-                  : 'https://images.unsplash.com/photo-1518791841217-8f162f1e1131'
-              "
-              [alt]="m.nombre"
-            />
-
-            <!-- BADGE -->
-            <div
-              class="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-tighter"
-              [ngClass]="
-                m.especie === 'CANINO'
-                  ? 'bg-primary-container text-on-primary-container'
-                  : 'bg-tertiary-container text-on-tertiary'
-              "
-            >
-              {{ m.especie === 'CANINO' ? 'Canino' : 'Felino' }}
-            </div>
-          </div>
-
-          <!-- INFO PRINCIPAL -->
-          <div class="p-6">
-            <div class="flex justify-between items-start mb-4">
-              <div>
-                <h3 class="font-headline text-2xl font-bold text-on-surface">
-                  {{ m.nombre }}
-                </h3>
-                <p class="text-tertiary font-medium text-sm">
-                  {{ m.raza }} • {{ m.fecha_nacimiento | date: 'yyyy' }}
-                </p>
-                <p class="text-xs text-gray-400 mt-1">
-                  {{ calcularEdad(m.fecha_nacimiento) }}
-                </p>
-              </div>
-              <span class="material-symbols-outlined text-outline">pets</span>
-            </div>
-
-            <!-- BOTONES -->
-            <div class="flex gap-2 mt-4">
-              <button
-                (click)="abrirHistorial(m)"
-                class="flex-1 bg-surface-container text-primary font-bold py-3 rounded-full text-xs uppercase tracking-widest hover:bg-primary hover:text-white transition-colors"
-              >
-                {{
-                  mascotaSeleccionadaId() === m.id_mascota
-                    ? 'Ocultar historia clinica'
-                    : 'Ver historia clinica'
-                }}
-              </button>
-            </div>
-          </div>
-        </div>
-      }
-      <div class="mt-12 flex justify-center">
-  <button
-    (click)="abrirAgregar()"
-    class="group border-2 border-dashed border-outline-variant/30 pet-card-radius p-10 flex flex-col items-center justify-center text-center hover:bg-surface-container-low transition-all max-w-sm w-full"
-  >
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    @for (m of mascotas; track m.id_mascota) {
     <div
-      class="w-20 h-20 rounded-full bg-primary-fixed flex items-center justify-center mb-6 group-hover:scale-110 transition-all"
+      class="bg-surface-container-lowest rounded-2xl p-5 shadow-sm border border-outline-variant/20 w-full max-w-xs transition-all hover:shadow-md"
     >
-      <span class="material-symbols-outlined text-4xl">add</span>
+      <!-- HEADER -->
+      <div class="flex justify-between items-start mb-4">
+        <!-- BADGE -->
+        <span
+          class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-tighter"
+          [ngClass]="
+        m.especie === 'CANINO'
+          ? 'bg-primary-container text-on-primary-container'
+          : 'bg-tertiary-container text-on-tertiary'
+      "
+        >
+          {{ m.especie === 'CANINO' ? 'Canino' : 'Felino' }}
+        </span>
+
+        <span class="material-symbols-outlined text-outline text-lg">
+          pets
+        </span>
+      </div>
+
+      <!-- NOMBRE -->
+      <h3 class="text-2xl font-bold text-primary mb-1">{{ m.nombre }}</h3>
+
+      <!-- RAZA -->
+      <p class="text-sm text-on-surface-variant mb-4">{{ m.raza }}</p>
+
+      <!-- INFO -->
+      <div class="flex gap-3 mb-5">
+        <!-- EDAD -->
+        <div
+          class="flex-1 bg-surface-container rounded-xl px-3 py-2 text-center"
+        >
+          <p class="text-xs text-on-surface-variant uppercase">Edad</p>
+          <p class="font-bold text-on-surface">
+            {{ calcularEdad(m.fecha_nacimiento) }}
+          </p>
+        </div>
+      </div>
+
+      <!-- BOTONES -->
+      <div class="flex gap-2 mt-4">
+        <button
+          (click)="abrirHistorial(m)"
+          class="flex-1 bg-surface-container text-primary font-bold py-3 rounded-full text-xs uppercase tracking-widest hover:bg-primary hover:text-white transition-colors"
+        >
+          {{ mascotaSeleccionadaId() === m.id_mascota ? 'Ocultar historia
+          clinica' : 'Ver historia clinica' }}
+        </button>
+      </div>
     </div>
 
-    <h3 class="font-headline text-xl font-bold text-on-surface mb-2">
-      ¿Nueva incorporación?
-    </h3>
+    }
+    <div class="mt-12 flex justify-center">
+      <button
+        (click)="abrirAgregar()"
+        class="group border-2 border-dashed border-outline-variant/30 pet-card-radius p-10 flex flex-col items-center justify-center text-center hover:bg-surface-container-low transition-all max-w-sm w-full"
+      >
+        <div
+          class="w-20 h-20 rounded-full bg-primary-fixed flex items-center justify-center mb-6 group-hover:scale-110 transition-all"
+        >
+          <span class="material-symbols-outlined text-4xl">add</span>
+        </div>
 
-    <p class="text-on-surface-variant text-sm mb-6 px-4">
-      Registrá a tu nueva mascota.
-    </p>
+        <h3 class="font-headline text-xl font-bold text-on-surface mb-2">
+          ¿Nueva incorporación?
+        </h3>
 
-    <span
-      class="text-primary font-bold text-sm tracking-widest uppercase group-hover:underline"
-    >
-      Comenzar registro
-    </span>
-  </button>
-</div>
+        <p class="text-on-surface-variant text-sm mb-6 px-4">
+          Registrá a tu nueva mascota.
+        </p>
+
+        <span
+          class="text-primary font-bold text-sm tracking-widest uppercase group-hover:underline"
+        >
+          Comenzar registro
+        </span>
+      </button>
     </div>
+   </div>
   }
 
+
+
+@if (mascotaSeleccionadaId() !== null) {
+  <div class="mt-8">
+    <app-historial-clinico-admin
+      [mascotaId]="mascotaSeleccionadaId()!"
+      [usuarioId]="usuarioSeleccionadoId()!"
+      [esAdmin]="false"
+    />
+  </div>
+  }
+
+
+
+
+@if (!loading && hayRecordatorios()) {
+<section class="mt-16">
+  <div class="mb-6">
+    <h2 class="text-3xl font-extrabold text-on-surface mb-2">
+      Próximos cuidados
+    </h2>
+    <p class="text-on-surface-variant">
+      Recordatorios de vacunas y desparasitaciones de tus mascotas.
+    </p>
+  </div>
+
+  <div class="space-y-6">
+    @for (mascota of recordatoriosMascotas; track mascota.id_mascota) {
+      @if (mascota.recordatorios.length) {
+      <div class="bg-surface-container-low rounded-3xl border border-outline-variant/20 p-6 shadow-sm">
+        <div class="flex items-center justify-between mb-5">
+          <div>
+            <h3 class="text-2xl font-bold text-primary">
+              {{ mascota.nombre }}
+            </h3>
+            <p class="text-sm text-on-surface-variant">
+              {{ mascota.especie }} · {{ mascota.raza }}
+            </p>
+          </div>
+
+          <div class="px-4 py-2 rounded-full bg-primary-container text-on-primary-container text-sm font-bold">
+            {{ mascota.recordatorios.length }}
+            {{ mascota.recordatorios.length === 1 ? 'recordatorio' : 'recordatorios' }}
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          @for (r of mascota.recordatorios; track r.id_registro) {
+          <article class="rounded-2xl border border-outline-variant/20 bg-surface p-5 shadow-sm">
+            <div class="flex items-start justify-between gap-3 mb-4">
+              <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-primary text-3xl">
+                  {{ getIconoTipo(r.tipo) }}
+                </span>
+
+                <div>
+                  <p class="text-xs uppercase tracking-widest text-on-surface-variant font-semibold">
+                    {{ r.tipo === 'VACUNA' ? 'Vacuna' : 'Desparasitación' }}
+                  </p>
+                  <h4 class="text-lg font-extrabold text-on-surface leading-tight">
+                    {{ r.nombre }}
+                  </h4>
+                </div>
+              </div>
+
+              <span
+                class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide"
+                [ngClass]="getClaseUrgencia(r.dias_restantes)"
+              >
+                {{ getTextoDias(r.dias_restantes) }}
+              </span>
+            </div>
+
+            <div class="space-y-2 text-sm">
+              <p class="text-on-surface">
+                <span class="font-semibold">Proxima Fecha:</span>
+                {{ r.fecha_proxima | date:'dd/MM/yyyy' }}
+              </p>
+
+              @if (r.subtipo) {
+              <p class="text-on-surface">
+                <span class="font-semibold">Tipo:</span>
+                {{ r.subtipo }}
+              </p>
+              }
+
+              @if (r.observaciones) {
+              <p class="text-on-surface-variant leading-relaxed">
+                {{ r.observaciones }}
+              </p>
+              }
+            </div>
+          </article>
+          }
+        </div>
+      </div>
+      }
+    }
+  </div>
+</section>
+}
   <!-- CARD AGREGAR (SIEMPRE VISIBLE) -->
 
   <!-- MENSAJE SI NO HAY DATOS -->
   @if (!loading && mascotas.length === 0) {
-    <div class="text-center py-20 text-gray-400">No tenés mascotas registradas</div>
-  }
-
-  @if (modalEditarAbierto() && mascotaSeleccionada()) {
-    <app-editar-mascota
-      [mascotaId]="mascotaSeleccionada()!.id_mascota"
-      [usuarioId]="mascotaSeleccionada()!.id_usuario"
-      [mascota]="mascotaSeleccionada()!"
-      (cerrar)="modalEditarAbierto.set(false)"
-      (mascotaEditada)="onMascotaEditada()"
-    />
-  }
-  @if (mascotaSeleccionadaId() !== null) {
-    <div class="mt-8">
-      <app-historial-clinico-admin
-        [mascotaId]="mascotaSeleccionadaId()!"
-        [usuarioId]="usuarioSeleccionadoId()!"
-        [esAdmin]="false"
-      />
-    </div>
-  }
-  @if (modalAgregarAbierto()) {
-    <app-nueva-mascota
-      [usuarioId]="getIdUsuario()"
-      (cerrar)="modalAgregarAbierto.set(false)"
-      (mascotaGuardada)="onMascotaAgregada()"
-    />
+  <div class="text-center py-20 text-gray-400">
+    No tenés mascotas registradas
+  </div>
+  } @if (modalEditarAbierto() && mascotaSeleccionada()) {
+  <app-editar-mascota
+    [mascotaId]="mascotaSeleccionada()!.id_mascota"
+    [usuarioId]="mascotaSeleccionada()!.id_usuario"
+    [mascota]="mascotaSeleccionada()!"
+    (cerrar)="modalEditarAbierto.set(false)"
+    (mascotaEditada)="onMascotaEditada()"
+  />
+  } 
+  
+   @if (modalAgregarAbierto()) {
+  <app-nueva-mascota
+    [usuarioId]="getIdUsuario()"
+    (cerrar)="modalAgregarAbierto.set(false)"
+    (mascotaGuardada)="onMascotaAgregada()"
+  />
   }
 </main>

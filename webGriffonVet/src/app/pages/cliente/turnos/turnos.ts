@@ -11,7 +11,7 @@ import { ServicioService } from '../../../core/services/servicio-service';
 })
 export class Turnos {
 
-  private readonly WHATSAPP_NUMBER = 'xxxxxxxxxx'; 
+  private readonly WHATSAPP_NUMBER = 'xxx'; 
 
   constructor(private servicioService: ServicioService) {}
 

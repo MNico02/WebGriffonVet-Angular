@@ -8,7 +8,10 @@ import { editarMascotaRequest } from '../../../api/models/historialClinico';
 import { AuthService } from '../../../core/services/auth';
 import { NuevaMascota } from '../../../layouts/cliente/nueva-mascota/nueva-mascota';
 import { HistorialClinicoAdmin } from '../../admin/historial-clinico-admin/historial-clinico-admin';
-
+import {
+  MascotaConRecordatorios,
+  RecordatorioMascota,
+} from '../../../api/models/RecordatorioMascota';
 @Component({
   selector: 'app-mascotas',
   standalone: true,
@@ -20,7 +23,7 @@ export class Mascotas implements OnInit {
 
   mascotas: MascotaUsuario[] = [];
   loading = true;
-
+recordatoriosMascotas: MascotaConRecordatorios[] = [];
   // ID de la mascota cuyo panel está abierto; null = ninguno
   mascotaExpandida: number | null = null;
 
@@ -90,6 +93,7 @@ export class Mascotas implements OnInit {
   }
 
   private cargarMascotas(): void {
+     this.loading = true;
     this.service.getMascotas().subscribe({
       next: (data) => {
         this.mascotas = data.map(m => ({
@@ -97,6 +101,7 @@ export class Mascotas implements OnInit {
           especie: this.normalizar(m.especie),
           edad: this.calcularEdad(m.fecha_nacimiento)
         }));
+        this.cargarRecordatorios();
         this.loading = false;
         this.cdr.detectChanges();
       },
@@ -129,4 +134,63 @@ export class Mascotas implements OnInit {
   getIdUsuario(){
     return this.auth.getIdUsuario();
   }
+
+  private cargarRecordatorios(): void {
+  this.service.getRecordatoriosMascotas().subscribe({
+    next: (data) => {
+      this.recordatoriosMascotas = data.map(m => ({
+        ...m,
+        especie: this.normalizar(m.especie),
+        recordatorios: (m.recordatorios ?? []).sort(
+          (a, b) => a.dias_restantes - b.dias_restantes
+        )
+      }));
+
+      this.loading = false;
+      this.cdr.detectChanges();
+    },
+    error: (err) => {
+      console.error(err);
+      this.recordatoriosMascotas = [];
+      this.loading = false;
+      this.cdr.detectChanges();
+    }
+  });
+}
+
+getClaseUrgencia(dias: number): string {
+  if (dias === 0) {
+    return 'bg-red-600 text-white animate-pulse';
+  }
+  if (dias <= 3) {
+    return 'bg-red-500 text-white';
+  }
+  if (dias <= 7) {
+    return 'bg-amber-400 text-black';
+  }
+  return 'bg-emerald-500 text-white';
+}
+
+getTextoDias(dias: number): string {
+  if (dias === 0) return 'Hoy';
+  if (dias === 1) return '1 día';
+  return `${dias} días`;
+}
+
+getIconoTipo(tipo: string): string {
+  return tipo === 'VACUNA' ? 'vaccines' : 'pet_supplies';
+}
+
+getTituloTipo(r: RecordatorioMascota): string {
+  if (r.tipo === 'VACUNA') {
+    return `Vacuna: ${r.nombre}`;
+  }
+  return `Desparasitación: ${r.nombre}`;
+}
+
+hayRecordatorios(): boolean {
+  return this.recordatoriosMascotas.some(
+    (m) => (m.recordatorios?.length ?? 0) > 0
+  );
+}
 }

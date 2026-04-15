@@ -1,11 +1,17 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
-import { Mascota } from '../../api/models/mascota';
-import { environment } from '../../../environments/environment.development';
-import { MascotaRequest, MascotaUsuario } from '../../api/models/mascota-usuario.model';
-
-@Injectable({ providedIn: 'root' })
+import { Injectable } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { Observable, map } from "rxjs";
+import { Mascota } from "../../api/models/mascota";
+import { environment } from "../../../environments/environment.development";
+import {
+  MascotaRequest,
+  MascotaUsuario,
+} from "../../api/models/mascota-usuario.model";
+import {
+  MascotaConRecordatorios,
+  RecordatoriosMascotasResponse,
+} from "../../api/models/RecordatorioMascota";
+@Injectable({ providedIn: "root" })
 export class MascotaService {
   constructor(private http: HttpClient) {}
 
@@ -30,13 +36,30 @@ export class MascotaService {
 
   getMascotas(): Observable<MascotaUsuario[]> {
     return this.http
-      .get<{ success: number; mascotas: MascotaUsuario[] }>(
-        `${this.apiUrl}/usuario/obtenerMascotas`, {}
-      )
+      .get<{
+        success: number;
+        mascotas: MascotaUsuario[];
+      }>(`${this.apiUrl}/usuario/obtenerMascotas`, {})
       .pipe(map((response) => response.mascotas ?? []));
   }
 
-  insertarMascota(payload: MascotaRequest ): Observable<any>{
+  insertarMascota(payload: MascotaRequest): Observable<any> {
     return this.http.post(`${this.apiUrl}/insertarMascotas`, payload);
+  }
+
+  getRecordatoriosMascotas(): Observable<MascotaConRecordatorios[]> {
+    return this.http
+      .post<RecordatoriosMascotasResponse>(
+        `${this.apiUrl}/usuario/obtenerRecordatoriosMascotas`,
+        {},
+      )
+      .pipe(
+        map((response) =>
+          (response.mascotas ?? []).map((m) => ({
+            ...m,
+            recordatorios: m.recordatorios ?? [],
+          })),
+        ),
+      );
   }
 }

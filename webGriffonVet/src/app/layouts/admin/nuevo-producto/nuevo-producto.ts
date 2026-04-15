@@ -174,8 +174,9 @@ mostrarNuevaCategoria = false;
       .insertarProducto(this.imagenArchivo, payload)
       .subscribe({
         next: () => {
-          // ✅ TOAST
-          this.toast.mostrar("Producto creado correctamente");
+          setTimeout(() => {
+    this.toast.mostrar("Producto creado correctamente");
+  });
 
           this.productoGuardado.emit();
           this.cerrar.emit();
