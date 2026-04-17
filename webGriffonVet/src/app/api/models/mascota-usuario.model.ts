@@ -21,6 +21,7 @@ export interface MascotaRequest {
   raza: string;
   sexo: string;
   tamanio:string;
+  castrado?: boolean;
   fecha_nacimiento: string;
   comportamiento:string;
   observaciones:string;

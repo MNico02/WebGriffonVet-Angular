@@ -75,6 +75,7 @@ export class Registro {
 
           // ✅ TOAST
           this.toast.mostrar('Cuenta creada correctamente, revisa tu email para la activación', 'success', 20000);
+          this.router.navigate(['/login']);
         },
         error: (err) => {
           this.cargando = false;

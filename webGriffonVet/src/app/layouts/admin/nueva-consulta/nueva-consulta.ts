@@ -188,6 +188,18 @@ export class NuevaConsulta implements OnInit {
   }
 
   guardar() {
+    if (!this.form.motivo_consulta.trim()) {
+      this.errorModal.mostrar("El motivo es obligatorio");
+      return;
+    }
+    if (!this.form.diagnostico.trim()) {
+      this.errorModal.mostrar("El diagnostico es obligatorio");
+      return;
+    }
+    if (!this.form.tratamiento.trim()) {
+      this.errorModal.mostrar("El tratemiento es obligatorio");
+      return;
+    }
     const formData = new FormData();
 
     const estudiosSinArchivo = this.form.estudios.map((e: any) => {

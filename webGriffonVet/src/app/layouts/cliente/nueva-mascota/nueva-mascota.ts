@@ -34,6 +34,7 @@ export class NuevaMascota implements OnInit {
     id_especie: null,
     raza: '',
     tamanio: '',
+    castrado: false ,
     fecha_nacimiento: '',
     sexo: '',
     tipo_pelaje: '',

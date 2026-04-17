@@ -1,30 +1,28 @@
 <div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
   <div class="bg-white w-[600px] max-h-[90vh] overflow-y-auto rounded-xl p-6 shadow-xl">
-
     <h2 class="text-xl font-bold mb-4">Nuevo Cliente</h2>
 
     <!-- CLIENTE -->
     <div class="grid grid-cols-2 gap-3 mb-4">
-      <input [(ngModel)]="formCliente.cliente.nombre" placeholder="Nombre" class="input"/>
-      <input [(ngModel)]="formCliente.cliente.apellido" placeholder="Apellido" class="input"/>
-      <input [(ngModel)]="formCliente.cliente.email" placeholder="Email" class="input col-span-2"/>
-      <input [(ngModel)]="formCliente.cliente.telefono" placeholder="Teléfono" class="input"/>
-      <input [(ngModel)]="formCliente.cliente.password" placeholder="Password" class="input"/>
+      <input [(ngModel)]="formCliente.cliente.nombre" placeholder="Nombre" class="input" />
+      <input [(ngModel)]="formCliente.cliente.apellido" placeholder="Apellido" class="input" />
+      <input [(ngModel)]="formCliente.cliente.email" placeholder="Email" class="input col-span-2" />
+      <input [(ngModel)]="formCliente.cliente.telefono" placeholder="Teléfono" class="input" />
+      <input [(ngModel)]="formCliente.cliente.password" placeholder="Password" class="input" />
     </div>
 
     <h3 class="font-bold mb-2">Mascota</h3>
 
     <!-- MASCOTA -->
     <div class="grid grid-cols-2 gap-3">
-
-      <input [(ngModel)]="formCliente.mascota.nombre" placeholder="Nombre" class="input"/>
+      <input [(ngModel)]="formCliente.mascota.nombre" placeholder="Nombre" class="input" />
       <select [(ngModel)]="formCliente.mascota.id_especie" class="input">
         <option [ngValue]="null">Especie</option>
         @for (especie of especies; track especie.id_especie) {
           <option [ngValue]="especie.id_especie">{{ especie.nombre }}</option>
         }
       </select>
-      <input [(ngModel)]="formCliente.mascota.raza" placeholder="Raza" class="input"/>
+      <input [(ngModel)]="formCliente.mascota.raza" placeholder="Raza" class="input" />
 
       <!-- TAMAÑO -->
       <select [(ngModel)]="formCliente.mascota.tamanio" class="input">
@@ -34,7 +32,7 @@
         <option value="GRANDE">Grande</option>
       </select>
 
-      <input type="date" [(ngModel)]="formCliente.mascota.fecha_nacimiento" class="input"/>
+      <input type="date" [(ngModel)]="formCliente.mascota.fecha_nacimiento" class="input" />
 
       <!-- SEXO -->
       <select [(ngModel)]="formCliente.mascota.sexo" class="input">
@@ -42,39 +40,35 @@
         <option value="MACHO">Macho</option>
         <option value="HEMBRA">Hembra</option>
       </select>
-<!-- CASTRADO -->
-<div class="col-span-2 flex items-center justify-between bg-surface-container-highest px-4 py-3 rounded-md">
-  
-  <div>
-    <p class="text-sm font-semibold text-on-surface">¿Está castrado?</p>
-    <p class="text-xs text-on-surface-variant">Indica si la mascota fue castrada</p>
-  </div>
+      <!-- CASTRADO -->
+      <div
+        class="col-span-2 flex items-center justify-between bg-surface-container-highest px-4 py-3 rounded-md"
+      >
+        <div>
+          <p class="text-sm font-semibold text-on-surface">¿Está castrado?</p>
+          <p class="text-xs text-on-surface-variant">Indica si la mascota fue castrada</p>
+        </div>
 
-  <label class="relative inline-flex items-center cursor-pointer">
-  <input
-    type="checkbox"
-    class="sr-only peer"
-    [(ngModel)]="formCliente.mascota.castrado"
-  />
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input type="checkbox" class="sr-only peer" [(ngModel)]="formCliente.mascota.castrado" />
 
-  <!-- FONDO -->
-  <div class="
-    w-12 h-6 rounded-full transition-all
-    bg-red-200 
-    peer-checked:bg-primary
-  "></div>
+          <!-- FONDO -->
+          <div
+            class="w-12 h-6 rounded-full transition-all bg-red-200 peer-checked:bg-primary"
+          ></div>
 
-  <!-- CÍRCULO -->
-  <div class="
-    absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-all
-    peer-checked:translate-x-6
-  "></div>
-</label>
-
-</div>
-      <input [(ngModel)]="formCliente.mascota.tipo_pelaje" placeholder="Pelaje" class="input"/>
-      <input [(ngModel)]="formCliente.mascota.observaciones" placeholder="Observaciones" class="input col-span-2"/>
-
+          <!-- CÍRCULO -->
+          <div
+            class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-all peer-checked:translate-x-6"
+          ></div>
+        </label>
+      </div>
+      <input [(ngModel)]="formCliente.mascota.tipo_pelaje" placeholder="Pelaje" class="input" />
+      <input
+        [(ngModel)]="formCliente.mascota.observaciones"
+        placeholder="Observaciones"
+        class="input col-span-2"
+      />
     </div>
 
     <!-- BOTONES -->
@@ -84,6 +78,5 @@
         Guardar
       </button>
     </div>
-
   </div>
 </div>
