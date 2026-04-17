@@ -1,4 +1,4 @@
-import { Component, input, output, inject, OnInit } from "@angular/core";
+import { Component, input, output, inject, OnInit,computed, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { HistorialClinicoService } from "../../../core/services/historial-clinico-service";
@@ -6,12 +6,15 @@ import {
   alergia,
   alergiaMascotaRequest,
 } from "../../../api/models/historialClinico";
-import { ChangeDetectorRef } from "@angular/core";
+
 import { ToastService } from "../../../core/services/toast.service";
 import { ErrorModalService } from "../../../core/services/error-modal";
+import { SelectConCreacion } from "../select-con-creacion/select-con-creacion";
+import { ItemSeleccionable } from "../../../api/models/itemSeleccionable";
+
 @Component({
   selector: "app-nueva-alergia",
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, SelectConCreacion],
   templateUrl: "./nueva-alergia.html",
   styleUrl: "./nueva-alergia.css",
 })
@@ -19,7 +22,6 @@ export class NuevaAlergia implements OnInit {
   mascotaId = input.required<number>();
   usuarioId = input.required<number>();
   private service = inject(HistorialClinicoService);
-  private cdr = inject(ChangeDetectorRef);
 
   private toast = inject(ToastService);
   private errorModal = inject(ErrorModalService);
@@ -27,9 +29,9 @@ export class NuevaAlergia implements OnInit {
   cerrar = output<void>();
   alergiaGuardada = output<void>();
 
-  alergias: alergia[] = [];
-  cargandoAlergias = false;
-
+  alergias= signal<alergia[]>([]);
+  cargandoAlergias = signal(false);
+  idAlergiaSeleccionada = signal<number>(0);
   nuevaAlergiaNombre = "";
   agregandoAlergia = false;
 
@@ -42,24 +44,26 @@ export class NuevaAlergia implements OnInit {
     severidad: "",
     observaciones: "",
   };
-
+  alergiasComoItem = computed(() =>
+    this.alergias().map(c => ({ id: c.id_alergia, nombre: c.nombre }))
+  );
   ngOnInit() {
     this.cargarAlergias();
   }
 
   cargarAlergias() {
-    this.cargandoAlergias = true;
+    this.cargandoAlergias.set(true);
     this.service.obtenerAlergia().subscribe({
       next: (data: alergia[]) => {
-        this.alergias = data;
-        this.cargandoAlergias = false;
+       this.alergias.set(data ?? []);
+        this.cargandoAlergias.set(false);
         this.agregandoAlergia = false;
-        this.cdr.detectChanges();
+        
       },
       error: (err) => {
-        this.cargandoAlergias = false;
+        this.cargandoAlergias.set(false);
         this.agregandoAlergia = false;
-        this.cdr.detectChanges();
+        
         const mensaje =
           err?.error?.mensaje || "No se pudieron cargar las alergias";
         this.errorModal.mostrar(mensaje);
@@ -67,7 +71,7 @@ export class NuevaAlergia implements OnInit {
     });
   }
 
-  insertarAlergia() {
+  /*insertarAlergia() {
     if (!this.nuevaAlergiaNombre.trim()) return;
 
     this.agregandoAlergia = true;
@@ -99,7 +103,42 @@ export class NuevaAlergia implements OnInit {
         this.errorModal.mostrar(mensaje);
       },
     });
+  }*/
+
+  onAlergiaSeleccionada(item: ItemSeleccionable) {
+    this.form.id_alergia = item.id;
   }
+
+  onNuevaAlergia(nombre: string) {
+    this.agregandoAlergia=true;
+    const idsAntes = this.alergias().map(c => c.id_alergia);
+
+    this.service.insertarAlergiaCatalogo(nombre).subscribe({
+      next: () => {
+        this.toast.mostrar('Enfermedad agregada correctamente');
+        this.service.obtenerAlergia().subscribe({
+          next: (data) => {
+            this.alergias.set(data ?? []);
+            this.agregandoAlergia=false;
+            const nueva = data.find(c => !idsAntes.includes(c.id_alergia));
+            if (nueva) {
+              this.idAlergiaSeleccionada.set(nueva.id_alergia);
+              this.form.id_alergia = nueva.id_alergia;
+            }
+          }
+        });
+      },
+      error: (err) => {
+       this.agregandoAlergia=false;
+        this.errorModal.mostrar(err?.error?.mensaje || 'Error al agregar');
+      }
+    });
+  }
+
+
+
+
+
   guardar() {
     const payload: alergiaMascotaRequest = {
       ...this.form,

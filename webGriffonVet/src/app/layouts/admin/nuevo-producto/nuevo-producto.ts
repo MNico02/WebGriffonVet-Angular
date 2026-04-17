@@ -5,6 +5,7 @@ import {
   OnInit,
   Output,
   signal,
+  computed
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
@@ -12,7 +13,9 @@ import { ProductoService } from "../../../core/services/producto-service";
 import { Categoria, ProductoRequest } from "../../../api/models/producto";
 import { ToastService } from "../../../core/services/toast.service";
 import { ErrorModalService } from "../../../core/services/error-modal";
-import { ChangeDetectorRef } from '@angular/core';
+import { ItemSeleccionable } from "../../../api/models/itemSeleccionable";
+import { SelectConCreacion } from "../select-con-creacion/select-con-creacion";
+
 interface ProductoForm {
   nombre: string;
   descripcion: string;
@@ -23,7 +26,7 @@ interface ProductoForm {
 
 @Component({
   selector: "app-nuevo-producto",
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, SelectConCreacion],
   templateUrl: "./nuevo-producto.html",
   styleUrl: "./nuevo-producto.css",
 })
@@ -32,17 +35,20 @@ export class NuevoProducto implements OnInit {
   @Output() productoGuardado = new EventEmitter<void>();
   private toast = inject(ToastService);
   private errorModal = inject(ErrorModalService);
-  private cdr = inject(ChangeDetectorRef);
-  guardando = signal(false);
 
+  guardando = signal(false);
   imagenPreview = signal<string | null>(null);
   imagenArchivo: File | null = null;
 
-  cargandoCategorias = false;
+  cargandoCategorias = signal(false);  // ← signal, no boolean
   agregandoCategoria = false;
-  nuevaCategoriaNombre = "";
-  categorias: Categoria[] = [];
-mostrarNuevaCategoria = false;
+  categorias = signal<Categoria[]>([]);
+  idCategoriaSeleccionada = signal<number>(0);
+
+  categoriasComoItems = computed(() =>
+    this.categorias().map(c => ({ id: c.id_categoria, nombre: c.nombre }))
+  );
+
   formProducto: ProductoForm = {
     nombre: "",
     descripcion: "",
@@ -58,20 +64,46 @@ mostrarNuevaCategoria = false;
   }
 
   cargarCategorias(): void {
-    this.cargandoCategorias = true;
+    this.cargandoCategorias.set(true);
     this.productoService.obtenerCategorias().subscribe({
-      next: (cats) => {
-        this.categorias = cats;
-        this.cargandoCategorias = false;
-         this.cdr.detectChanges();
+      next: (data) => {
+        this.categorias.set(data ?? []);
+        this.cargandoCategorias.set(false);
       },
       error: (err) => {
-        this.cargandoCategorias = false;
-
-        const mensaje = err?.error?.mensaje || "Error al cargar las categorías";
-        this.errorModal.mostrar(mensaje);
-         this.cdr.detectChanges();
+        this.cargandoCategorias.set(false);
+        this.errorModal.mostrar(err?.error?.mensaje || "Error al cargar las categorías");
       },
+    });
+  }
+
+  onCategoriaSeleccionada(item: ItemSeleccionable) {
+    this.formProducto.id_categoria = item.id;
+  }
+
+  onNuevaCategoria(nombre: string) {
+    this.agregandoCategoria = true;
+    const idsAntes = this.categorias().map(c => c.id_categoria);
+
+    this.productoService.insertarCategoria(nombre).subscribe({
+      next: () => {
+        this.toast.mostrar('Categoría agregada correctamente');
+        this.productoService.obtenerCategorias().subscribe({
+          next: (data) => {
+            this.categorias.set(data ?? []);
+            this.agregandoCategoria = false;
+            const nueva = data.find(c => !idsAntes.includes(c.id_categoria));
+            if (nueva) {
+              this.idCategoriaSeleccionada.set(nueva.id_categoria);
+              this.formProducto.id_categoria = nueva.id_categoria;
+            }
+          }
+        });
+      },
+      error: (err) => {
+        this.agregandoCategoria = false;
+        this.errorModal.mostrar(err?.error?.mensaje || 'Error al agregar');
+      }
     });
   }
 
@@ -96,64 +128,23 @@ mostrarNuevaCategoria = false;
     this.imagenPreview.set(null);
   }
 
-  agregarCategoria(): void {
-  const nombre = this.nuevaCategoriaNombre.trim();
-  if (!nombre) return;
-
-  this.agregandoCategoria = true;
-
-  this.productoService.insertarCategoria(nombre).subscribe({
-    next: () => {
-      this.nuevaCategoriaNombre = '';
-      this.agregandoCategoria = false;
-
-      this.mostrarNuevaCategoria = false;
-
-      this.cargarCategorias();
-
-      setTimeout(() => {
-        if (!this.categorias.length) return;
-
-        const ultima = this.categorias.reduce((max, c) =>
-          c.id_categoria > max.id_categoria ? c : max
-        );
-
-        this.formProducto.id_categoria = ultima.id_categoria;
-      }, 300);
-
-      this.toast.mostrar("Categoría agregada correctamente");
-    },
-    error: (err) => {
-      this.agregandoCategoria = false;
-
-      const mensaje = err?.error?.mensaje || "Error al agregar la categoría";
-      this.errorModal.mostrar(mensaje);
-    },
-  });
-}
-
   guardar(): void {
-    // 🔒 VALIDACIONES
     if (!this.formProducto.nombre.trim()) {
       this.errorModal.mostrar("El nombre es obligatorio");
       return;
     }
-
     if (!this.formProducto.precio || this.formProducto.precio <= 0) {
       this.errorModal.mostrar("Ingresá un precio válido");
       return;
     }
-
     if (!this.formProducto.id_categoria) {
       this.errorModal.mostrar("Seleccioná una categoría");
       return;
     }
-
     if (this.formProducto.stock === null || this.formProducto.stock < 0) {
       this.errorModal.mostrar("Ingresá un stock válido");
       return;
     }
-
     if (!this.imagenArchivo) {
       this.errorModal.mostrar("Seleccioná una imagen para el producto");
       return;
@@ -170,26 +161,17 @@ mostrarNuevaCategoria = false;
       imagen_url: "",
     };
 
-    this.productoService
-      .insertarProducto(this.imagenArchivo, payload)
-      .subscribe({
-        next: () => {
-          setTimeout(() => {
-    this.toast.mostrar("Producto creado correctamente");
-  });
-
-          this.productoGuardado.emit();
-          this.cerrar.emit();
-        },
-        error: (err) => {
-          this.guardando.set(false);
-
-          const mensaje = err?.error?.mensaje || "Error al guardar el producto";
-          this.errorModal.mostrar(mensaje);
-        },
-        complete: () => {
-          this.guardando.set(false);
-        },
-      });
+    this.productoService.insertarProducto(this.imagenArchivo, payload).subscribe({
+      next: () => {
+        setTimeout(() => this.toast.mostrar("Producto creado correctamente"));
+        this.productoGuardado.emit();
+        this.cerrar.emit();
+      },
+      error: (err) => {
+        this.guardando.set(false);
+        this.errorModal.mostrar(err?.error?.mensaje || "Error al guardar el producto");
+      },
+      complete: () => this.guardando.set(false),
+    });
   }
 }

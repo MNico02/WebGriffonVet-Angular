@@ -11,9 +11,11 @@ import {
 import { ToastService } from "../../../core/services/toast.service";
 import { ErrorModalService } from "../../../core/services/error-modal";
 import { inject } from "@angular/core";
+import { ConfirmarEliminarModal } from "../../../components/confirmar-eliminar-modal/confirmar-eliminar-modal";
+
 @Component({
   selector: "app-servicios-admin",
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ConfirmarEliminarModal],
   templateUrl: "./servicios-admin.html",
   styleUrl: "./servicios-admin.css",
 })
@@ -28,7 +30,7 @@ export class ServiciosAdmin {
   guardando = signal(false);
   insertando = signal(false);
   modalEliminar = signal(false);
-  servicioAEliminar = signal<number | null>(null);
+  servicioAEliminar = signal<servicio | null>(null);
   // Estado temporal para edición inline
   editForm = signal<servicio | null>(null);
 
@@ -39,6 +41,10 @@ export class ServiciosAdmin {
     descripcion: "",
     precios: [{ tamanio: "CHICO", precio: "", duracion: 0 as any }],
   });
+
+  mensajeEliminar = computed(() =>
+  `¿Seguro que querés eliminar el servicio "${this.servicioAEliminar()?.nombre}"?`
+);
 
   constructor(private servicioService: ServicioService) {}
 
@@ -130,8 +136,8 @@ export class ServiciosAdmin {
 
   // ── Eliminar ────────────────────────────────────────────────────
 
-  eliminar(id: number) {
-    this.servicioAEliminar.set(id);
+  eliminar(servicio: servicio) {
+    this.servicioAEliminar.set(servicio);
     this.modalEliminar.set(true);
   }
 
@@ -143,10 +149,10 @@ export class ServiciosAdmin {
 
   // confirmar
   eliminarConfirmado() {
-    const id = this.servicioAEliminar();
-    if (!id) return;
+    const servicio = this.servicioAEliminar();
+    if (!servicio) return;
 
-    this.servicioService.eliminarServicio(id).subscribe({
+    this.servicioService.eliminarServicio(servicio.id_servicio).subscribe({
       next: () => {
         this.toast.mostrar("Servicio eliminado correctamente");
         this.serviciosResource.reload();

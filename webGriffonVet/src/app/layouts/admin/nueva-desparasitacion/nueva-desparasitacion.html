@@ -1,32 +1,48 @@
-<div class="modal-overlay fixed inset-0 bg-black/40 z-50 flex items-center justify-center"
-  (click)="onOverlayClick($event)">
-
-  <div class="bg-surface-container-lowest rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto mx-4">
-
+<div
+  class="modal-overlay fixed inset-0 bg-black/40 z-50 flex items-center justify-center"
+  (click)="onOverlayClick($event)"
+>
+  <div
+    class="bg-surface-container-lowest rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto mx-4"
+  >
     <!-- Header -->
     <div class="flex items-center justify-between px-6 py-4 border-b border-outline-variant/30">
       <h2 class="font-headline text-lg font-bold text-on-surface">Nueva Desparasitación</h2>
-      <button (click)="cerrar.emit()" class="p-2 rounded-full hover:bg-surface-container transition-all">
+      <button
+        (click)="cerrar.emit()"
+        class="p-2 rounded-full hover:bg-surface-container transition-all"
+      >
         <span class="material-symbols-outlined">close</span>
       </button>
     </div>
 
     <!-- Body -->
     <div class="px-6 py-5 space-y-4">
-
       <!-- Select desparasitación -->
       <div class="flex flex-col gap-1">
-        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">Desparasitación</label>
-        @if (cargandoDesparasitaciones) {
-          <div class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 text-on-surface-variant italic">
+        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant"
+          >Desparasitación</label
+        >
+        @if (cargandoDesparasitaciones()) {
+          <div
+            class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 text-on-surface-variant italic"
+          >
             Cargando desparasitaciones...
           </div>
         } @else {
-          <select [(ngModel)]="form.id_desparasitacion" (ngModelChange)="onDesparasitacionSeleccionada($event)"
-            class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary">
+          <select
+            [(ngModel)]="form.id_desparasitacion"
+            (ngModelChange)="onDesparasitacionSeleccionada($event)"
+            class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary"
+          >
             <option [ngValue]="0" disabled>Seleccionar desparasitación...</option>
-            @for (d of desparasitaciones; track d.id_desparasitacion) {
-              <option [ngValue]="d.id_desparasitacion">{{ d.nombre }} @if (d.tipo) { — {{ d.tipo }} }</option>
+            @for (d of desparasitaciones(); track d.id_desparasitacion) {
+              <option [ngValue]="d.id_desparasitacion">
+                {{ d.nombre }}
+                @if (d.tipo) {
+                  — {{ d.tipo }}
+                }
+              </option>
             }
           </select>
         }
@@ -34,91 +50,104 @@
 
       <!-- Agregar desparasitación nueva -->
       <div class="mt-2 p-3 rounded-xl bg-primary/5 border border-primary/20">
+        <!-- Header -->
+        <div class="flex items-center justify-between gap-2 flex-wrap">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">💡</span>
+            <p class="text-sm font-semibold text-primary">¿No encontrás la desparasitación?</p>
+          </div>
 
-  <!-- Header -->
-  <div class="flex items-center justify-between gap-2 flex-wrap">
-    <div class="flex items-center gap-2">
-      <span class="text-lg">💡</span>
-      <p class="text-sm font-semibold text-primary">
-        ¿No encontrás la desparasitación?
-      </p>
-    </div>
+          <button
+            (click)="mostrarNuevaDesparasitacion = !mostrarNuevaDesparasitacion"
+            class="text-xs font-bold text-primary underline hover:opacity-80"
+          >
+            + Crear nueva
+          </button>
+        </div>
 
-    <button
-      (click)="mostrarNuevaDesparasitacion = !mostrarNuevaDesparasitacion"
-      class="text-xs font-bold text-primary underline hover:opacity-80"
-    >
-      + Crear nueva
-    </button>
-  </div>
+        <!-- FORM -->
+        @if (mostrarNuevaDesparasitacion) {
+          <div class="grid grid-cols-2 gap-2 mt-3">
+            <input
+              type="text"
+              [(ngModel)]="nuevaDesparasitacionNombre"
+              placeholder="Ej: Pipeta Frontline"
+              class="bg-white rounded-lg px-3 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary col-span-2"
+            />
 
-  <!-- FORM -->
-  @if (mostrarNuevaDesparasitacion) {
-    <div class="grid grid-cols-2 gap-2 mt-3">
+            <select
+              [(ngModel)]="nuevaDesparasitacionTipo"
+              class="bg-white rounded-lg px-3 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary"
+            >
+              <option value="">Tipo</option>
+              <option value="INTERNO">INTERNO</option>
+              <option value="EXTERNO">EXTERNO</option>
+            </select>
 
-      <input
-        type="text"
-        [(ngModel)]="nuevaDesparasitacionNombre"
-        placeholder="Ej: Pipeta Frontline"
-        class="bg-white rounded-lg px-3 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary col-span-2"
-      />
-
-      <select
-        [(ngModel)]="nuevaDesparasitacionTipo"
-        class="bg-white rounded-lg px-3 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary"
-      >
-        <option value="">Tipo</option>
-        <option value="INTERNO">INTERNO</option>
-        <option value="EXTERNO">EXTERNO</option>
-      </select>
-
-      <button
-        (click)="insertarTipoDesparasitacion()"
-        [disabled]="agregandoDesparasitacion || !nuevaDesparasitacionNombre.trim()"
-        class="px-4 py-2 rounded-lg bg-primary text-white text-xs font-bold hover:opacity-90 transition-all disabled:opacity-40"
-      >
-        {{ agregandoDesparasitacion ? 'Guardando...' : '+ Agregar' }}
-      </button>
-
-    </div>
-  }
-
-</div>
+            <button
+              (click)="insertarTipoDesparasitacion()"
+              [disabled]="agregandoDesparasitacion || !nuevaDesparasitacionNombre.trim()"
+              class="px-4 py-2 rounded-lg bg-primary text-white text-xs font-bold hover:opacity-90 transition-all disabled:opacity-40"
+            >
+              {{ agregandoDesparasitacion ? 'Guardando...' : '+ Agregar' }}
+            </button>
+          </div>
+        }
+      </div>
 
       <!-- Fecha de aplicación -->
       <div class="flex flex-col gap-1">
-        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">Fecha de aplicación</label>
-        <input type="date" [(ngModel)]="form.fecha_aplicacion"
-          class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary" />
+        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant"
+          >Fecha de aplicación</label
+        >
+        <input
+          type="date"
+          [(ngModel)]="form.fecha_aplicacion"
+          class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary"
+        />
       </div>
 
       <!-- Próxima dosis -->
       <div class="flex flex-col gap-1">
-        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">Próxima dosis</label>
-        <input type="date" [(ngModel)]="form.proxima_dosis"
-          class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary" />
+        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant"
+          >Próxima dosis</label
+        >
+        <input
+          type="date"
+          [(ngModel)]="form.proxima_dosis"
+          class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary"
+        />
       </div>
 
       <!-- Observaciones -->
       <div class="flex flex-col gap-1">
-        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">Observaciones</label>
-        <textarea [(ngModel)]="form.observaciones" rows="3" placeholder="Producto utilizado, dosis, reacciones..."
-          class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary resize-none"></textarea>
+        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant"
+          >Observaciones</label
+        >
+        <textarea
+          [(ngModel)]="form.observaciones"
+          rows="3"
+          placeholder="Producto utilizado, dosis, reacciones..."
+          class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary resize-none"
+        ></textarea>
       </div>
-
     </div>
 
     <!-- Footer -->
     <div class="flex justify-end gap-3 px-6 py-4 border-t border-outline-variant/30">
-      <button (click)="cerrar.emit()"
-        class="px-5 py-2 rounded-full text-sm font-bold text-on-surface-variant hover:bg-surface-container transition-all">
+      <button
+        (click)="cerrar.emit()"
+        class="px-5 py-2 rounded-full text-sm font-bold text-on-surface-variant hover:bg-surface-container transition-all"
+      >
         Cancelar
       </button>
-      <button (click)="guardar()" [disabled]="form.id_desparasitacion === 0 || !form.fecha_aplicacion"
-        class="px-5 py-2 rounded-full editorial-gradient text-white text-sm font-bold hover:opacity-90 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+      <button
+        (click)="guardar()"
+        [disabled]="form.id_desparasitacion === 0 || !form.fecha_aplicacion"
+        class="px-5 py-2 rounded-full editorial-gradient text-white text-sm font-bold hover:opacity-90 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+      >
         Guardar desparasitación
       </button>
     </div>
-
   </div>
 </div>

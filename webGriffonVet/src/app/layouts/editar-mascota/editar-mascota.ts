@@ -1,4 +1,4 @@
-import { Component, input, output, inject, OnInit } from "@angular/core";
+import { Component, input, output, inject, OnInit, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { HistorialClinicoService } from "../../core/services/historial-clinico-service";
@@ -26,7 +26,7 @@ export class EditarMascota implements OnInit {
   cerrar = output<void>();
   mascotaEditada = output<void>();
 
-  especies: Especie[] = [];
+  especies = signal<Especie[]>([]);
   tamanios = ["CHICO", "MEDIANO", "GRANDE", "MUY GRANDE"];
   sexos = ["MACHO", "HEMBRA"];
 
@@ -57,7 +57,8 @@ export class EditarMascota implements OnInit {
 
     this.clienteService.getEspecies().subscribe({
       next: (data) => {
-        this.especies = data ?? [];
+        this.especies.set(data ?? []);
+        this.form.id_especie = this.form.id_especie ? Number(this.form.id_especie) : null;
 
         // 🔥 FORZAR RESELECCIÓN
         this.form.id_especie = this.form.id_especie

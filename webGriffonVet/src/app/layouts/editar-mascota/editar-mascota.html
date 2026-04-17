@@ -28,7 +28,7 @@
           <select [(ngModel)]="form.id_especie"
             class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary">
             <option [ngValue]="null" disabled>Seleccionar...</option>
-            @for (e of especies; track e.id_especie) {
+            @for (e of especies(); track e.id_especie) {
               <option [ngValue]="e.id_especie">{{ e.nombre }}</option>
             }
           </select>

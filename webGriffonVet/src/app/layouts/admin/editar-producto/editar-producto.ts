@@ -31,8 +31,8 @@ export class EditarProducto implements OnInit {
   cerrar = output<void>();
   productoEditado = output<void>();
 
-  categorias: Categoria[] = [];
-  cargandoCategorias = false;
+  categorias= signal<Categoria[]>([]);
+  cargandoCategorias = signal(false);
   nuevaCategoriaNombre = "";
   agregandoCategoria = false;
 
@@ -53,6 +53,7 @@ export class EditarProducto implements OnInit {
 
   ngOnInit() {
     const p = this.producto();
+    
     this.form = {
       id_producto: p.id_producto,
       nombre: p.nombre,
@@ -65,19 +66,22 @@ export class EditarProducto implements OnInit {
     if (p.imagen_url) {
       this.imagenPreview.set(p.imagen_url);
     }
+    
     this.cargarCategorias();
   }
 
   cargarCategorias() {
-    this.cargandoCategorias = true;
+    this.cargandoCategorias.set(true);
     this.service.obtenerCategorias().subscribe({
-      next: (cats) => {
-        this.categorias = cats;
-        this.cargandoCategorias = false;
+      next: (data) => {
+        
+        this.categorias.set(data ?? []);
+       
+        this.form.id_categoria = Number(this.form.id_categoria);
+        this.cargandoCategorias.set(false);
       },
       error: () => {
-        this.cargandoCategorias = false;
-        //this.error.set('No se pudieron cargar las categorías.');
+        this.cargandoCategorias.set(false);
         this.errorModal.mostrar("No se pudieron cargar las categorías.");
       },
     });

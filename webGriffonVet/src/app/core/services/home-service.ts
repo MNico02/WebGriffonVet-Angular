@@ -28,7 +28,7 @@ export class HomeService {
     return this.http.post(`${this.apiUrl}/InsertarInfoHome`, formData);
   }
 
-  actualizarInfoHome(payload: infoHomeEdit, imagen?: File): Observable<any> {
+  actualizarInfoHome(payload: infoHomeEdit, imagen: File | null ): Observable<any> {
     const formData = new FormData();
     if (imagen) {
       formData.append('imagen', imagen);

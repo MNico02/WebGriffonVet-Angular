@@ -14,13 +14,16 @@ import {
   infoHomeRequest,
   infoHomeEdit,
 } from "../../../api/models/home";
+import { ConfirmarEliminarModal } from "../../../components/confirmar-eliminar-modal/confirmar-eliminar-modal";
+import { SelectConCreacion } from "../../../layouts/admin/select-con-creacion/select-con-creacion";
+import { ItemSeleccionable } from "../../../api/models/itemSeleccionable";
 
 type TipoFiltro = "todos" | "noticias" | "servicios";
 type TipoEdicion = "noticia" | "servicio";
 
 @Component({
   selector: "app-info-home-admin",
-  imports: [DatePipe],
+  imports: [DatePipe, ConfirmarEliminarModal, SelectConCreacion],
   templateUrl: "./contenidos-home.html",
   styleUrl: "./contenidos-home.css",
 })
@@ -28,9 +31,7 @@ export class ContenidosHome implements OnInit {
   private toast = inject(ToastService);
   private errorModal = inject(ErrorModalService);
   private cdr = inject(ChangeDetectorRef);
-  modalEliminar = signal(false);
-  itemAEliminar = signal<number | null>(null);
-mostrarNuevaCategoria = signal(false);
+
   constructor(
     private homeService: HomeService,
     private productoService: ProductoService,
@@ -48,8 +49,15 @@ mostrarNuevaCategoria = signal(false);
   // ── Estado categorías ─────────────────────────────────────────────
   categorias = signal<Categoria[]>([]);
   cargandoCategorias = signal(false);
-  nuevaCategoriaNombre = signal("");
   agregandoCategoria = signal(false);
+
+  // FIX 1: computed categoriasComoItems() faltaba — el template lo usaba pero no existía
+ categoriasComoItems = computed(() =>
+    this.categorias().map(c => ({ id: c.id_categoria, nombre: c.nombre }))
+  );
+  idCategoriaEdicionNoticia = signal<number>(0);
+  idCategoriaEdicionServicio = signal<number>(0);
+  idCategoriaNuevo = signal<number>(0);
 
   cargarCategorias(): void {
     this.cargandoCategorias.set(true);
@@ -60,28 +68,10 @@ mostrarNuevaCategoria = signal(false);
         this.cdr.detectChanges();
       },
       error: (err) => {
+        this.cargandoCategorias.set(false);
         const mensaje = err?.error?.mensaje || "Error al cargar categorías";
         this.errorModal.mostrar(mensaje);
         this.cdr.detectChanges();
-      },
-    });
-  }
-
-  agregarCategoria(): void {
-    const nombre = this.nuevaCategoriaNombre().trim();
-    if (!nombre) return;
-    this.agregandoCategoria.set(true);
-    this.productoService.insertarCategoria(nombre).subscribe({
-      next: () => {
-        this.cargarCategorias();
-        this.nuevaCategoriaNombre.set("");
-        this.agregandoCategoria.set(false);
-        this.toast.mostrar("Categoría agregada correctamente");
-      },
-      error: (err) => {
-        this.agregandoCategoria.set(false);
-        const mensaje = err?.error?.mensaje || "Error al agregar categoría";
-        this.errorModal.mostrar(mensaje);
       },
     });
   }
@@ -97,6 +87,13 @@ mostrarNuevaCategoria = signal(false);
   nuevoTipo = signal<TipoEdicion>("noticia");
 
   editForm = signal<infoHomeEdit | null>(null);
+  modalEliminar = signal(false);
+  itemAEliminar = signal<infoHomeEdit | null>(null);
+
+  mensajeEliminar = computed(
+    () =>
+      `¿Seguro que querés eliminar el contenido "${this.itemAEliminar()?.titulo}"?`,
+  );
 
   nuevoItem = signal<infoHomeRequest>({
     titulo: "",
@@ -140,7 +137,7 @@ mostrarNuevaCategoria = signal(false);
     this.editandoId.set(item.id_informacion);
     this.editandoTipo.set("noticia");
     this.editImagenArchivo = null;
-    this.editImagenPreview.set(item.imagen_url ?? null); // muestra la imagen actual
+    this.editImagenPreview.set(item.imagen_url ?? null);
 
     this.editForm.set({
       id_informacion: item.id_informacion,
@@ -151,14 +148,9 @@ mostrarNuevaCategoria = signal(false);
       fecha_publicacion: item.fecha_publicacion,
     });
 
-    // 🔥 FIX DEL SELECT
-    const id = item.id_categoria;
-
-    this.updateEditField("id_categoria", "");
-
-    setTimeout(() => {
-      this.updateEditField("id_categoria", String(id));
-    });
+    // FIX 2: sincronizar la signal del select con el valor actual
+    this.idCategoriaEdicionNoticia.set(0);
+    setTimeout(() => this.idCategoriaEdicionNoticia.set(item.id_categoria));
   }
 
   abrirEditarServicio(item: ServicioHome) {
@@ -176,14 +168,9 @@ mostrarNuevaCategoria = signal(false);
       fecha_publicacion: "",
     });
 
-    // 🔥 FIX
-    const id = item.id_categoria;
-
-    this.updateEditField("id_categoria", "");
-
-    setTimeout(() => {
-      this.updateEditField("id_categoria", String(id));
-    });
+    // FIX 2: sincronizar la signal del select con el valor actual
+    this.idCategoriaEdicionServicio.set(0);
+    setTimeout(() => this.idCategoriaEdicionServicio.set(item.id_categoria));
   }
 
   cancelarEditar() {
@@ -196,11 +183,13 @@ mostrarNuevaCategoria = signal(false);
 
   updateEditField(
     field: keyof Omit<infoHomeEdit, "id_informacion">,
-    value: string,
+    // FIX 3: acepta string | number para que las llamadas con number sean válidas
+    value: string | number,
   ) {
     const form = this.editForm();
     if (!form) return;
-    const parsed = field === "id_categoria" ? Number(value) || null : value;
+    const parsed =
+      field === "id_categoria" ? Number(value) || 0 : String(value);
     this.editForm.set({ ...form, [field]: parsed });
   }
 
@@ -218,25 +207,28 @@ mostrarNuevaCategoria = signal(false);
       fecha_publicacion: form.fecha_publicacion,
     };
 
-    this.homeService.actualizarInfoHome(payload).subscribe({
-      next: () => {
-        this.guardando.set(false);
-        this.cancelarEditar();
-        this.homeResource.reload();
-        this.toast.mostrar("Contenido actualizado correctamente");
-      },
-      error: (err) => {
-        this.guardando.set(false);
-        const mensaje =
-          err?.error?.mensaje || "Error al actualizar el contenido";
-        this.errorModal.mostrar(mensaje);
-      },
-    });
+    // FIX 4: pasar el archivo de imagen al servicio si el usuario lo cambió
+    this.homeService
+      .actualizarInfoHome( payload, this.editImagenArchivo)
+      .subscribe({
+        next: () => {
+          this.guardando.set(false);
+          this.cancelarEditar();
+          this.homeResource.reload();
+          this.toast.mostrar("Contenido actualizado correctamente");
+        },
+        error: (err) => {
+          this.guardando.set(false);
+          const mensaje =
+            err?.error?.mensaje || "Error al actualizar el contenido";
+          this.errorModal.mostrar(mensaje);
+        },
+      });
   }
 
   // ── Eliminar ──────────────────────────────────────────────────────
-  eliminar(id: number) {
-    this.itemAEliminar.set(id);
+  eliminar(item: NoticiasHome | ServicioHome) {
+    this.itemAEliminar.set(item as infoHomeEdit);
     this.modalEliminar.set(true);
   }
 
@@ -246,10 +238,10 @@ mostrarNuevaCategoria = signal(false);
   }
 
   eliminarConfirmado() {
-    const id = this.itemAEliminar();
-    if (!id) return;
+    const item = this.itemAEliminar();
+    if (!item) return;
 
-    this.homeService.eliminarInfoHome(id).subscribe({
+    this.homeService.eliminarInfoHome(item.id_informacion).subscribe({
       next: () => {
         this.toast.mostrar("Contenido eliminado correctamente");
         this.homeResource.reload();
@@ -262,11 +254,13 @@ mostrarNuevaCategoria = signal(false);
       },
     });
   }
+
   // ── Nuevo ítem ────────────────────────────────────────────────────
   abrirNueva() {
     this.nuevaCard.set(true);
     this.nuevoImagenArchivo = null;
     this.nuevoImagenPreview.set(null);
+    this.idCategoriaNuevo.set(0);
     this.nuevoItem.set({
       titulo: "",
       descripcion: "",
@@ -280,8 +274,10 @@ mostrarNuevaCategoria = signal(false);
     this.nuevaCard.set(false);
   }
 
-  updateNuevoField(field: keyof infoHomeEdit, value: string) {
-    const parsed = field === "id_categoria" ? Number(value) || null : value;
+  // FIX 5: tipo correcto — keyof infoHomeRequest en vez de infoHomeEdit
+  updateNuevoField(field: keyof infoHomeRequest, value: string | number) {
+    const parsed =
+      field === "id_categoria" ? Number(value) || 0 : String(value);
     this.nuevoItem.set({ ...this.nuevoItem(), [field]: parsed as any });
   }
 
@@ -292,6 +288,7 @@ mostrarNuevaCategoria = signal(false);
       this.nuevoTipo() === "noticia" && item.fecha_publicacion?.trim()
         ? item.fecha_publicacion
         : null;
+
     const payload: infoHomeRequest = {
       titulo: item.titulo,
       descripcion: item.descripcion,
@@ -313,13 +310,13 @@ mostrarNuevaCategoria = signal(false);
         },
         error: (err) => {
           this.insertando.set(false);
-
           const mensaje =
             err?.error?.mensaje || "Error al guardar el contenido";
           this.errorModal.mostrar(mensaje);
         },
       });
   }
+
   // ── Handlers imagen nuevo ─────────────────────────────────────────
   onNuevoImagenSeleccionada(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -350,5 +347,51 @@ mostrarNuevaCategoria = signal(false);
   quitarEditImagen(): void {
     this.editImagenArchivo = null;
     this.editImagenPreview.set(null);
+  }
+
+  // ── Handlers categorías ───────────────────────────────────────────
+  onCategoriaSeleccionadaEdicion(item: ItemSeleccionable) {
+    this.updateEditField("id_categoria", item.id);
+  }
+
+  onCategoriaSeleccionadaNuevo(item: ItemSeleccionable) {
+    this.updateNuevoField("id_categoria", item.id);
+  }
+
+  onNuevaCategoria(nombre: string) {
+    this.agregandoCategoria.set(true);
+    const idsAntes = this.categorias().map((c) => c.id_categoria);
+
+    this.productoService.insertarCategoria(nombre).subscribe({
+      next: () => {
+        this.toast.mostrar("Categoría agregada correctamente");
+        this.productoService.obtenerCategorias().subscribe({
+          next: (data) => {
+            this.categorias.set(data ?? []);
+            this.agregandoCategoria.set(false);
+
+            const nueva = data.find((c) => !idsAntes.includes(c.id_categoria));
+            if (nueva) {
+              // FIX 6: updateEditField ahora acepta number, no hay cast incorrecto
+              this.idCategoriaEdicionNoticia.set(nueva.id_categoria);
+              this.idCategoriaEdicionServicio.set(nueva.id_categoria);
+              this.idCategoriaNuevo.set(nueva.id_categoria);
+              this.updateEditField("id_categoria", nueva.id_categoria);
+              this.updateNuevoField("id_categoria", nueva.id_categoria);
+            }
+          },
+          error: (err) => {
+            this.agregandoCategoria.set(false);
+            this.errorModal.mostrar(
+              err?.error?.mensaje || "Error al recargar categorías",
+            );
+          },
+        });
+      },
+      error: (err) => {
+        this.agregandoCategoria.set(false);
+        this.errorModal.mostrar(err?.error?.mensaje || "Error al agregar");
+      },
+    });
   }
 }

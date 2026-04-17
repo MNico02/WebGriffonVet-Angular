@@ -14,9 +14,11 @@ import { editarMascotaRequest } from '../../../api/models/historialClinico';
 import { EditarConsultaModal } from '../../../layouts/admin/editar-consulta-modal/editar-consulta-modal';
 import { HistorialClinicoService } from '../../../core/services/historial-clinico-service';
 import { ToastService } from '../../../core/services/toast.service';
+import { ConfirmarEliminarModal } from '../../../components/confirmar-eliminar-modal/confirmar-eliminar-modal';
+
 @Component({
   selector: 'app-historial-clinico-admin',
-  imports: [CommonModule, NuevaConsulta, NuevaVacunacion, NuevaDesparasitacion, NuevoPeso, NuevaEnfermedad, NuevaAlergia, EditarMascota,EditarConsultaModal ],
+  imports: [CommonModule, NuevaConsulta, NuevaVacunacion, NuevaDesparasitacion, NuevoPeso, NuevaEnfermedad, NuevaAlergia, EditarMascota,EditarConsultaModal, ConfirmarEliminarModal ],
   templateUrl: './historial-clinico-admin.html',
   styleUrl: './historial-clinico-admin.css',
 })
@@ -50,13 +52,17 @@ export class HistorialClinicoAdmin implements AfterViewInit {
   modalEditarConsulta = signal(false);
   modalEliminarConsulta = signal(false);
   consultaSeleccionada = signal<any | null>(null);
+  consultaAEliminar = signal<any | null>(null);
+      mensajeEliminar = computed(() =>
+  `¿Seguro que querés eliminar la siguiente consulta "${this.consultaAEliminar()?.motivo_consulta}"?`
+);
 
   @ViewChild('tabsContainer') tabsContainer!: ElementRef<HTMLDivElement>;
 
   thumbWidth = 100;
   thumbLeft = 0;
 
-consultaAEliminar = signal<any | null>(null);
+
   tabs = [
     { id: 'info',           label: 'Info General',   icono: '📋' },
     { id: 'consultas',      label: 'Consultas',       icono: '🧾', count: true },

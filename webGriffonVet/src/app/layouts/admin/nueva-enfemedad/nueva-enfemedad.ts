@@ -1,4 +1,4 @@
-import { Component, input, output, inject, OnInit } from "@angular/core";
+import { Component, input, output, inject, OnInit, computed, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { HistorialClinicoService } from "../../../core/services/historial-clinico-service";
@@ -6,12 +6,15 @@ import {
   enfermedad,
   enfermedadMascotaRequest,
 } from "../../../api/models/historialClinico";
-import { ChangeDetectorRef } from "@angular/core";
+
 import { ToastService } from "../../../core/services/toast.service";
 import { ErrorModalService } from "../../../core/services/error-modal";
+import { SelectConCreacion } from "../select-con-creacion/select-con-creacion";
+import { ItemSeleccionable } from "../../../api/models/itemSeleccionable";
+
 @Component({
   selector: "app-nueva-enfermedad",
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, SelectConCreacion],
   templateUrl: "./nueva-enfemedad.html",
   styleUrl: "./nueva-enfemedad.css",
 })
@@ -19,14 +22,14 @@ export class NuevaEnfermedad implements OnInit {
   mascotaId = input.required<number>();
   usuarioId = input.required<number>();
   private enfermedadService = inject(HistorialClinicoService);
-  private cdr = inject(ChangeDetectorRef);
+
   private toast = inject(ToastService);
   private errorModal = inject(ErrorModalService);
   cerrar = output<void>();
   enfermedadGuardada = output<void>();
-
-  enfermedades: enfermedad[] = [];
-  cargandoEnfermedades = false;
+  idEnfermedadSeleccionada = signal<number>(0);
+  enfermedades = signal<enfermedad[]>([]);
+  cargandoenfermedades = signal(false); 
 
   nuevaEnfermedadNombre = "";
   agregandoEnfermedad = false;
@@ -41,32 +44,65 @@ export class NuevaEnfermedad implements OnInit {
     fecha_diagnostico: "",
     observaciones: "",
   };
+  enfermedadesComoItem = computed(() =>
+    this.enfermedades().map(c => ({ id: c.id_enfermedad, nombre: c.nombre }))
+  );
 
   ngOnInit() {
     this.cargarEnfermedades();
   }
 
   cargarEnfermedades() {
-    this.cargandoEnfermedades = true;
+    this.cargandoenfermedades.set(true);
     this.enfermedadService.obtenerEnfermedades().subscribe({
       next: (data: enfermedad[]) => {
-        this.enfermedades = data;
-        this.cargandoEnfermedades = false;
+        this.enfermedades.set(data ?? []);
+        this.cargandoenfermedades.set(false);
         this.agregandoEnfermedad = false;
-        this.cdr.detectChanges();
+        
       },
       error: (err) => {
-        this.cargandoEnfermedades = false;
+        this.cargandoenfermedades.set(false);
         this.agregandoEnfermedad = false;
-        this.cdr.detectChanges();
+        
         const mensaje =
           err?.error?.mensaje || "No se pudieron cargar las enfermedades";
         this.errorModal.mostrar(mensaje);
       },
     });
   }
+   onEnfermedadSeleccionada(item: ItemSeleccionable) {
+    this.form.id_enfermedad = item.id;
+  }
 
-  insertarEnfermedad() {
+  onNuevaEnfermedad(nombre: string) {
+    this.agregandoEnfermedad = true;
+    const idsAntes = this.enfermedades().map(c => c.id_enfermedad);
+
+    this.enfermedadService.insertarEnfermedadCatalogo(nombre).subscribe({
+      next: () => {
+        this.toast.mostrar('Enfermedad agregada correctamente');
+        this.enfermedadService.obtenerEnfermedades().subscribe({
+          next: (data) => {
+            this.enfermedades.set(data ?? []);
+            this.agregandoEnfermedad = false;
+            const nueva = data.find(c => !idsAntes.includes(c.id_enfermedad));
+            if (nueva) {
+              this.idEnfermedadSeleccionada.set(nueva.id_enfermedad);
+              this.form.id_enfermedad = nueva.id_enfermedad;
+            }
+          }
+        });
+      },
+      error: (err) => {
+        this.agregandoEnfermedad = false;
+        this.errorModal.mostrar(err?.error?.mensaje || 'Error al agregar');
+      }
+    });
+  }
+
+
+  /*insertarEnfermedad() {
     if (!this.nuevaEnfermedadNombre.trim()) return;
 
     this.agregandoEnfermedad = true;
@@ -86,7 +122,7 @@ export class NuevaEnfermedad implements OnInit {
         setTimeout(() => {
           if (!this.enfermedades.length) return;
 
-          const ultima = this.enfermedades.reduce((max, e) =>
+          const ultima = this.enfermedades().reduce((max, e) =>
             e.id_enfermedad > max.id_enfermedad ? e : max,
           );
 
@@ -101,7 +137,7 @@ export class NuevaEnfermedad implements OnInit {
         this.errorModal.mostrar(mensaje);
       },
     });
-  }
+  }*/
 
   guardar() {
     const payload: enfermedadMascotaRequest = {

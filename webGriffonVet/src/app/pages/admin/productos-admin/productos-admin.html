@@ -127,35 +127,11 @@
   }
 
   @if (modalEliminarProducto() && productoAEliminar()) {
-  <div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-
-    <div class="bg-white rounded-xl shadow-xl p-6 w-[380px] animate-fade-in">
-
-      <p class="text-center text-sm font-medium text-gray-600 mb-2">
-        ¿Seguro que querés eliminar este producto?
-      </p>
-
-      <p class="text-center text-xl font-extrabold text-gray-900 mb-2">
-        {{ productoAEliminar()?.nombre }}
-      </p>
-
-      <div class="flex justify-end gap-2">
-        <button
-          (click)="cancelarEliminarProducto()"
-          class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-sm"
-        >
-          Cancelar
-        </button>
-
-        <button
-          (click)="eliminarProductoConfirmado()"
-          class="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 text-sm"
-        >
-          Eliminar
-        </button>
-      </div>
-
-    </div>
-  </div>
+      <app-confirmar-eliminar-modal
+      [visible]="modalEliminarProducto()"
+      [mensaje]="mensajeEliminar()"
+      (confirmado)="eliminarProductoConfirmado()"
+      (cancelado)="cancelarEliminarProducto()"
+    />
 }
 </main>

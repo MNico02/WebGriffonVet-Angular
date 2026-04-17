@@ -1,90 +1,58 @@
-<div class="modal-overlay fixed inset-0 bg-black/40 z-50 flex items-center justify-center"
-  (click)="onOverlayClick($event)">
-
-  <div class="bg-surface-container-lowest rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto mx-4">
-
+<div
+  class="modal-overlay fixed inset-0 bg-black/40 z-50 flex items-center justify-center"
+  (click)="onOverlayClick($event)"
+>
+  <div
+    class="bg-surface-container-lowest rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto mx-4"
+  >
     <!-- Header -->
     <div class="flex items-center justify-between px-6 py-4 border-b border-outline-variant/30">
       <h2 class="font-headline text-lg font-bold text-on-surface">Registrar Enfermedad</h2>
-      <button (click)="cerrar.emit()" class="p-2 rounded-full hover:bg-surface-container transition-all">
+      <button
+        (click)="cerrar.emit()"
+        class="p-2 rounded-full hover:bg-surface-container transition-all"
+      >
         <span class="material-symbols-outlined">close</span>
       </button>
     </div>
 
     <!-- Body -->
     <div class="px-6 py-5 space-y-4">
-
       <!-- Select enfermedad -->
       <div class="flex flex-col gap-1">
-        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">Enfermedad</label>
-        @if (cargandoEnfermedades) {
-          <div class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 text-on-surface-variant italic">
-            Cargando enfermedades...
-          </div>
-        } @else {
-          <select [(ngModel)]="form.id_enfermedad"
-            class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary">
-            <option [ngValue]="0" disabled>Seleccionar enfermedad...</option>
-            @for (e of enfermedades; track e.id_enfermedad) {
-              <option [ngValue]="e.id_enfermedad">{{ e.nombre }}</option>
-            }
-          </select>
-        }
+        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">
+          Enfermedad
+        </label>
+        <app-select-con-creacion
+          [items]="enfermedadesComoItem()"
+          [cargando]="cargandoenfermedades()"
+          [guardando]="agregandoEnfermedad"
+          [(valorSeleccionado)]="idEnfermedadSeleccionada"
+          label="¿No encontrás la enfermedad?"
+          placeholder="Seleccionar enfermedad..."
+          inputPlaceholder="Ej: Dermatitis"
+          (seleccionado)="onEnfermedadSeleccionada($event)"
+          (nuevoItem)="onNuevaEnfermedad($event)"
+        />
       </div>
 
-      <!-- Agregar enfermedad nueva -->
-      <div class="mt-2 p-3 rounded-xl bg-primary/5 border border-primary/20">
-
-  <!-- Header -->
-  <div class="flex items-center justify-between gap-2 flex-wrap">
-    <div class="flex items-center gap-2">
-      <span class="text-lg">💡</span>
-      <p class="text-sm font-semibold text-primary">
-        ¿No encontrás la enfermedad?
-      </p>
-    </div>
-
-    <button
-      (click)="mostrarNuevaEnfermedad = !mostrarNuevaEnfermedad"
-      class="text-xs font-bold text-primary underline hover:opacity-80"
-    >
-      + Crear nueva
-    </button>
-  </div>
-
-  <!-- INPUT -->
-  @if (mostrarNuevaEnfermedad) {
-    <div class="flex gap-2 mt-3">
-
-      <input
-        type="text"
-        [(ngModel)]="nuevaEnfermedadNombre"
-        placeholder="Ej: Dermatitis"
-        class="flex-1 bg-white rounded-lg px-3 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary"
-      />
-
-      <button
-        (click)="insertarEnfermedad()"
-        [disabled]="agregandoEnfermedad || !nuevaEnfermedadNombre.trim()"
-        class="px-4 py-2 rounded-lg bg-primary text-white text-xs font-bold hover:opacity-90 transition-all disabled:opacity-40"
-      >
-        {{ agregandoEnfermedad ? 'Guardando...' : '+ Agregar' }}
-      </button>
-
-    </div>
-  }
-
-</div>
+      
 
       <!-- Estado -->
       <div class="flex flex-col gap-1">
-        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">Estado</label>
+        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant"
+          >Estado</label
+        >
         <div class="flex gap-2">
           @for (e of estados; track e) {
-            <button (click)="form.estado = e"
-              [class]="form.estado === e
-                ? 'flex-1 py-2 rounded-lg text-xs font-bold border-2 border-primary bg-primary-container/30 text-primary transition-all'
-                : 'flex-1 py-2 rounded-lg text-xs font-bold border border-outline-variant/30 bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-all'">
+            <button
+              (click)="form.estado = e"
+              [class]="
+                form.estado === e
+                  ? 'flex-1 py-2 rounded-lg text-xs font-bold border-2 border-primary bg-primary-container/30 text-primary transition-all'
+                  : 'flex-1 py-2 rounded-lg text-xs font-bold border border-outline-variant/30 bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-all'
+              "
+            >
               {{ e }}
             </button>
           }
@@ -93,31 +61,45 @@
 
       <!-- Fecha de diagnóstico -->
       <div class="flex flex-col gap-1">
-        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">Fecha de diagnóstico</label>
-        <input type="date" [(ngModel)]="form.fecha_diagnostico"
-          class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary" />
+        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant"
+          >Fecha de diagnóstico</label
+        >
+        <input
+          type="date"
+          [(ngModel)]="form.fecha_diagnostico"
+          class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary"
+        />
       </div>
 
       <!-- Observaciones -->
       <div class="flex flex-col gap-1">
-        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">Observaciones</label>
-        <textarea [(ngModel)]="form.observaciones" rows="3" placeholder="Síntomas, tratamiento relacionado..."
-          class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary resize-none"></textarea>
+        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant"
+          >Observaciones</label
+        >
+        <textarea
+          [(ngModel)]="form.observaciones"
+          rows="3"
+          placeholder="Síntomas, tratamiento relacionado..."
+          class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary resize-none"
+        ></textarea>
       </div>
-
     </div>
 
     <!-- Footer -->
     <div class="flex justify-end gap-3 px-6 py-4 border-t border-outline-variant/30">
-      <button (click)="cerrar.emit()"
-        class="px-5 py-2 rounded-full text-sm font-bold text-on-surface-variant hover:bg-surface-container transition-all">
+      <button
+        (click)="cerrar.emit()"
+        class="px-5 py-2 rounded-full text-sm font-bold text-on-surface-variant hover:bg-surface-container transition-all"
+      >
         Cancelar
       </button>
-      <button (click)="guardar()" [disabled]="form.id_enfermedad === 0 || !form.estado || !form.fecha_diagnostico"
-        class="px-5 py-2 rounded-full editorial-gradient text-white text-sm font-bold hover:opacity-90 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+      <button
+        (click)="guardar()"
+        [disabled]="form.id_enfermedad === 0 || !form.estado || !form.fecha_diagnostico"
+        class="px-5 py-2 rounded-full editorial-gradient text-white text-sm font-bold hover:opacity-90 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+      >
         Guardar enfermedad
       </button>
     </div>
-
   </div>
 </div>

@@ -1,4 +1,4 @@
-import { Component, input, output, inject, OnInit } from "@angular/core";
+import { Component, input, output, inject, OnInit, signal, computed } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import {
@@ -11,6 +11,8 @@ import { Medicamento } from "../../../api/models/historialClinico";
 import { ToastService } from "../../../core/services/toast.service";
 import { ErrorModalService } from "../../../core/services/error-modal";
 import { ChangeDetectorRef } from "@angular/core";
+import { ItemSeleccionable } from "../../../api/models/itemSeleccionable";
+import { SelectConCreacion } from "../select-con-creacion/select-con-creacion";
 
 export interface NuevoEstudioRequest {
   tipo_estudio: string;
@@ -20,7 +22,7 @@ export interface NuevoEstudioRequest {
 
 @Component({
   selector: "app-nueva-consulta-modal",
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, SelectConCreacion],
   templateUrl: "./nueva-consulta.html",
   styleUrl: "./nueva-consulta.css",
 })
@@ -36,13 +38,15 @@ export class NuevaConsulta implements OnInit {
   consultaGuardada = output<void>();
 
   // Lista de medicamentos disponibles
-  medicamentos: Medicamento[] = [];
-  cargandoMedicamentos = false;
-
+  medicamentos = signal<Medicamento[]>([]);
+  cargandoMedicamentos= signal(false);
+  idMedicamentoSeleccionado = signal<number>(0);
   // Para agregar un medicamento nuevo al sistema
   nuevoMedicamentoNombre = "";
   agregandoMedicamento = false;
-
+  MedicamentosComoItems = computed(() =>
+    this.medicamentos().map(c => ({ id: c.id_medicamento, nombre: c.nombre }))
+  );
   archivoSeleccionado: File | null = null;
   archivoSeleccionadoNombre = "";
   mostrarNuevoMedicamento = false;
@@ -81,63 +85,68 @@ export class NuevaConsulta implements OnInit {
   }
 
   cargarMedicamentos() {
-    this.cargandoMedicamentos = true;
+    this.cargandoMedicamentos.set(true);
     this.service.obtenerMedicamentos().subscribe({
       next: (data: Medicamento[]) => {
-        this.medicamentos = data;
-        this.cargandoMedicamentos = false;
+        this.medicamentos.set(data ?? []);
+        this.cargandoMedicamentos.set(false);
         this.agregandoMedicamento = false; // ← acá, no antes
         this.cdr.detectChanges();
       },
       error: () => {
-        this.cargandoMedicamentos = false;
+        this.cargandoMedicamentos.set(false);
         this.agregandoMedicamento = false;
         this.cdr.detectChanges();
       },
     });
   }
 
-  onMedicamentoSeleccionado() {
-    const med = this.medicamentos.find(
-      (m) => m.id_medicamento === +this.nuevoTratamiento.id_medicamento,
+  onMedicamentoSeleccionado(item: ItemSeleccionable) {
+    const med = this.medicamentos().find(
+      (m) => m.id_medicamento === Number(item.id),
     );
-    if (med) {
-      this.nuevoTratamiento.nombre_medicamento = med.nombre;
-    }
+    this.nuevoTratamiento.id_medicamento = Number(item.id);
+    this.nuevoTratamiento.nombre_medicamento = med?.nombre ?? item.nombre ?? "";
   }
-
-  insertarMedicamento() {
-    if (!this.nuevoMedicamentoNombre.trim()) return;
-
-    this.agregandoMedicamento = true;
-
-    const nombre = this.nuevoMedicamentoNombre.trim();
-
+ 
+  // Cuando el usuario escribe uno nuevo y lo crea
+  onNuevoMedicamento(nombre: string) {
+    this.agregandoMedicamento=true;
+    const idsAntes = this.medicamentos().map((m) => m.id_medicamento);
+ 
     this.service.insertarMedicamento(nombre).subscribe({
       next: () => {
-        this.nuevoMedicamentoNombre = "";
-        this.agregandoMedicamento = false;
-
-        this.mostrarNuevoMedicamento = false;
-
-        this.cargarMedicamentos();
-
-        setTimeout(() => {
-          if (!this.medicamentos.length) return;
-
-          const ultimo = this.medicamentos.reduce((max, m) =>
-            m.id_medicamento > max.id_medicamento ? m : max,
-          );
-
-          this.nuevoTratamiento.id_medicamento = ultimo.id_medicamento;
-          this.nuevoTratamiento.nombre_medicamento = ultimo.nombre;
-        }, 300);
+        this.toast.mostrar("Medicamento agregado correctamente");
+        this.service.obtenerMedicamentos().subscribe({
+          next: (data) => {
+            this.medicamentos.set(data ?? []);
+            this.agregandoMedicamento=false;
+ 
+            // Detectar el nuevo y pre-seleccionarlo en el select
+            const nuevo = data.find((m) => !idsAntes.includes(m.id_medicamento));
+            if (nuevo) {
+              this.idMedicamentoSeleccionado.set(0);
+              setTimeout(() => {
+                this.idMedicamentoSeleccionado.set(nuevo.id_medicamento);
+                this.nuevoTratamiento.id_medicamento = nuevo.id_medicamento;
+                this.nuevoTratamiento.nombre_medicamento = nuevo.nombre;
+              });
+            }
+            this.cdr.detectChanges();
+          },
+          error: () => {
+            this.agregandoMedicamento=false;
+            this.cdr.detectChanges();
+          },
+        });
       },
-      error: () => {
-        this.agregandoMedicamento = false;
+      error: (err) => {
+        this.agregandoMedicamento=false;
+        this.errorModal.mostrar(err?.error?.mensaje || "Error al agregar medicamento");
       },
     });
   }
+ 
 
   agregarTratamiento() {
     if (!this.nuevoTratamiento.id_medicamento) return;

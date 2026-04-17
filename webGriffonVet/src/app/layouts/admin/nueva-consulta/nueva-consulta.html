@@ -6,12 +6,8 @@
     class="bg-surface-container-lowest rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto mx-4"
   >
     <!-- Header -->
-    <div
-      class="flex items-center justify-between px-6 py-4 border-b border-outline-variant/30"
-    >
-      <h2 class="font-headline text-lg font-bold text-on-surface">
-        Nueva Consulta
-      </h2>
+    <div class="flex items-center justify-between px-6 py-4 border-b border-outline-variant/30">
+      <h2 class="font-headline text-lg font-bold text-on-surface">Nueva Consulta</h2>
       <button
         (click)="cerrar.emit()"
         class="p-2 rounded-full hover:bg-surface-container transition-all"
@@ -25,8 +21,7 @@
     <div class="px-6 py-5 space-y-4">
       <!-- Motivo -->
       <div class="flex flex-col gap-1">
-        <label
-          class="text-xs font-black uppercase tracking-widest text-on-surface-variant"
+        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant"
           >Motivo de consulta *</label
         >
         <input
@@ -39,8 +34,7 @@
 
       <!-- Anamnesis -->
       <div class="flex flex-col gap-1">
-        <label
-          class="text-xs font-black uppercase tracking-widest text-on-surface-variant"
+        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant"
           >Anamnesis</label
         >
         <textarea
@@ -54,8 +48,7 @@
 
       <!-- Examen general -->
       <div class="flex flex-col gap-1">
-        <label
-          class="text-xs font-black uppercase tracking-widest text-on-surface-variant"
+        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant"
           >Examen general</label
         >
         <textarea
@@ -69,9 +62,7 @@
 
       <!-- Diagnóstico presuntivo -->
       <div class="flex flex-col gap-1">
-        <label
-          class="text-xs font-black uppercase tracking-widest text-on-surface-variant"
-        >
+        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">
           Diagnóstico presuntivo
         </label>
         <textarea
@@ -85,8 +76,7 @@
 
       <!-- Diagnóstico -->
       <div class="flex flex-col gap-1">
-        <label
-          class="text-xs font-black uppercase tracking-widest text-on-surface-variant"
+        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant"
           >Diagnóstico*</label
         >
         <textarea
@@ -100,8 +90,7 @@
 
       <!-- Tratamiento general -->
       <div class="flex flex-col gap-1">
-        <label
-          class="text-xs font-black uppercase tracking-widest text-on-surface-variant"
+        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant"
           >Tratamiento general*</label
         >
         <textarea
@@ -115,8 +104,7 @@
 
       <!-- Observaciones -->
       <div class="flex flex-col gap-1">
-        <label
-          class="text-xs font-black uppercase tracking-widest text-on-surface-variant"
+        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant"
           >Observaciones</label
         >
         <textarea
@@ -132,8 +120,7 @@
       <!--              TRATAMIENTOS               -->
       <!-- ════════════════════════════════════════ -->
       <div class="flex flex-col gap-3">
-        <label
-          class="text-xs font-black uppercase tracking-widest text-on-surface-variant"
+        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant"
           >Medicación*</label
         >
 
@@ -142,24 +129,17 @@
           <!-- Select medicamento -->
           <div class="col-span-2 flex flex-col gap-1">
             <label class="text-xs text-on-surface-variant">Medicamento</label>
-            @if (cargandoMedicamentos) {
-            <div
-              class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 text-on-surface-variant italic"
-            >
-              Cargando medicamentos...
-            </div>
-            } @else {
-            <select
-              [(ngModel)]="nuevoTratamiento.id_medicamento"
-              (ngModelChange)="onMedicamentoSeleccionado()"
-              class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary"
-            >
-              <option [ngValue]="0" disabled>Seleccionar medicamento...</option>
-              @for (med of medicamentos; track med.id_medicamento) {
-              <option [ngValue]="med.id_medicamento">{{ med.nombre }}</option>
-              }
-            </select>
-            }
+           <app-select-con-creacion
+          [items]="MedicamentosComoItems()"
+          [cargando]="cargandoMedicamentos()"
+          [guardando]="agregandoMedicamento"
+          [(valorSeleccionado)]="idMedicamentoSeleccionado"
+          label="¿No encontrás el medicamento?"
+          placeholder="Seleccionar medicamento.."
+          inputPlaceholder="Ej: Amoxicilina"
+          (seleccionado)="onMedicamentoSeleccionado($event)"
+          (nuevoItem)="onNuevoMedicamento($event)"
+        />
           </div>
 
           <input
@@ -176,9 +156,7 @@
           />
 
           <div class="flex flex-col gap-1">
-            <label
-              class="text-xs font-black uppercase tracking-widest text-on-surface-variant"
-            >
+            <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">
               Duración del tratamiento (días)
             </label>
             <input
@@ -208,195 +186,136 @@
 
         <!-- Lista de tratamientos cargados -->
         @for (t of form.tratamientos; track $index) {
-        <div
-          class="flex items-start justify-between bg-surface-container px-4 py-3 rounded-lg border border-outline-variant/20"
-        >
-          <div class="flex flex-col gap-1">
-            <span class="font-bold text-sm">💊 {{ t.nombre_medicamento }}</span>
-            <div class="flex gap-2 flex-wrap">
-              <span
-                class="text-xs bg-primary-container/20 text-primary px-2 py-0.5 rounded-full"
-                >{{ t.dosis }}</span
-              >
-              <span class="text-xs text-on-surface-variant"
-                >{{ t.frecuencia }}</span
-              >
-              <span class="text-xs text-on-surface-variant"
-                >{{ t.duracion_dias }} días</span
-              >
-            </div>
-            @if (t.indicaciones) {
-            <span class="text-xs text-on-surface-variant italic"
-              >{{ t.indicaciones }}</span
-            >
-            }
-          </div>
-          <button
-            (click)="eliminarTratamiento($index)"
-            class="p-1 rounded-full hover:bg-error-container/20 transition-all"
-          >
-            <span class="material-symbols-outlined text-error text-[18px]"
-              >delete</span
-            >
-          </button>
-        </div>
-        }
-
-        <!-- Agregar medicamento nuevo al sistema -->
-        <div class="mt-2 p-3 rounded-xl bg-primary/5 border border-primary/20">
-
-  <!-- Header -->
-  <div class="flex items-center justify-between gap-2 flex-wrap">
-    <div class="flex items-center gap-2">
-      <span class="text-lg">💡</span>
-      <p class="text-sm font-semibold text-primary">
-        ¿No encontrás el medicamento?
-      </p>
-    </div>
-
-    <button
-      (click)="mostrarNuevoMedicamento = !mostrarNuevoMedicamento"
-      class="text-xs font-bold text-primary underline hover:opacity-80"
-    >
-      + Crear nuevo
-    </button>
-  </div>
-
-  <!-- INPUT -->
-  @if (mostrarNuevoMedicamento) {
-    <div class="flex gap-2 mt-3">
-
-      <input
-        type="text"
-        [(ngModel)]="nuevoMedicamentoNombre"
-        placeholder="Ej: Amoxicilina"
-        class="flex-1 bg-white rounded-lg px-3 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary"
-      />
-
-      <button
-        (click)="insertarMedicamento()"
-        [disabled]="agregandoMedicamento || !nuevoMedicamentoNombre.trim()"
-        class="px-4 py-2 rounded-lg bg-primary text-white text-xs font-bold hover:opacity-90 transition-all disabled:opacity-40"
-      >
-        {{ agregandoMedicamento ? 'Guardando...' : '+ Agregar' }}
-      </button>
-
-    </div>
-  }
-
-</div>
-
-      <!-- ════════════════════════════════════════ -->
-      <!--               ESTUDIOS                  -->
-      <!-- ════════════════════════════════════════ -->
-      <div class="flex flex-col gap-3">
-        <label
-          class="text-xs font-black uppercase tracking-widest text-on-surface-variant"
-          >Estudios</label
-        >
-
-        <!-- Fila agregar estudio -->
-        <div class="grid grid-cols-2 gap-2">
-          <input
-            type="text"
-            [(ngModel)]="nuevoEstudio.tipo_estudio"
-            placeholder="Tipo de estudio (Ej: Hemograma)"
-            class="col-span-2 bg-surface-container rounded-lg px-3 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary"
-          />
           <div
-            class="col-span-2 border-2 border-dashed border-outline-variant/40 rounded-lg p-4 text-center cursor-pointer hover:bg-surface-container transition-all"
-            (drop)="onDrop($event)"
-            (dragover)="onDragOver($event)"
+            class="flex items-start justify-between bg-surface-container px-4 py-3 rounded-lg border border-outline-variant/20"
           >
-            <p class="text-xs text-on-surface-variant">
-              Arrastrá imagen o PDF o hacé click
-            </p>
-
-            <input
-              type="file"
-              #fileInput
-              (change)="onFileSelected($event)"
-              accept="image/*,.pdf"
-              class="hidden"
-            />
-
+            <div class="flex flex-col gap-1">
+              <span class="font-bold text-sm">💊 {{ t.nombre_medicamento }}</span>
+              <div class="flex gap-2 flex-wrap">
+                <span
+                  class="text-xs bg-primary-container/20 text-primary px-2 py-0.5 rounded-full"
+                  >{{ t.dosis }}</span
+                >
+                <span class="text-xs text-on-surface-variant">{{ t.frecuencia }}</span>
+                <span class="text-xs text-on-surface-variant">{{ t.duracion_dias }} días</span>
+              </div>
+              @if (t.indicaciones) {
+                <span class="text-xs text-on-surface-variant italic">{{ t.indicaciones }}</span>
+              }
+            </div>
             <button
-              type="button"
-              (click)="fileInput.click()"
-              class="mt-2 text-xs text-primary underline"
+              (click)="eliminarTratamiento($index)"
+              class="p-1 rounded-full hover:bg-error-container/20 transition-all"
             >
-              Seleccionar archivo
+              <span class="material-symbols-outlined text-error text-[18px]">delete</span>
             </button>
-
-            @if (archivoSeleccionadoNombre) {
-            <p class="text-xs mt-2 text-on-surface">
-              {{ archivoSeleccionadoNombre }}
-            </p>
-            }
           </div>
-          <input
-            type="text"
-            [(ngModel)]="nuevoEstudio.observaciones"
-            placeholder="Observaciones"
-            class="bg-surface-container rounded-lg px-3 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary"
-          />
-        </div>
-
-        <button
-          (click)="agregarEstudio()"
-          class="self-start text-xs px-4 py-2 rounded-full border border-primary text-primary hover:bg-primary-container/20 transition-all font-bold"
-        >
-          + Agregar estudio
-        </button>
-
-        <!-- Lista de estudios cargados -->
-        @for (e of form.estudios; track $index) {
-        <div
-          class="flex items-start justify-between bg-surface-container px-4 py-3 rounded-lg border border-outline-variant/20"
-        >
-          <div class="flex flex-col gap-1">
-            <span class="font-bold text-sm">🔬 {{ e.tipo_estudio }}</span>
-            @if (e.resultado) {
-            <span
-              class="text-xs bg-tertiary-container/20 text-tertiary px-2 py-0.5 rounded-full self-start"
-            >
-              {{ e.resultado }}
-            </span>
-            } @if (e.observaciones) {
-            <span class="text-xs text-on-surface-variant italic"
-              >{{ e.observaciones }}</span
-            >
-            }
-          </div>
-          <button
-            (click)="eliminarEstudio($index)"
-            class="p-1 rounded-full hover:bg-error-container/20 transition-all"
-          >
-            <span class="material-symbols-outlined text-error text-[18px]"
-              >delete</span
-            >
-          </button>
-        </div>
         }
-      </div>
-    </div>
 
-    <!-- Footer -->
-    <div
-      class="flex justify-end gap-3 px-6 py-4 border-t border-outline-variant/30"
-    >
-      <button
-        (click)="cerrar.emit()"
-        class="px-5 py-2 rounded-full text-sm font-bold text-on-surface-variant hover:bg-surface-container transition-all"
-      >
-        Cancelar
-      </button>
-      <button
-        (click)="guardar()"
-        class="px-5 py-2 rounded-full editorial-gradient text-white text-sm font-bold hover:opacity-90 transition-all"
-      >
-        Guardar consulta
-      </button>
+        <!-- ════════════════════════════════════════ -->
+        <!--               ESTUDIOS                  -->
+        <!-- ════════════════════════════════════════ -->
+        <div class="flex flex-col gap-3">
+          <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant"
+            >Estudios</label
+          >
+
+          <!-- Fila agregar estudio -->
+          <div class="grid grid-cols-2 gap-2">
+            <input
+              type="text"
+              [(ngModel)]="nuevoEstudio.tipo_estudio"
+              placeholder="Tipo de estudio (Ej: Hemograma)"
+              class="col-span-2 bg-surface-container rounded-lg px-3 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary"
+            />
+            <div
+              class="col-span-2 border-2 border-dashed border-outline-variant/40 rounded-lg p-4 text-center cursor-pointer hover:bg-surface-container transition-all"
+              (drop)="onDrop($event)"
+              (dragover)="onDragOver($event)"
+            >
+              <p class="text-xs text-on-surface-variant">Arrastrá imagen o PDF o hacé click</p>
+
+              <input
+                type="file"
+                #fileInput
+                (change)="onFileSelected($event)"
+                accept="image/*,.pdf"
+                class="hidden"
+              />
+
+              <button
+                type="button"
+                (click)="fileInput.click()"
+                class="mt-2 text-xs text-primary underline"
+              >
+                Seleccionar archivo
+              </button>
+
+              @if (archivoSeleccionadoNombre) {
+                <p class="text-xs mt-2 text-on-surface">
+                  {{ archivoSeleccionadoNombre }}
+                </p>
+              }
+            </div>
+            <input
+              type="text"
+              [(ngModel)]="nuevoEstudio.observaciones"
+              placeholder="Observaciones"
+              class="bg-surface-container rounded-lg px-3 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary"
+            />
+          </div>
+
+          <button
+            (click)="agregarEstudio()"
+            class="self-start text-xs px-4 py-2 rounded-full border border-primary text-primary hover:bg-primary-container/20 transition-all font-bold"
+          >
+            + Agregar estudio
+          </button>
+
+          <!-- Lista de estudios cargados -->
+          @for (e of form.estudios; track $index) {
+            <div
+              class="flex items-start justify-between bg-surface-container px-4 py-3 rounded-lg border border-outline-variant/20"
+            >
+              <div class="flex flex-col gap-1">
+                <span class="font-bold text-sm">🔬 {{ e.tipo_estudio }}</span>
+                @if (e.resultado) {
+                  <span
+                    class="text-xs bg-tertiary-container/20 text-tertiary px-2 py-0.5 rounded-full self-start"
+                  >
+                    {{ e.resultado }}
+                  </span>
+                }
+                @if (e.observaciones) {
+                  <span class="text-xs text-on-surface-variant italic">{{ e.observaciones }}</span>
+                }
+              </div>
+              <button
+                (click)="eliminarEstudio($index)"
+                class="p-1 rounded-full hover:bg-error-container/20 transition-all"
+              >
+                <span class="material-symbols-outlined text-error text-[18px]">delete</span>
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="flex justify-end gap-3 px-6 py-4 border-t border-outline-variant/30">
+        <button
+          (click)="cerrar.emit()"
+          class="px-5 py-2 rounded-full text-sm font-bold text-on-surface-variant hover:bg-surface-container transition-all"
+        >
+          Cancelar
+        </button>
+        <button
+          (click)="guardar()"
+          class="px-5 py-2 rounded-full editorial-gradient text-white text-sm font-bold hover:opacity-90 transition-all"
+        >
+          Guardar consulta
+        </button>
+      </div>
     </div>
   </div>
 </div>

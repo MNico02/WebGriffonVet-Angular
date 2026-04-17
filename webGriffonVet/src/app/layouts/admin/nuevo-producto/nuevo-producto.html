@@ -62,68 +62,21 @@
 
       <!-- Categoría -->
       <div class="flex flex-col gap-1">
-        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">Categoría</label>
-        @if (cargandoCategorias) {
-          <div class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 text-on-surface-variant italic">
-            Cargando categorías...
-          </div>
-        } @else {
-          <select
-            [(ngModel)]="formProducto.id_categoria"
-            class="bg-surface-container rounded-lg px-4 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary"
-          
-            >
-            <option [value]="null">Seleccionar categoría...</option>
-            @for (cat of categorias; track cat.id_categoria) {
-              <option [value]="cat.id_categoria">{{ cat.nombre }}</option>
-            }
-          </select>
-        }
+        <label class="text-xs font-black uppercase tracking-widest text-on-surface-variant">
+          Categoría
+        </label>
+        <app-select-con-creacion
+          [items]="categoriasComoItems()"
+          [cargando]="cargandoCategorias()"
+          [guardando]="agregandoCategoria"
+          [(valorSeleccionado)]="idCategoriaSeleccionada"
+          label="¿No encontrás la categoría?"
+          placeholder="Seleccionar categoría..."
+          inputPlaceholder="Ej: Accesorios, Alimentos..."
+          (seleccionado)="onCategoriaSeleccionada($event)"
+          (nuevoItem)="onNuevaCategoria($event)"
+        />
       </div>
-
-      <!-- Agregar categoría nueva -->
-      <div class="mt-2 p-3 rounded-xl bg-primary/5 border border-primary/20">
-
-  <!-- Header -->
-  <div class="flex items-center justify-between gap-2 flex-wrap">
-    <div class="flex items-center gap-2">
-      <span class="text-lg">💡</span>
-      <p class="text-sm font-semibold text-primary">
-        ¿No encontrás la categoría?
-      </p>
-    </div>
-
-    <button
-      (click)="mostrarNuevaCategoria = !mostrarNuevaCategoria"
-      class="text-xs font-bold text-primary underline hover:opacity-80"
-    >
-      + Crear nueva
-    </button>
-  </div>
-
-  <!-- INPUT -->
-  @if (mostrarNuevaCategoria) {
-    <div class="flex gap-2 mt-3">
-
-      <input
-        type="text"
-        [(ngModel)]="nuevaCategoriaNombre"
-        placeholder="Ej: Accesorios"
-        class="flex-1 bg-white rounded-lg px-3 py-2 text-sm border border-outline-variant/30 focus:outline-none focus:border-primary"
-      />
-
-      <button
-        (click)="agregarCategoria()"
-        [disabled]="agregandoCategoria || !nuevaCategoriaNombre.trim()"
-        class="px-4 py-2 rounded-lg bg-primary text-white text-xs font-bold hover:opacity-90 transition-all disabled:opacity-40"
-      >
-        {{ agregandoCategoria ? 'Guardando...' : '+ Agregar' }}
-      </button>
-
-    </div>
-  }
-
-</div>
 
       <!-- Imagen -->
       <div class="flex flex-col gap-1">

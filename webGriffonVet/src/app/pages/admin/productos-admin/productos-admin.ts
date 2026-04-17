@@ -5,10 +5,11 @@ import { NuevoProducto } from '../../../layouts/admin/nuevo-producto/nuevo-produ
 import { EditarProducto } from '../../../layouts/admin/editar-producto/editar-producto';
 import { ProductoService } from '../../../core/services/producto-service';
 import { Producto } from '../../../api/models/producto';
+import { ConfirmarEliminarModal } from "../../../components/confirmar-eliminar-modal/confirmar-eliminar-modal";
 
 @Component({
   selector: 'app-productos-admin',
-  imports: [CommonModule, NuevoProducto, EditarProducto],
+  imports: [CommonModule, NuevoProducto, EditarProducto, ConfirmarEliminarModal],
   templateUrl: './productos-admin.html',
   styleUrl: './productos-admin.css',
 })
@@ -25,6 +26,10 @@ export class ProductosAdmin {
 
   // 🔎 BUSCADOR
   searchQuery = signal('');
+
+    mensajeEliminar = computed(() =>
+  `¿Seguro que querés eliminar el producto "${this.productoAEliminar()?.nombre}"?`
+);
 
   constructor(private productoService: ProductoService) {}
 
