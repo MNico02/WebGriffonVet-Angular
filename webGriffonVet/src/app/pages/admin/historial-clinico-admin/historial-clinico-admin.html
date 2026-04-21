@@ -498,11 +498,29 @@
         </div>
         @if (esAdmin()) {
         <button
-          (click)="modalDesparasitacionAbierto.set(true)"
-          class="px-4 py-2 rounded-full editorial-gradient text-white text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-all"
-        >
-          + Nueva Desparasitación
-        </button>
+  (click)="modalDesparasitacionAbierto.set(true)"
+  class="
+    px-3 py-1.5 
+    sm:px-4 sm:py-2
+
+    text-[10px] 
+    sm:text-xs 
+
+    rounded-full 
+    editorial-gradient 
+    text-white 
+    font-bold 
+    uppercase 
+
+    tracking-normal 
+    sm:tracking-widest 
+
+    hover:opacity-90 
+    transition-all
+  "
+>
+  + Nueva Desparasitación
+</button>
       }
         @if (modalDesparasitacionAbierto()) {
         <app-nueva-desparasitacion

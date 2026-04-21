@@ -185,8 +185,6 @@
     </p>
     } @else {
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-      
-      
       <!-- Noticia destacada -->
       @if (noticiaDestacada(); as noticia) {
       <div class="lg:col-span-7 group cursor-pointer">
@@ -204,18 +202,18 @@
           <div class="w-full h-full bg-surface-container-low"></div>
           }
           <div
-            class="absolute inset-0 bg-gradient-to-t from-primary/90 via-transparent to-transparent"
+            class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"
           ></div>
-          <div class="absolute bottom-0 p-12 text-on-primary">
+          <div class="absolute bottom-0 p-12">
             <span
               class="inline-block px-3 py-1 bg-tertiary rounded-md text-xs font-bold mb-4"
             >
               {{ noticia.categoria | uppercase }}
             </span>
-            <h3 class="text-4xl font-bold mb-4 leading-tight">
+            <h3 class="text-4xl font-bold mb-4 leading-tight text-white">
               {{ noticia.titulo }}
             </h3>
-            <p class="text-white/70 text-lg max-w-lg mb-6">
+            <p class="text-white/80 text-lg max-w-lg mb-6">
               {{ noticia.descripcion }}
             </p>
             <p class="text-sm font-medium text-white/60">
@@ -230,35 +228,35 @@
       <div class="lg:col-span-5 flex flex-col gap-6">
         @for (noticia of noticiasLaterales(); track noticia.id_informacion) {
         <div
-  class="bg-surface-container-low rounded-lg p-4 flex gap-6 hover:bg-surface-container transition-colors group cursor-pointer"
->
-  @if (noticia.imagen_url) {
-    <div class="w-40 h-40 flex-shrink-0 rounded-md overflow-hidden">
-      <img
-        [src]="noticia.imagen_url"
-        [alt]="noticia.titulo"
-        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-        (error)="noticia.imagen_url = null"
-      />
-    </div>
-  }
+          class="bg-surface-container-low rounded-lg p-4 flex gap-6 hover:bg-surface-container transition-colors group cursor-pointer"
+        >
+          @if (noticia.imagen_url) {
+          <div class="w-40 h-40 flex-shrink-0 rounded-md overflow-hidden">
+            <img
+              [src]="noticia.imagen_url"
+              [alt]="noticia.titulo"
+              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              (error)="noticia.imagen_url = null"
+            />
+          </div>
+          }
 
-  <div class="flex flex-col justify-center flex-1">
-    <span class="text-xs font-bold text-on-tertiary-fixed-variant mb-2">
-      {{ noticia.categoria | uppercase }}
-    </span>
+          <div class="flex flex-col justify-center flex-1">
+            <span class="text-xs font-bold text-on-tertiary-fixed-variant mb-2">
+              {{ noticia.categoria | uppercase }}
+            </span>
 
-    <h4
-      class="text-xl font-bold text-primary leading-snug mb-2 group-hover:text-secondary transition-colors"
-    >
-      {{ noticia.titulo }}
-    </h4>
+            <h4
+              class="text-xl font-bold text-primary leading-snug mb-2 group-hover:text-secondary transition-colors"
+            >
+              {{ noticia.titulo }}
+            </h4>
 
-    <p class="text-sm text-on-surface-variant line-clamp-2">
-      {{ noticia.descripcion }}
-    </p>
-  </div>
-</div>
+            <p class="text-sm text-on-surface-variant line-clamp-2">
+              {{ noticia.descripcion }}
+            </p>
+          </div>
+        </div>
         }
       </div>
     </div>

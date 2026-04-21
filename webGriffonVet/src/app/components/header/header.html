@@ -1,39 +1,58 @@
-<header class="fixed top-0 w-full z-50 bg-white/70 backdrop-blur-xl shadow-xl shadow-slate-900/5 transition-all">
-  <div class="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto">
-    <div class="text-2xl font-bold tracking-tighter text-blue-800 font-headline">GriffonVet</div>
+<header class="fixed top-0 w-full z-50 bg-white/70 backdrop-blur-xl shadow-xl shadow-slate-900/5 transition-all relative">
 
+  <div class="flex justify-between items-center px-6 md:px-8 py-4 max-w-7xl mx-auto">
+
+    <!-- LOGO -->
+    <div class="text-xl md:text-2xl font-bold tracking-tighter text-blue-800 font-headline">
+      GriffonVet
+    </div>
+
+    <!-- NAV DESKTOP -->
     <nav class="hidden md:flex items-center space-x-8 font-plus-jakarta text-sm tracking-tight">
       <a class="text-slate-600 hover:text-blue-600 transition-all" routerLink="/main/home" routerLinkActive="text-blue-700 font-bold border-b-2 border-blue-600">Inicio</a>
       <a class="text-slate-600 hover:text-blue-600 transition-all" routerLink="/main/productos" routerLinkActive="text-blue-700 font-bold border-b-2 border-blue-600">Productos</a>
       <a class="text-slate-600 hover:text-blue-600 transition-all" routerLink="/main/blog" routerLinkActive="text-blue-700 font-bold border-b-2 border-blue-600">Blog</a>
       <a class="text-slate-600 hover:text-blue-600 transition-all" routerLink="/main/turnos" routerLinkActive="text-blue-700 font-bold border-b-2 border-blue-600">Turnos</a>
       <a class="text-slate-600 hover:text-blue-600 transition-all" routerLink="/main/mis-mascotas" routerLinkActive="text-blue-700 font-bold border-b-2 border-blue-600">Mis Mascotas</a>
+
       @if (isLoggedIn$ | async) {
-          @if(isAdmin()) {
-              <a class="text-slate-600 hover:text-blue-600 transition-all" routerLink="/admin/dashboard" routerLinkActive="text-blue-700 font-bold border-b-2 border-blue-600">Panel Admin</a>
-        
-          }
+        @if (isAdmin()) {
+          <a class="text-slate-600 hover:text-blue-600 transition-all" routerLink="/admin/dashboard" routerLinkActive="text-blue-700 font-bold border-b-2 border-blue-600">Panel Admin</a>
         }
+      }
     </nav>
 
-    <div class="flex items-center gap-4">
-      <!-- NO logueado -->
+    <!-- DERECHA -->
+    <div class="flex items-center gap-3 md:gap-4">
+
+      <!-- BOTÓN HAMBURGUESA (MOBILE) -->
+      <button
+        class="md:hidden flex items-center justify-center w-10 h-10 rounded-lg hover:bg-slate-100 transition"
+        (click)="toggleMenu()"
+      >
+        <span class="material-symbols-outlined text-2xl">
+          menu
+        </span>
+      </button>
+
+      <!-- NO LOGUEADO -->
       @if (!(isLoggedIn$ | async)) {
         <button
-          class="px-6 py-2 rounded-full border border-blue-300 text-blue-700 font-bold text-xs uppercase tracking-widest hover:bg-blue-50 transition-all"
+          class="hidden md:block px-6 py-2 rounded-full border border-blue-300 text-blue-700 font-bold text-xs uppercase tracking-widest hover:bg-blue-50 transition-all"
           routerLink="/login">
           Login
         </button>
       }
 
-      <!-- Logueado -->
+      <!-- LOGUEADO -->
       @if (isLoggedIn$ | async) {
         <button
-          class="px-6 py-2 rounded-full border border-red-200 text-red-600 font-bold text-xs uppercase tracking-widest hover:bg-red-50 transition-all"
+          class="hidden md:block px-6 py-2 rounded-full border border-red-200 text-red-600 font-bold text-xs uppercase tracking-widest hover:bg-red-50 transition-all"
           (click)="logout()">
           Cerrar sesión
         </button>
-        <div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden">
+
+        <div class="w-9 h-9 md:w-10 md:h-10 rounded-full bg-surface-container-highest overflow-hidden">
           <img
             alt="User avatar"
             class="w-full h-full object-cover"
@@ -42,4 +61,42 @@
       }
     </div>
   </div>
+
+  <!-- MENÚ MOBILE -->
+  @if (menuOpen) {
+    <div class="md:hidden absolute top-full left-0 w-full bg-white shadow-xl border-t border-slate-200">
+      <div class="flex flex-col p-5 gap-4 font-plus-jakarta text-sm">
+
+        <a routerLink="/main/home" (click)="toggleMenu()">Inicio</a>
+        <a routerLink="/main/productos" (click)="toggleMenu()">Productos</a>
+        <a routerLink="/main/blog" (click)="toggleMenu()">Blog</a>
+        <a routerLink="/main/turnos" (click)="toggleMenu()">Turnos</a>
+        <a routerLink="/main/mis-mascotas" (click)="toggleMenu()">Mis Mascotas</a>
+
+        @if (isLoggedIn$ | async) {
+          @if (isAdmin()) {
+            <a routerLink="/admin/dashboard" (click)="toggleMenu()">Panel Admin</a>
+          }
+
+          <!-- logout mobile -->
+          <button
+            class="mt-2 px-4 py-2 rounded-lg border border-red-200 text-red-600 font-bold text-xs uppercase tracking-widest hover:bg-red-50 transition-all text-left"
+            (click)="logout(); toggleMenu()">
+            Cerrar sesión
+          </button>
+        }
+
+        @if (!(isLoggedIn$ | async)) {
+          <button
+            class="mt-2 px-4 py-2 rounded-lg border border-blue-300 text-blue-700 font-bold text-xs uppercase tracking-widest hover:bg-blue-50 transition-all text-left"
+            routerLink="/login"
+            (click)="toggleMenu()">
+            Login
+          </button>
+        }
+
+      </div>
+    </div>
+  }
+
 </header>

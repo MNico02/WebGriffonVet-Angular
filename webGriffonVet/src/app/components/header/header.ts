@@ -32,6 +32,13 @@ export class Header {
     this.authService.logout();
     this.router.navigate(['/login']);
   }
+
+
+  menuOpen = false;
+
+toggleMenu() {
+  this.menuOpen = !this.menuOpen;
+}
 }
 
 
