@@ -118,7 +118,7 @@ export class HistorialClinicoService {
     return this.http.put(`${this.apiUrl}/actualizarMascotas`, payload);
   }
   editarConsulta(formData: FormData): Observable<any> {
-    return this.http.put(`${this.apiUrl}/ActualizarConsultaClinica`, formData);
+    return this.http.post(`${this.apiUrl}/ActualizarConsultaClinica`, formData);
   }
   eliminarConsulta(payload: any): Observable<any> {
     return this.http.delete(`${this.apiUrl}/EliminarConsulta`, {

@@ -51,7 +51,7 @@ export class ProductoService {
       formData.append('imagen', imagen);
     }
     formData.append('producto', JSON.stringify(producto));
-    return this.http.put(`${this.apiUrl}/actualizarProductos`, formData);
+    return this.http.post(`${this.apiUrl}/actualizarProductos`, formData);
   }
 
   eliminarProducto(id_producto: number): Observable<any> {

@@ -34,7 +34,7 @@ export class HomeService {
       formData.append('imagen', imagen);
     }
     formData.append('data', JSON.stringify(payload));
-    return this.http.put(`${this.apiUrl}/ActualizarInfoHome`, formData);
+    return this.http.post(`${this.apiUrl}/ActualizarInfoHome`, formData);
   }
  
   eliminarInfoHome(id_informacion: number): Observable<any> {
