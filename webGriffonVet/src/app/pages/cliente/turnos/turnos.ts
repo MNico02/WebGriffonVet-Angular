@@ -15,7 +15,7 @@ import { servicio } from '../../../api/models/servicio';
 })
 export class Turnos {
 
-  private readonly WHATSAPP_NUMBER = '549xxxxxxx'; // 👈 formato correcto
+  private readonly WHATSAPP_NUMBER = '549xxx'; // 👈 formato correcto
 
   constructor(private servicioService: ServicioService,
   private mascotaService: MascotaService) {}

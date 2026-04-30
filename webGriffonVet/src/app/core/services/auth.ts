@@ -31,6 +31,14 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/usuarios/registro`, payload);
   }
 
+  recuperarPassword(email: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/recuperar-password`, { email });
+  }
+
+  resetearPassword(token: string, password: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/resetear-password`, { token, password });
+  }
+
   
   private decodificarToken(): any {
     const token = this.getToken();

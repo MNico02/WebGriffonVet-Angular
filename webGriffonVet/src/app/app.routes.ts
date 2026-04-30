@@ -19,6 +19,16 @@ export const routes: Routes = [
       import("./pages/cliente/activar/activar").then((m) => m.Activar),
   },
   {
+    path: "recuperar-password",
+    loadComponent: () =>
+      import("./pages/cliente/recuperar-password/recuperar-password").then((m) => m.RecuperarPassword),
+  },
+  {
+    path: "reset-password",
+    loadComponent: () =>
+      import("./pages/cliente/reset-password/reset-password").then((m) => m.ResetPassword),
+  },
+  {
     path: "main",
     loadComponent: () =>
       import("./layouts/cliente/main-layout/main").then((m) => m.Main),

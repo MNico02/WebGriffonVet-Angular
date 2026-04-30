@@ -9,7 +9,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
   const token = authService.getToken();
 
-  const publicEndpoints = ['/login', '/registro','/usuarios/activar', '/main/home', '/main/productos', '/main/turnos','/main/blog' ];
+  const publicEndpoints = ['/login', '/registro','/usuarios/activar', '/main/home', '/main/productos', '/main/turnos','/main/blog', '/recuperar-password', '/resetear-password' ];
   const isPublic = publicEndpoints.some(e => req.url.includes(e));
 
   if (req.url.includes('amazonaws.com')) {
