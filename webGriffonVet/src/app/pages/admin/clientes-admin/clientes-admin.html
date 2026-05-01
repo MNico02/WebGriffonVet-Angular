@@ -12,7 +12,7 @@
     </div>
 
     <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-      <!-- BUSCADOR (FIX CLAVE) -->
+      <!-- BUSCADOR -->
       <div class="relative w-full sm:flex-1 lg:w-[350px] min-w-0">
         <span
           class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/60"
@@ -39,8 +39,94 @@
     </div>
   </header>
 
-  <!-- Tabla con scroll horizontal -->
-  <section class="px-4 sm:px-6 md:px-8 lg:px-10 pb-20">
+  <!-- ===================== MOBILE: Lista de cards ===================== -->
+  <section class="sm:hidden px-4 pb-20">
+    <div class="flex flex-col gap-2">
+      @if (clientesResource.isLoading()) {
+        <p class="text-sm text-on-surface-variant px-2">Cargando...</p>
+      }
+      @for (cliente of clientesFiltrados(); track cliente.id_usuario) {
+        <!-- Card colapsable -->
+        <div class="bg-surface-container-low rounded-xl overflow-hidden">
+          <!-- Cabecera siempre visible -->
+          <button
+            class="w-full flex items-center justify-between px-4 py-4 text-left"
+            (click)="toggleFila(cliente.id_usuario)"
+          >
+            <div class="min-w-0">
+              <p class="font-headline font-bold text-on-surface text-sm truncate">
+                {{ cliente.nombre_completo }}
+              </p>
+            </div>
+            <span
+              class="material-symbols-outlined text-on-surface-variant flex-shrink-0 ml-2 transition-transform duration-300"
+              [class.rotate-180]="filaExpandida() === cliente.id_usuario"
+            >
+              expand_more
+            </span>
+          </button>
+
+          <!-- Detalle expandido -->
+          @if (filaExpandida() === cliente.id_usuario) {
+            <div class="px-4 pb-4 flex flex-col gap-3 border-t border-outline-variant/20">
+              <!-- Email -->
+              <p class="text-xs text-on-surface-variant pt-3">{{ cliente.email }}</p>
+
+              <!-- Mascotas -->
+              <div>
+                <p class="text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-1">Mascotas</p>
+                <div class="flex flex-wrap gap-1">
+                  @for (mascota of cliente.mascotas; track mascota.id_mascota) {
+                    <div
+                      (click)="seleccionarMascota(mascota.id_mascota, cliente.id_usuario)"
+                      class="bg-white px-2 py-0.5 rounded-full border border-outline-variant/30 flex items-center gap-1 text-xs font-bold"
+                    >
+                      <span
+                        class="material-symbols-outlined text-[14px]"
+                        [ngClass]="getColorMascota(mascota)"
+                      >
+                        {{ getIconoMascota(mascota) }}
+                      </span>
+                      {{ mascota.nombre_mascota }}
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <!-- Teléfono + Estado -->
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-0.5">Teléfono</p>
+                  <p class="text-sm font-medium">{{ cliente.telefono }}</p>
+                </div>
+                <span
+                  [class]="
+                    cliente.activo
+                      ? 'px-3 py-1 rounded-full bg-green-100 text-green-700 text-[10px] font-black uppercase tracking-widest'
+                      : 'px-3 py-1 rounded-full bg-red-100 text-red-700 text-[10px] font-black uppercase tracking-widest'
+                  "
+                >
+                  {{ cliente.activo ? 'Activo' : 'Inactivo' }}
+                </span>
+              </div>
+
+              <!-- Acción -->
+              <button
+                (click)="abrirModalMascota(cliente.id_usuario)"
+                class="flex items-center justify-center gap-2 w-full py-2 rounded-lg bg-green-100 text-green-700 font-bold text-sm hover:bg-green-200 transition-all"
+              >
+                <span class="material-symbols-outlined text-[18px]">add</span>
+                Agregar mascota
+              </button>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- ===================== DESKTOP: Tabla con scroll horizontal ===================== -->
+  <section class="hidden sm:block px-4 sm:px-6 md:px-8 lg:px-10 pb-20">
     <div class="bg-surface-container-low rounded-xl shadow-sm overflow-hidden">
       <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse min-w-[640px]">
@@ -50,47 +136,30 @@
     </div>
   </section>
 
-  <!-- Table View -->
-  <section class="px-4 sm:px-6 md:px-8 lg:px-10 pb-20">
+  <!-- ===================== DESKTOP: Table View ===================== -->
+  <section class="hidden sm:block px-4 sm:px-6 md:px-8 lg:px-10 pb-20">
     <div
       class="bg-surface-container-low rounded-xl shadow-sm table-scroll-container relative overflow-hidden"
     >
-      <!-- Indicador mobile -->
-      <div
-        class="absolute bottom-1 right-3 md:right-8 text-[10px] text-on-surface-variant/60 pointer-events-none md:hidden"
-      >
-        ← Desliza →
-      </div>
-
       <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse min-w-[600px]">
           <thead>
             <tr
               class="bg-surface-container-high/50 text-on-surface-variant font-label text-xs uppercase tracking-widest"
             >
-              <th
-                class="px-2 sm:px-4 md:px-8 py-3 sm:py-5 font-bold text-xs sm:text-sm"
-              >
+              <th class="px-2 sm:px-4 md:px-8 py-3 sm:py-5 font-bold text-xs sm:text-sm">
                 Cliente
               </th>
-              <th
-                class="px-2 sm:px-4 md:px-8 py-3 sm:py-5 font-bold text-xs sm:text-sm"
-              >
+              <th class="px-2 sm:px-4 md:px-8 py-3 sm:py-5 font-bold text-xs sm:text-sm">
                 Mascotas
               </th>
-              <th
-                class="px-2 sm:px-4 md:px-8 py-3 sm:py-5 font-bold text-xs sm:text-sm"
-              >
+              <th class="px-2 sm:px-4 md:px-8 py-3 sm:py-5 font-bold text-xs sm:text-sm">
                 Teléfono
               </th>
-              <th
-                class="px-2 sm:px-4 md:px-8 py-3 sm:py-5 font-bold text-xs sm:text-sm"
-              >
+              <th class="px-2 sm:px-4 md:px-8 py-3 sm:py-5 font-bold text-xs sm:text-sm">
                 Estado
               </th>
-              <th
-                class="px-2 sm:px-4 md:px-8 py-3 sm:py-5 font-bold text-right text-xs sm:text-sm"
-              >
+              <th class="px-2 sm:px-4 md:px-8 py-3 sm:py-5 font-bold text-right text-xs sm:text-sm">
                 Acciones
               </th>
             </tr>
@@ -98,96 +167,94 @@
 
           <tbody class="divide-y divide-outline-variant/10">
             @if (clientesResource.isLoading()) {
-            <tr>
-              <td colspan="5">Cargando...</td>
-            </tr>
-            } @for (cliente of clientesFiltrados(); track cliente.id_usuario) {
-            <tr
-              class="group hover:bg-surface-container-lowest transition-all cursor-pointer"
-            >
-              <!-- Cliente -->
-              <td class="px-2 sm:px-4 md:px-8 py-3 sm:py-6">
-                <div class="flex items-center gap-2 sm:gap-4">
-                  <div class="min-w-0">
-                    <p
-                      class="font-headline font-bold text-on-surface text-sm sm:text-base truncate"
-                    >
-                      {{ cliente.nombre_completo }}
-                    </p>
-                    <p
-                      class="text-xs text-on-surface-variant hidden sm:block truncate"
-                    >
-                      {{ cliente.email }}
-                    </p>
+              <tr>
+                <td colspan="5">Cargando...</td>
+              </tr>
+            }
+            @for (cliente of clientesFiltrados(); track cliente.id_usuario) {
+              <tr
+                class="group hover:bg-surface-container-lowest transition-all cursor-pointer"
+              >
+                <!-- Cliente -->
+                <td class="px-2 sm:px-4 md:px-8 py-3 sm:py-6">
+                  <div class="flex items-center gap-2 sm:gap-4">
+                    <div class="min-w-0">
+                      <p
+                        class="font-headline font-bold text-on-surface text-sm sm:text-base truncate"
+                      >
+                        {{ cliente.nombre_completo }}
+                      </p>
+                      <p
+                        class="text-xs text-on-surface-variant hidden sm:block truncate"
+                      >
+                        {{ cliente.email }}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </td>
+                </td>
 
-              <!-- Mascotas -->
-              <td class="px-2 sm:px-4 md:px-8 py-3 sm:py-6">
-                <div class="flex flex-wrap gap-1 sm:gap-2">
-                  @for (mascota of cliente.mascotas; track mascota.id_mascota) {
-                  <div
-                    (click)="seleccionarMascota(mascota.id_mascota, cliente.id_usuario)"
-                    [class.border-primary]="mascotaSeleccionadaId() === mascota.id_mascota"
-                    class="group/pet relative bg-white px-2 py-0.5 sm:px-3 sm:py-1 rounded-full border border-outline-variant/30 flex items-center gap-1 sm:gap-2 text-xs font-bold hover:border-primary-container transition-all flex-shrink-0 max-w-full"
-                    [title]="mascota.nombre_mascota + ' (' + mascota.especie + ')'"
+                <!-- Mascotas -->
+                <td class="px-2 sm:px-4 md:px-8 py-3 sm:py-6">
+                  <div class="flex flex-wrap gap-1 sm:gap-2">
+                    @for (mascota of cliente.mascotas; track mascota.id_mascota) {
+                      <div
+                        (click)="seleccionarMascota(mascota.id_mascota, cliente.id_usuario)"
+                        [class.border-primary]="mascotaSeleccionadaId() === mascota.id_mascota"
+                        class="group/pet relative bg-white px-2 py-0.5 sm:px-3 sm:py-1 rounded-full border border-outline-variant/30 flex items-center gap-1 sm:gap-2 text-xs font-bold hover:border-primary-container transition-all flex-shrink-0 max-w-full"
+                        [title]="mascota.nombre_mascota + ' (' + mascota.especie + ')'"
+                      >
+                        <span
+                          class="material-symbols-outlined text-[14px] sm:text-[16px]"
+                          [ngClass]="getColorMascota(mascota)"
+                        >
+                          {{ getIconoMascota(mascota) }}
+                        </span>
+                        <span class="hidden sm:inline truncate max-w-[80px]">
+                          {{ mascota.nombre_mascota }}
+                        </span>
+                        <span class="sm:hidden text-[10px] font-bold">
+                          {{ mascota.nombre_mascota.substring(0, 3) }}
+                        </span>
+                      </div>
+                    }
+                  </div>
+                </td>
+
+                <!-- Teléfono -->
+                <td class="px-2 sm:px-4 md:px-8 py-3 sm:py-6">
+                  <p class="text-xs sm:text-sm font-medium truncate">
+                    {{ cliente.telefono }}
+                  </p>
+                </td>
+
+                <!-- Estado -->
+                <td class="px-2 sm:px-4 md:px-8 py-3 sm:py-6">
+                  <span
+                    [class]="
+                      cliente.activo
+                        ? 'px-2 py-0.5 sm:px-3 sm:py-1 rounded-full bg-green-100 text-green-700 text-[8px] sm:text-[10px] font-black uppercase tracking-widest'
+                        : 'px-2 py-0.5 sm:px-3 sm:py-1 rounded-full bg-red-100 text-red-700 text-[8px] sm:text-[10px] font-black uppercase tracking-widest'
+                    "
                   >
-                    <span
-                      class="material-symbols-outlined text-[14px] sm:text-[16px]"
-                      [ngClass]="getColorMascota(mascota)"
+                    {{ cliente.activo ? 'Activo' : 'Inactivo' }}
+                  </span>
+                </td>
+
+                <!-- Acciones -->
+                <td class="px-2 sm:px-4 md:px-8 py-3 sm:py-6 text-center">
+                  <div class="flex justify-center items-center">
+                    <button
+                      (click)="abrirModalMascota(cliente.id_usuario)"
+                      class="flex items-center justify-center w-9 h-9 rounded-full bg-green-100 text-green-700 hover:bg-green-200 hover:scale-105 transition-all"
+                      title="Agregar mascota"
                     >
-                      {{ getIconoMascota(mascota) }}
-                    </span>
-
-                    <span class="hidden sm:inline truncate max-w-[80px]">
-                      {{ mascota.nombre_mascota }}
-                    </span>
-
-                    <span class="sm:hidden text-[10px] font-bold">
-                      {{ mascota.nombre_mascota.substring(0, 3) }}
-                    </span>
+                      <span class="material-symbols-outlined text-[20px]">
+                        add
+                      </span>
+                    </button>
                   </div>
-                  }
-                </div>
-              </td>
-
-              <!-- Teléfono -->
-              <td class="px-2 sm:px-4 md:px-8 py-3 sm:py-6">
-                <p class="text-xs sm:text-sm font-medium truncate">
-                  {{ cliente.telefono }}
-                </p>
-              </td>
-
-              <!-- Estado -->
-              <td class="px-2 sm:px-4 md:px-8 py-3 sm:py-6">
-                <span
-                  [class]="
-                        cliente.activo
-                          ? 'px-2 py-0.5 sm:px-3 sm:py-1 rounded-full bg-green-100 text-green-700 text-[8px] sm:text-[10px] font-black uppercase tracking-widest'
-                          : 'px-2 py-0.5 sm:px-3 sm:py-1 rounded-full bg-red-100 text-red-700 text-[8px] sm:text-[10px] font-black uppercase tracking-widest'
-                      "
-                >
-                  {{ cliente.activo ? 'Activo' : 'Inactivo' }}
-                </span>
-              </td>
-
-              <!-- Acciones -->
-              <td class="px-2 sm:px-4 md:px-8 py-3 sm:py-6 text-right">
-                <button
-  (click)="abrirModalMascota(cliente.id_usuario)"
-  class="flex items-center justify-center w-9 h-9 rounded-full 
-         bg-green-100 text-green-700 
-         hover:bg-green-200 hover:scale-105 
-         transition-all"
-  title="Agregar mascota"
->
-  <span class="material-symbols-outlined text-[20px]">
-    add
-  </span>
-</button>
-              </td>
-            </tr>
+                </td>
+              </tr>
             }
           </tbody>
         </table>
@@ -197,26 +264,25 @@
 
   <!-- Historial -->
   @if (mascotaSeleccionadaId() !== null) {
-  <app-historial-clinico-admin
-    [mascotaId]="mascotaSeleccionadaId()!"
-    [usuarioId]="usuarioSeleccionadoId()!"
-    [esAdmin]="true"
-  />
+    <app-historial-clinico-admin
+      [mascotaId]="mascotaSeleccionadaId()!"
+      [usuarioId]="usuarioSeleccionadoId()!"
+      [esAdmin]="true"
+    />
   }
 
   <!-- Modal -->
   @if (mostrarModalCliente()) {
-  <app-nuevo-cliente-desde-admin
-    (cerrar)="mostrarModalCliente.set(false)"
-    (clienteGuardado)="clientesResource.reload()"
-  />
-}
-
-@if (mostrarModalMascota()) {
-  <app-nueva-mascota
-    [usuarioId]="usuarioParaNuevaMascota()!"
-    (cerrar)="cerrarModalMascota()"
-    (mascotaGuardada)="clientesResource.reload()"
-  />
-}
+    <app-nuevo-cliente-desde-admin
+      (cerrar)="mostrarModalCliente.set(false)"
+      (clienteGuardado)="clientesResource.reload()"
+    />
+  }
+  @if (mostrarModalMascota()) {
+    <app-nueva-mascota
+      [usuarioId]="usuarioParaNuevaMascota()!"
+      (cerrar)="cerrarModalMascota()"
+      (mascotaGuardada)="clientesResource.reload()"
+    />
+  }
 </main>

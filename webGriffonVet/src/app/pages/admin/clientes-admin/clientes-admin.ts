@@ -92,6 +92,14 @@ getColorMascota(mascota: any): string {
   return 'text-gray-400';
 }
 
+
+
+
+filaExpandida = signal<number | null>(null);
+
+toggleFila(id: number) {
+  this.filaExpandida.set(this.filaExpandida() === id ? null : id);
+}
 }
 
 
